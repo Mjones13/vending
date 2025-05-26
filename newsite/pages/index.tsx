@@ -1,14 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Layout from "../components/Layout";
+import HeroSection from "../components/HeroSection";
 import { useScrollAnimation, useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
 export default function Home() {
-  const router = useRouter();
-  const [heroRef, heroVisible] = useScrollAnimation(0.3);
   const [logosRef, logosVisible] = useScrollAnimation(0.2);
   const [servicesRef, servicesVisible] = useScrollAnimation(0.2);
   const [aboutRef, aboutVisible] = useScrollAnimation(0.2);
@@ -21,34 +19,6 @@ export default function Home() {
     }
   }, [logosVisible, triggerLogoAnimations]);
 
-  const handleRequestDemo = () => {
-    router.push('/request-a-demo');
-  };
-
-  const handleMakeAppointment = () => {
-    router.push('/contact');
-  };
-
-  const handleLoginToOrder = () => {
-    router.push('/login');
-  };
-
-  const handleServiceClick = (service: string) => {
-    switch(service) {
-      case 'mini-markets':
-        router.push('/mini-markets');
-        break;
-      case 'coffee-services':
-        router.push('/coffee-services');
-        break;
-      case 'vending-machines':
-        router.push('/vending-machines');
-        break;
-      default:
-        break;
-    }
-  };
-
   return (
     <>
       <Head>
@@ -58,34 +28,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {/* Hero Section */}
-        <section 
-          ref={heroRef}
-          className={`hero-section ${heroVisible ? 'animate-on-scroll animated' : 'animate-on-scroll'}`}
-        >
-          <div className="hero-content">
-            <h1 className="hero-title gradient-text">
-              <span className="text-slide-up">
-                <span>SMARTER VENDING</span>
-              </span>
-            </h1>
-            <h2 className="hero-subtitle">
-              <span className="text-slide-up">
-                <span>Traditional & healthy</span>
-              </span>
-            </h2>
-            <button 
-              className="btn-animated cta-button"
-              onClick={handleRequestDemo}
-            >
-              Request a Demo
-            </button>
-            <p className="hero-phone">
-              CALL US TODAY <span className="phone-highlight">909.258.9848</span>
-            </p>
-          </div>
-          <div className="hero-bg-animation"></div>
-        </section>
+        {/* Hero Section with Background Image */}
+        <HeroSection
+          backgroundImage="/images/hero-backgrounds/home/office-breakroom-hero.jpg"
+          title="SMARTER VENDING"
+          subtitle="Traditional & Healthy Vending Solutions"
+          description="Keep your employees onsite during breaks with our comprehensive vending, coffee, and mini-market services for workplaces of 150 - 25,000 employees."
+          ctaButton={{
+            text: "Request a Demo",
+            href: "/request-a-demo"
+          }}
+          phoneNumber={{
+            text: "CALL US TODAY",
+            number: "909.258.9848"
+          }}
+          minHeight="80vh"
+          overlayOpacity={0.5}
+        />
 
         {/* Company Logos */}
         <section 
@@ -148,12 +107,12 @@ export default function Home() {
               <p>
                 Have your own store in your break room! Stocked with fresh, frozen, and a variety of drinks – all chosen by your staff through our online suggestion box. LET US HANDLE RESTOCKING. Custom-designed to fit any space.
               </p>
-              <button 
+              <Link 
+                href="/mini-markets"
                 className="btn-animated service-btn mini-markets-btn"
-                onClick={() => handleServiceClick('mini-markets')}
               >
                 Read more
-              </button>
+              </Link>
             </div>
             
             <div className="service-card card-hover">
@@ -164,12 +123,12 @@ export default function Home() {
               <p>
                 State of the art freshly ground coffee machines, including teas, hot chocolate, cappuccinos, and more at your fingertips. Enjoy a barista experience with our Coffee Services in California, which include a diverse selection of freshly served coffees. We take care of maintenance and restocking. We offer Bean to Cup machines and a wide range of coffee vending machines in California. Leave it to us.
               </p>
-              <button 
+              <Link 
+                href="/coffee-services"
                 className="btn-animated service-btn coffee-btn"
-                onClick={() => handleServiceClick('coffee-services')}
               >
                 Read more
-              </button>
+              </Link>
             </div>
             
             <div className="service-card card-hover">
@@ -180,12 +139,12 @@ export default function Home() {
               <p>
                 Refresh, snack, and indulge with our smart vending machines – offering a wide range of selections from healthy snacks to guilty pleasures, cold drinks to energizing beverages. Tailored for convenience, ready for your choice.
               </p>
-              <button 
+              <Link 
+                href="/vending-machines"
                 className="btn-animated service-btn vending-btn"
-                onClick={() => handleServiceClick('vending-machines')}
               >
                 Read more
-              </button>
+              </Link>
             </div>
           </div>
         </section>
@@ -210,12 +169,12 @@ export default function Home() {
                 <Link href="/about" className="btn-animated about-btn">
                   Read more about us
                 </Link>
-                <button 
+                <Link 
+                  href="/contact"
                   className="btn-animated appointment-btn"
-                  onClick={handleMakeAppointment}
                 >
                   Make an appointment
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -264,12 +223,12 @@ export default function Home() {
               <span>🥤</span>
             </div>
           </div>
-          <button 
+          <Link 
+            href="/login"
             className="btn-animated login-btn"
-            onClick={handleLoginToOrder}
           >
             Login to order online
-          </button>
+          </Link>
         </section>
 
         {/* Call to Action */}
@@ -280,12 +239,12 @@ export default function Home() {
               <span className="cta-highlight mini-markets">MINI MARKETS</span>, <span className="cta-highlight coffee">COFFEE SERVICES</span> AND <span className="cta-highlight vending">VENDING MACHINES</span>!
             </h3>
             <h4 className="cta-phone">Call us today <span className="phone-highlight">909.258.9848</span></h4>
-            <button 
+            <Link 
+              href="/contact"
               className="btn-animated cta-button-final"
-              onClick={handleMakeAppointment}
             >
               Make an appointment
-            </button>
+            </Link>
           </div>
         </section>
       </Layout>
@@ -488,6 +447,8 @@ export default function Home() {
         }
 
         .service-btn {
+          display: inline-block;
+          text-decoration: none;
           border: none;
           padding: 1rem 2rem;
           border-radius: 25px;
@@ -554,6 +515,8 @@ export default function Home() {
         }
 
         .appointment-btn {
+          display: inline-block;
+          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;
@@ -661,6 +624,8 @@ export default function Home() {
         }
 
         .login-btn {
+          display: inline-block;
+          text-decoration: none;
           background: #0066cc;
           color: white;
           border: none;
@@ -713,6 +678,8 @@ export default function Home() {
         }
 
         .cta-button-final {
+          display: inline-block;
+          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;

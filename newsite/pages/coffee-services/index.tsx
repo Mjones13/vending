@@ -1,47 +1,36 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
-import { useScrollAnimation } from "../../hooks/useScrollAnimation";
+import HeroSection from "../../components/HeroSection";
 
 export default function CoffeeServicesOverview() {
-  const router = useRouter();
-  const [heroRef, heroVisible] = useScrollAnimation(0.3);
-  const [equipmentRef, equipmentVisible] = useScrollAnimation(0.2);
-  const [benefitsRef, benefitsVisible] = useScrollAnimation(0.2);
-
-  const handleLoginToOrder = () => {
-    router.push('/login');
-  };
-
-  const handleMakeAppointment = () => {
-    router.push('/contact');
-  };
 
   return (
     <>
       <Head>
         <title>Coffee Services - SMARTER VENDING</title>
-        <meta name="description" content="Professional coffee services for offices in California. Bean-to-cup machines, vending machines, and airpot services. Fresh, quality coffee solutions." />
+        <meta name="description" content="Professional office coffee solutions in California. Bean-to-cup machines, traditional vending, and complete coffee services for your workplace." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        {/* Hero Section */}
-        <section 
-          ref={heroRef}
-          className={`coffee-hero ${heroVisible ? 'animate-on-scroll animated' : 'animate-on-scroll'}`}
-        >
-          <div className="hero-content">
-            <h1 className="hero-title gradient-text">Coffee Services</h1>
-            <h2 className="hero-subtitle">Professional Office Coffee Solutions in California</h2>
-            <p className="hero-description">
-              Transform your workplace with our comprehensive coffee services. From bean-to-cup machines to traditional vending solutions, 
-              we provide everything you need to keep your team energized and productive.
-            </p>
-          </div>
-        </section>
+        {/* Debug identifier */}
+        <div style={{ display: 'none' }} data-page="coffee-services">Coffee Services Page Loaded</div>
+        
+        {/* Hero Section with Coffee Background */}
+        <HeroSection
+          backgroundImage="/images/hero-backgrounds/coffee-services/coffee-machine-hero.jpg"
+          title="Coffee Services"
+          subtitle="Professional Office Coffee Solutions in California"
+          description="Transform your workplace with our comprehensive coffee services. From bean-to-cup machines to traditional vending solutions, we provide everything you need to keep your team energized and productive."
+          ctaButton={{
+            text: "Make an Appointment",
+            href: "/contact"
+          }}
+          minHeight="75vh"
+          overlayOpacity={0.4}
+        />
 
         {/* Overview Section */}
         <section className="overview-section">
@@ -74,10 +63,7 @@ export default function CoffeeServicesOverview() {
         </section>
 
         {/* Coffee Equipment Section */}
-        <section 
-          ref={equipmentRef}
-          className={`equipment-section ${equipmentVisible ? 'animate-on-scroll animated' : 'animate-on-scroll'}`}
-        >
+        <section className="equipment-section">
           <h2 className="section-title">Our Coffee Equipment</h2>
           <h4 className="section-subtitle">Select on the screen, place your cup, and enjoy</h4>
           <p className="section-text">Our Coffee machines for Offices California make it that easy.</p>
@@ -161,10 +147,7 @@ export default function CoffeeServicesOverview() {
         </section>
 
         {/* Why Your Workplace Needs Coffee */}
-        <section 
-          ref={benefitsRef}
-          className={`benefits-section ${benefitsVisible ? 'animate-on-scroll animated' : 'animate-on-scroll'}`}
-        >
+        <section className="benefits-section">
           <h3 className="section-title">Why Your Workplace Needs Onsite Coffee</h3>
           <div className="benefits-grid-large">
             <div className="benefit-card card-hover">
@@ -209,12 +192,12 @@ export default function CoffeeServicesOverview() {
           <p className="section-description">
             Tailor your coffee experience with customizable options, ensuring your selections are perfectly aligned with your tastes and preferences. Simply place your orders, and leave the rest to us – we deliver and do the restocking for you.
           </p>
-          <button 
+          <Link 
+            href="/login"
             className="btn-animated login-btn"
-            onClick={handleLoginToOrder}
           >
             Login to order online
-          </button>
+          </Link>
         </section>
 
         {/* Call to Action */}
@@ -222,12 +205,12 @@ export default function CoffeeServicesOverview() {
           <h3 className="cta-title">Ready to get started?!</h3>
           <h3 className="cta-subtitle">Elevate your office coffee experience today with our <strong>office coffee service in California</strong></h3>
           <h4 className="cta-phone">Call us today <span className="phone-highlight">909.258.9848</span></h4>
-          <button 
+          <Link 
+            href="/contact"
             className="btn-animated cta-button"
-            onClick={handleMakeAppointment}
           >
             Make an appointment
-          </button>
+          </Link>
         </section>
 
         {/* Navigation Links */}
@@ -470,6 +453,8 @@ export default function CoffeeServicesOverview() {
         }
 
         .login-btn {
+          display: inline-block;
+          text-decoration: none;
           background: #8B4513;
           color: white;
           border: none;
@@ -511,6 +496,8 @@ export default function CoffeeServicesOverview() {
         }
 
         .cta-button {
+          display: inline-block;
+          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;

@@ -25,7 +25,10 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const isActive = (path: string) => {
-    return router.pathname === path;
+    if (path === '/') {
+      return router.pathname === path;
+    }
+    return router.pathname === path || router.pathname.startsWith(path + '/');
   };
 
   return (
@@ -54,7 +57,9 @@ const Layout = ({ children }: LayoutProps) => {
                 </Link>
               </li>
               <li className="nav-item dropdown">
-                <span className="dropdown-toggle">Coffee Services</span>
+                <Link href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
+                  Coffee Services
+                </Link>
                 <ul className="dropdown-menu">
                   <li><Link href="/coffee-services">Overview</Link></li>
                   <li><Link href="/coffee-services/ground-whole-bean">Ground & Whole Bean</Link></li>
@@ -258,11 +263,21 @@ const Layout = ({ children }: LayoutProps) => {
           color: #333;
           font-weight: 500;
           padding: 0.5rem 1rem;
-          transition: color 0.3s ease;
+          transition: all 0.3s ease;
+          text-decoration: none;
+          border-radius: 5px;
+          position: relative;
         }
 
+        .dropdown-toggle:hover,
         .dropdown:hover .dropdown-toggle {
           color: #0066cc;
+          transform: translateY(-2px);
+        }
+
+        .dropdown-toggle.active {
+          color: #0066cc;
+          background: rgba(0, 102, 204, 0.1);
         }
 
         .dropdown-menu {
