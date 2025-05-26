@@ -263,6 +263,7 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 5px;
           transition: all 0.3s ease;
           position: relative;
+          outline: none;
         }
 
         .nav-item a:hover {
@@ -288,6 +289,7 @@ const Layout = ({ children }: LayoutProps) => {
           text-decoration: none;
           border-radius: 5px;
           position: relative;
+          outline: none;
         }
 
         .dropdown-toggle:hover,
@@ -334,6 +336,7 @@ const Layout = ({ children }: LayoutProps) => {
           text-decoration: none;
           border-radius: 4px;
           transition: all 0.3s ease;
+          outline: none;
         }
 
         .dropdown-menu a:hover {
@@ -348,6 +351,7 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 25px !important;
           font-weight: 600 !important;
           transition: all 0.3s ease !important;
+          outline: none !important;
         }
 
         .btn-demo:hover {
@@ -363,6 +367,7 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 25px !important;
           font-weight: 600 !important;
           transition: all 0.3s ease !important;
+          outline: none !important;
         }
 
         .btn-login:hover {
