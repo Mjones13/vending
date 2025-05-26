@@ -36,20 +36,15 @@ const Layout = ({ children }: LayoutProps) => {
     const isHomepage = router.pathname === '/';
     
     if (isHomepage && href !== '/') {
+      // Use regular anchor tag for force reload from homepage
       return (
-        <a 
-          href={href}
-          className={className}
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.href = href;
-          }}
-        >
+        <a href={href} className={className}>
           {children}
         </a>
       );
     }
     
+    // Use Next.js Link for normal routing
     return (
       <Link href={href} className={className}>
         {children}
