@@ -31,6 +31,32 @@ const Layout = ({ children }: LayoutProps) => {
     return router.pathname === path || router.pathname.startsWith(path + '/');
   };
 
+  // Custom navigation component that conditionally forces reload
+  const NavLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
+    const isHomepage = router.pathname === '/';
+    
+    if (isHomepage && href !== '/') {
+      return (
+        <a 
+          href={href}
+          className={className}
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.href = href;
+          }}
+        >
+          {children}
+        </a>
+      );
+    }
+    
+    return (
+      <Link href={href} className={className}>
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <>
       <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
@@ -57,60 +83,60 @@ const Layout = ({ children }: LayoutProps) => {
                 </Link>
               </li>
               <li className="nav-item dropdown">
-                <Link href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
+                <NavLink href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
                   Coffee Services
-                </Link>
+                </NavLink>
                 <ul className="dropdown-menu">
-                  <li><Link href="/coffee-services">Overview</Link></li>
-                  <li><Link href="/coffee-services/ground-whole-bean">Ground & Whole Bean</Link></li>
-                  <li><Link href="/coffee-services/airpot-portion-packets">Airpot Portion Packets</Link></li>
-                  <li><Link href="/coffee-services/accessories">Accessories</Link></li>
+                  <li><NavLink href="/coffee-services">Overview</NavLink></li>
+                  <li><NavLink href="/coffee-services/ground-whole-bean">Ground & Whole Bean</NavLink></li>
+                  <li><NavLink href="/coffee-services/airpot-portion-packets">Airpot Portion Packets</NavLink></li>
+                  <li><NavLink href="/coffee-services/accessories">Accessories</NavLink></li>
                 </ul>
               </li>
               <li className="nav-item">
-                <Link href="/shop" className={isActive('/shop') ? 'active' : ''}>
+                <NavLink href="/shop" className={isActive('/shop') ? 'active' : ''}>
                   Shop
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/mini-markets" className={isActive('/mini-markets') ? 'active' : ''}>
+                <NavLink href="/mini-markets" className={isActive('/mini-markets') ? 'active' : ''}>
                   Mini Markets
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/vending-machines" className={isActive('/vending-machines') ? 'active' : ''}>
+                <NavLink href="/vending-machines" className={isActive('/vending-machines') ? 'active' : ''}>
                   Vending Machines
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/blog" className={isActive('/blog') ? 'active' : ''}>
+                <NavLink href="/blog" className={isActive('/blog') ? 'active' : ''}>
                   Blog
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/about" className={isActive('/about') ? 'active' : ''}>
+                <NavLink href="/about" className={isActive('/about') ? 'active' : ''}>
                   About
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/careers" className={isActive('/careers') ? 'active' : ''}>
+                <NavLink href="/careers" className={isActive('/careers') ? 'active' : ''}>
                   Careers
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/contact" className={isActive('/contact') ? 'active' : ''}>
+                <NavLink href="/contact" className={isActive('/contact') ? 'active' : ''}>
                   Contact
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/request-a-demo" className="btn-demo">
+                <NavLink href="/request-a-demo" className="btn-demo">
                   Request Demo
-                </Link>
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link href="/login" className="btn-login">
+                <NavLink href="/login" className="btn-login">
                   Login
-                </Link>
+                </NavLink>
               </li>
             </ul>
           </div>
