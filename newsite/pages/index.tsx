@@ -1,12 +1,14 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Layout from "../components/Layout";
 import HeroSection from "../components/HeroSection";
 import { useScrollAnimation, useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
 export default function Home() {
+  const router = useRouter();
   const [logosRef, logosVisible] = useScrollAnimation(0.2);
   const [servicesRef, servicesVisible] = useScrollAnimation(0.2);
   const [aboutRef, aboutVisible] = useScrollAnimation(0.2);
@@ -18,6 +20,34 @@ export default function Home() {
       triggerLogoAnimations();
     }
   }, [logosVisible, triggerLogoAnimations]);
+
+  const handleRequestDemo = () => {
+    router.push('/request-a-demo');
+  };
+
+  const handleMakeAppointment = () => {
+    router.push('/contact');
+  };
+
+  const handleLoginToOrder = () => {
+    router.push('/login');
+  };
+
+  const handleServiceClick = (service: string) => {
+    switch(service) {
+      case 'mini-markets':
+        router.push('/mini-markets');
+        break;
+      case 'coffee-services':
+        router.push('/coffee-services');
+        break;
+      case 'vending-machines':
+        router.push('/vending-machines');
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <>
@@ -36,7 +66,7 @@ export default function Home() {
           description="Keep your employees onsite during breaks with our comprehensive vending, coffee, and mini-market services for workplaces of 150 - 25,000 employees."
           ctaButton={{
             text: "Request a Demo",
-            href: "/request-a-demo"
+            onClick: handleRequestDemo
           }}
           phoneNumber={{
             text: "CALL US TODAY",
@@ -107,12 +137,12 @@ export default function Home() {
               <p>
                 Have your own store in your break room! Stocked with fresh, frozen, and a variety of drinks – all chosen by your staff through our online suggestion box. LET US HANDLE RESTOCKING. Custom-designed to fit any space.
               </p>
-              <Link 
-                href="/mini-markets"
+              <button 
                 className="btn-animated service-btn mini-markets-btn"
+                onClick={() => handleServiceClick('mini-markets')}
               >
                 Read more
-              </Link>
+              </button>
             </div>
             
             <div className="service-card card-hover">
@@ -123,12 +153,12 @@ export default function Home() {
               <p>
                 State of the art freshly ground coffee machines, including teas, hot chocolate, cappuccinos, and more at your fingertips. Enjoy a barista experience with our Coffee Services in California, which include a diverse selection of freshly served coffees. We take care of maintenance and restocking. We offer Bean to Cup machines and a wide range of coffee vending machines in California. Leave it to us.
               </p>
-              <Link 
-                href="/coffee-services"
+              <button 
                 className="btn-animated service-btn coffee-btn"
+                onClick={() => handleServiceClick('coffee-services')}
               >
                 Read more
-              </Link>
+              </button>
             </div>
             
             <div className="service-card card-hover">
@@ -139,12 +169,12 @@ export default function Home() {
               <p>
                 Refresh, snack, and indulge with our smart vending machines – offering a wide range of selections from healthy snacks to guilty pleasures, cold drinks to energizing beverages. Tailored for convenience, ready for your choice.
               </p>
-              <Link 
-                href="/vending-machines"
+              <button 
                 className="btn-animated service-btn vending-btn"
+                onClick={() => handleServiceClick('vending-machines')}
               >
                 Read more
-              </Link>
+              </button>
             </div>
           </div>
         </section>
@@ -169,12 +199,12 @@ export default function Home() {
                 <Link href="/about" className="btn-animated about-btn">
                   Read more about us
                 </Link>
-                <Link 
-                  href="/contact"
+                <button 
                   className="btn-animated appointment-btn"
+                  onClick={handleMakeAppointment}
                 >
                   Make an appointment
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -223,12 +253,12 @@ export default function Home() {
               <span>🥤</span>
             </div>
           </div>
-          <Link 
-            href="/login"
+          <button 
             className="btn-animated login-btn"
+            onClick={handleLoginToOrder}
           >
             Login to order online
-          </Link>
+          </button>
         </section>
 
         {/* Call to Action */}
@@ -239,12 +269,12 @@ export default function Home() {
               <span className="cta-highlight mini-markets">MINI MARKETS</span>, <span className="cta-highlight coffee">COFFEE SERVICES</span> AND <span className="cta-highlight vending">VENDING MACHINES</span>!
             </h3>
             <h4 className="cta-phone">Call us today <span className="phone-highlight">909.258.9848</span></h4>
-            <Link 
-              href="/contact"
+            <button 
               className="btn-animated cta-button-final"
+              onClick={handleMakeAppointment}
             >
               Make an appointment
-            </Link>
+            </button>
           </div>
         </section>
       </Layout>
@@ -433,18 +463,17 @@ export default function Home() {
 
         .coffee-icon::before,
         .coffee-icon::after {
-          content: '';
+          content: '◜◝◜◝';
           position: absolute;
-          top: -15px;
+          top: -20px;
           left: 50%;
-          transform: translateX(-50%);
-          width: 4px;
-          height: 25px;
-          background: rgba(255, 255, 255, 0.7);
-          border-radius: 50%;
+          transform: translateX(-50%) rotate(90deg);
+          font-size: 8px;
+          color: rgba(255, 255, 255, 0.7);
           opacity: 0;
           transition: opacity 0.3s ease;
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          text-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+          letter-spacing: -1px;
         }
 
         .coffee-icon::before {
@@ -454,55 +483,28 @@ export default function Home() {
 
         .coffee-icon::after {
           left: 55%;
-          animation-delay: 0.7s;
+          animation-delay: 0.6s;
+          content: '◝◜◝◜';
         }
 
         .service-card:hover .coffee-icon::before,
         .service-card:hover .coffee-icon::after {
           opacity: 1;
-          animation: squigglySteam 3s ease-in-out infinite;
+          animation: steamRise 2.5s ease-in-out infinite;
         }
 
-        @keyframes squigglySteam {
+        @keyframes steamRise {
           0% {
-            transform: translateX(-50%) translateY(0) rotate(0deg) scaleY(1);
+            transform: translateX(-50%) translateY(0) rotate(90deg) scale(0.8);
             opacity: 0.7;
-            border-radius: 50% 30% 50% 30%;
           }
-          15% {
-            transform: translateX(-45%) translateY(-5px) rotate(5deg) scaleY(1.1);
-            opacity: 0.6;
-            border-radius: 30% 50% 30% 50%;
-          }
-          30% {
-            transform: translateX(-55%) translateY(-10px) rotate(-3deg) scaleY(1.3);
-            opacity: 0.5;
-            border-radius: 60% 40% 60% 40%;
-          }
-          45% {
-            transform: translateX(-48%) translateY(-15px) rotate(7deg) scaleY(1.5);
+          50% {
+            transform: translateX(-50%) translateY(-15px) rotate(90deg) scale(1);
             opacity: 0.4;
-            border-radius: 40% 60% 40% 60%;
-          }
-          60% {
-            transform: translateX(-52%) translateY(-22px) rotate(-4deg) scaleY(1.7);
-            opacity: 0.3;
-            border-radius: 70% 30% 70% 30%;
-          }
-          75% {
-            transform: translateX(-47%) translateY(-30px) rotate(6deg) scaleY(1.9);
-            opacity: 0.2;
-            border-radius: 30% 70% 30% 70%;
-          }
-          90% {
-            transform: translateX(-53%) translateY(-38px) rotate(-2deg) scaleY(2.1);
-            opacity: 0.1;
-            border-radius: 80% 20% 80% 20%;
           }
           100% {
-            transform: translateX(-50%) translateY(-45px) rotate(0deg) scaleY(2.3);
+            transform: translateX(-50%) translateY(-30px) rotate(90deg) scale(1.2);
             opacity: 0;
-            border-radius: 50% 50% 50% 50%;
           }
         }
 
@@ -524,8 +526,6 @@ export default function Home() {
         }
 
         .service-btn {
-          display: inline-block;
-          text-decoration: none;
           border: none;
           padding: 1rem 2rem;
           border-radius: 25px;
@@ -592,8 +592,6 @@ export default function Home() {
         }
 
         .appointment-btn {
-          display: inline-block;
-          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;
@@ -701,8 +699,6 @@ export default function Home() {
         }
 
         .login-btn {
-          display: inline-block;
-          text-decoration: none;
           background: #0066cc;
           color: white;
           border: none;
@@ -755,8 +751,6 @@ export default function Home() {
         }
 
         .cta-button-final {
-          display: inline-block;
-          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;
