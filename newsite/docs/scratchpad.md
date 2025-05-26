@@ -11,6 +11,7 @@
 - [2024-12-23] Breaking content updates into logical chunks (page by page) makes it easier to track progress and debug issues
 - [2024-12-23] Always test builds after major content updates to catch any syntax or formatting issues early
 - [2024-12-23] Navigation Consistency: Always use Next.js Link components for internal navigation instead of programmatic routing (router.push()) to ensure consistent page transitions and proper client-side routing behavior. Programmatic routing should only be used for conditional navigation or form submissions, not for standard navigation links.
+- [2024-12-23] Conditional Navigation: Custom components can be created to conditionally change navigation behavior based on current page context. Using window.location.href forces full page reload while Next.js Link provides client-side routing. This allows selective force reload functionality when needed.
 
 ## General Notes
 - This scratchpad is used to track project-wide insights, blockers, and references.

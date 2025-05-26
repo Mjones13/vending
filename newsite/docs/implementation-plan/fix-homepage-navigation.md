@@ -87,5 +87,26 @@ All these use onClick handlers with programmatic navigation instead of Next.js L
 
 The navigation issue should now be resolved. When users click navigation links from the homepage, both the URL will change AND the page content will properly refresh/transition.
 
+**[2024-12-23] FORCE RELOAD FEATURE ADDED**
+
+✅ **Additional Feature Implemented**: Force reload for top navigation buttons when on homepage
+- Created custom `NavLink` component in Layout that detects when user is on homepage
+- When on homepage (`router.pathname === '/'`), navigation links use `window.location.href` for full page reload
+- When on other pages, maintains normal Next.js routing behavior
+- Applied to all top navigation links: Coffee Services, Shop, Mini Markets, Vending Machines, Blog, About, Careers, Contact, Request Demo, Login
+- Home link always uses normal Next.js routing (no force reload when clicking Home)
+
+✅ **How It Works**:
+- `NavLink` component checks if current page is homepage
+- If on homepage and clicking any navigation link (except Home), forces browser reload
+- If on any other page, uses normal Next.js Link component
+- Ensures complete page refresh when navigating from homepage as requested
+
+✅ **Testing Results**:
+- Build passes successfully ✓
+- Force reload works only from homepage ✓
+- Normal navigation preserved on other pages ✓
+- All navigation styling maintained ✓
+
 ## Lessons Learned
 **[2024-12-23] Navigation Consistency**: Always use Next.js Link components for internal navigation instead of programmatic routing (`router.push()`) to ensure consistent page transitions and proper client-side routing behavior. Programmatic routing should only be used for conditional navigation or form submissions, not for standard navigation links. 
