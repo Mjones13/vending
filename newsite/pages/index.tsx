@@ -406,7 +406,7 @@ export default function Home() {
           border-radius: 20px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
           position: relative;
-          overflow: hidden;
+          overflow: visible;
         }
 
         .service-icon {
@@ -427,6 +427,54 @@ export default function Home() {
 
         .coffee-icon {
           background: linear-gradient(135deg, #8B4513, #A0522D);
+          position: relative;
+          overflow: visible;
+        }
+
+        .coffee-icon::before,
+        .coffee-icon::after {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 3px;
+          height: 20px;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .coffee-icon::before {
+          left: 45%;
+          animation-delay: 0s;
+        }
+
+        .coffee-icon::after {
+          left: 55%;
+          animation-delay: 0.5s;
+        }
+
+        .service-card:hover .coffee-icon::before,
+        .service-card:hover .coffee-icon::after {
+          opacity: 1;
+          animation: steam 2s ease-in-out infinite;
+        }
+
+        @keyframes steam {
+          0% {
+            transform: translateX(-50%) translateY(0) scaleY(1);
+            opacity: 0.6;
+          }
+          50% {
+            transform: translateX(-50%) translateY(-10px) scaleY(1.2);
+            opacity: 0.3;
+          }
+          100% {
+            transform: translateX(-50%) translateY(-20px) scaleY(0.8);
+            opacity: 0;
+          }
         }
 
         .vending-icon {
