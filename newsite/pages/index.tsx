@@ -438,12 +438,13 @@ export default function Home() {
           top: -15px;
           left: 50%;
           transform: translateX(-50%);
-          width: 3px;
-          height: 20px;
-          background: rgba(255, 255, 255, 0.6);
-          border-radius: 50px;
+          width: 4px;
+          height: 25px;
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 50%;
           opacity: 0;
           transition: opacity 0.3s ease;
+          border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .coffee-icon::before {
@@ -453,27 +454,55 @@ export default function Home() {
 
         .coffee-icon::after {
           left: 55%;
-          animation-delay: 0.5s;
+          animation-delay: 0.7s;
         }
 
         .service-card:hover .coffee-icon::before,
         .service-card:hover .coffee-icon::after {
           opacity: 1;
-          animation: steam 2s ease-in-out infinite;
+          animation: squigglySteam 3s ease-in-out infinite;
         }
 
-        @keyframes steam {
+        @keyframes squigglySteam {
           0% {
-            transform: translateX(-50%) translateY(0) scaleY(1);
-            opacity: 0.6;
+            transform: translateX(-50%) translateY(0) rotate(0deg) scaleY(1);
+            opacity: 0.7;
+            border-radius: 50% 30% 50% 30%;
           }
-          50% {
-            transform: translateX(-50%) translateY(-10px) scaleY(1.2);
+          15% {
+            transform: translateX(-45%) translateY(-5px) rotate(5deg) scaleY(1.1);
+            opacity: 0.6;
+            border-radius: 30% 50% 30% 50%;
+          }
+          30% {
+            transform: translateX(-55%) translateY(-10px) rotate(-3deg) scaleY(1.3);
+            opacity: 0.5;
+            border-radius: 60% 40% 60% 40%;
+          }
+          45% {
+            transform: translateX(-48%) translateY(-15px) rotate(7deg) scaleY(1.5);
+            opacity: 0.4;
+            border-radius: 40% 60% 40% 60%;
+          }
+          60% {
+            transform: translateX(-52%) translateY(-22px) rotate(-4deg) scaleY(1.7);
             opacity: 0.3;
+            border-radius: 70% 30% 70% 30%;
+          }
+          75% {
+            transform: translateX(-47%) translateY(-30px) rotate(6deg) scaleY(1.9);
+            opacity: 0.2;
+            border-radius: 30% 70% 30% 70%;
+          }
+          90% {
+            transform: translateX(-53%) translateY(-38px) rotate(-2deg) scaleY(2.1);
+            opacity: 0.1;
+            border-radius: 80% 20% 80% 20%;
           }
           100% {
-            transform: translateX(-50%) translateY(-20px) scaleY(0.8);
+            transform: translateX(-50%) translateY(-45px) rotate(0deg) scaleY(2.3);
             opacity: 0;
+            border-radius: 50% 50% 50% 50%;
           }
         }
 
