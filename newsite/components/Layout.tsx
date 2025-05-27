@@ -31,27 +31,6 @@ const Layout = ({ children }: LayoutProps) => {
     return router.pathname === path || router.pathname.startsWith(path + '/');
   };
 
-  // Custom navigation component that conditionally forces reload
-  const NavLink = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => {
-    const isHomepage = router.pathname === '/';
-    
-    if (isHomepage && href !== '/') {
-      // Use regular anchor tag for force reload from homepage
-      return (
-        <a href={href} className={className}>
-          {children}
-        </a>
-      );
-    }
-    
-    // Use Next.js Link for normal routing
-    return (
-      <Link href={href} className={className}>
-        {children}
-      </Link>
-    );
-  };
-
   return (
     <>
       <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
@@ -78,60 +57,60 @@ const Layout = ({ children }: LayoutProps) => {
                 </Link>
               </li>
               <li className="nav-item dropdown">
-                <NavLink href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
+                <Link href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
                   Coffee Services
-                </NavLink>
+                </Link>
                 <ul className="dropdown-menu">
-                  <li><NavLink href="/coffee-services">Overview</NavLink></li>
-                  <li><NavLink href="/coffee-services/ground-whole-bean">Ground & Whole Bean</NavLink></li>
-                  <li><NavLink href="/coffee-services/airpot-portion-packets">Airpot Portion Packets</NavLink></li>
-                  <li><NavLink href="/coffee-services/accessories">Accessories</NavLink></li>
+                  <li><Link href="/coffee-services">Overview</Link></li>
+                  <li><Link href="/coffee-services/ground-whole-bean">Ground & Whole Bean</Link></li>
+                  <li><Link href="/coffee-services/airpot-portion-packets">Airpot Portion Packets</Link></li>
+                  <li><Link href="/coffee-services/accessories">Accessories</Link></li>
                 </ul>
               </li>
               <li className="nav-item">
-                <NavLink href="/shop" className={isActive('/shop') ? 'active' : ''}>
+                <Link href="/shop" className={isActive('/shop') ? 'active' : ''}>
                   Shop
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/mini-markets" className={isActive('/mini-markets') ? 'active' : ''}>
+                <Link href="/mini-markets" className={isActive('/mini-markets') ? 'active' : ''}>
                   Mini Markets
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/vending-machines" className={isActive('/vending-machines') ? 'active' : ''}>
+                <Link href="/vending-machines" className={isActive('/vending-machines') ? 'active' : ''}>
                   Vending Machines
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/blog" className={isActive('/blog') ? 'active' : ''}>
+                <Link href="/blog" className={isActive('/blog') ? 'active' : ''}>
                   Blog
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/about" className={isActive('/about') ? 'active' : ''}>
+                <Link href="/about" className={isActive('/about') ? 'active' : ''}>
                   About
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/careers" className={isActive('/careers') ? 'active' : ''}>
+                <Link href="/careers" className={isActive('/careers') ? 'active' : ''}>
                   Careers
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/contact" className={isActive('/contact') ? 'active' : ''}>
+                <Link href="/contact" className={isActive('/contact') ? 'active' : ''}>
                   Contact
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/request-a-demo" className="btn-demo">
+                <Link href="/request-a-demo" className="btn-demo">
                   Request Demo
-                </NavLink>
+                </Link>
               </li>
               <li className="nav-item">
-                <NavLink href="/login" className="btn-login">
+                <Link href="/login" className="btn-login">
                   Login
-                </NavLink>
+                </Link>
               </li>
             </ul>
           </div>
@@ -263,7 +242,6 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 5px;
           transition: all 0.3s ease;
           position: relative;
-          outline: none;
         }
 
         .nav-item a:hover {
@@ -289,7 +267,6 @@ const Layout = ({ children }: LayoutProps) => {
           text-decoration: none;
           border-radius: 5px;
           position: relative;
-          outline: none;
         }
 
         .dropdown-toggle:hover,
@@ -336,7 +313,6 @@ const Layout = ({ children }: LayoutProps) => {
           text-decoration: none;
           border-radius: 4px;
           transition: all 0.3s ease;
-          outline: none;
         }
 
         .dropdown-menu a:hover {
@@ -351,7 +327,6 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 25px !important;
           font-weight: 600 !important;
           transition: all 0.3s ease !important;
-          outline: none !important;
         }
 
         .btn-demo:hover {
@@ -367,7 +342,6 @@ const Layout = ({ children }: LayoutProps) => {
           border-radius: 25px !important;
           font-weight: 600 !important;
           transition: all 0.3s ease !important;
-          outline: none !important;
         }
 
         .btn-login:hover {

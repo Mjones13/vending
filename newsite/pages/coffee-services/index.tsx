@@ -1,16 +1,26 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import HeroSection from "../../components/HeroSection";
 
 export default function CoffeeServicesOverview() {
+  const router = useRouter();
+
+  const handleLoginToOrder = () => {
+    router.push('/login');
+  };
+
+  const handleMakeAppointment = () => {
+    router.push('/contact');
+  };
 
   return (
     <>
       <Head>
         <title>Coffee Services - SMARTER VENDING</title>
-        <meta name="description" content="Professional office coffee solutions in California. Bean-to-cup machines, traditional vending, and complete coffee services for your workplace." />
+        <meta name="description" content="Professional coffee services for offices in California. Bean-to-cup machines, vending machines, and airpot services. Fresh, quality coffee solutions." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -20,13 +30,13 @@ export default function CoffeeServicesOverview() {
         
         {/* Hero Section with Coffee Background */}
         <HeroSection
-          backgroundImage="/images/hero-backgrounds/coffee-services/coffee-machine-hero.jpg"
+          backgroundImage="/images/hero-backgrounds/coffee-services/coffee-brewing-hero.jpg"
           title="Coffee Services"
           subtitle="Professional Office Coffee Solutions in California"
           description="Transform your workplace with our comprehensive coffee services. From bean-to-cup machines to traditional vending solutions, we provide everything you need to keep your team energized and productive."
           ctaButton={{
             text: "Make an Appointment",
-            href: "/contact"
+            onClick: handleMakeAppointment
           }}
           minHeight="75vh"
           overlayOpacity={0.4}
@@ -192,12 +202,12 @@ export default function CoffeeServicesOverview() {
           <p className="section-description">
             Tailor your coffee experience with customizable options, ensuring your selections are perfectly aligned with your tastes and preferences. Simply place your orders, and leave the rest to us – we deliver and do the restocking for you.
           </p>
-          <Link 
-            href="/login"
+          <button 
             className="btn-animated login-btn"
+            onClick={handleLoginToOrder}
           >
             Login to order online
-          </Link>
+          </button>
         </section>
 
         {/* Call to Action */}
@@ -205,12 +215,12 @@ export default function CoffeeServicesOverview() {
           <h3 className="cta-title">Ready to get started?!</h3>
           <h3 className="cta-subtitle">Elevate your office coffee experience today with our <strong>office coffee service in California</strong></h3>
           <h4 className="cta-phone">Call us today <span className="phone-highlight">909.258.9848</span></h4>
-          <Link 
-            href="/contact"
+          <button 
             className="btn-animated cta-button"
+            onClick={handleMakeAppointment}
           >
             Make an appointment
-          </Link>
+          </button>
         </section>
 
         {/* Navigation Links */}
@@ -453,8 +463,6 @@ export default function CoffeeServicesOverview() {
         }
 
         .login-btn {
-          display: inline-block;
-          text-decoration: none;
           background: #8B4513;
           color: white;
           border: none;
@@ -496,8 +504,6 @@ export default function CoffeeServicesOverview() {
         }
 
         .cta-button {
-          display: inline-block;
-          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;

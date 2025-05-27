@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 interface HeroSectionProps {
   backgroundImage: string;
@@ -9,7 +8,7 @@ interface HeroSectionProps {
   description?: string;
   ctaButton?: {
     text: string;
-    href: string;
+    onClick: () => void;
     className?: string;
   };
   phoneNumber?: {
@@ -65,12 +64,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {subtitle && <h2 className="hero-subtitle">{subtitle}</h2>}
             {description && <p className="hero-description">{description}</p>}
             {ctaButton && (
-              <Link 
-                href={ctaButton.href}
+              <button 
                 className={`hero-cta-button ${ctaButton.className || ''}`}
+                onClick={ctaButton.onClick}
               >
                 {ctaButton.text}
-              </Link>
+              </button>
             )}
             {phoneNumber && (
               <p className="hero-phone">
@@ -151,8 +150,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         }
 
         .hero-cta-button {
-          display: inline-block;
-          text-decoration: none;
           background: #ff6600;
           color: white;
           border: none;
