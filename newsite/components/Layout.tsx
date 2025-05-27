@@ -1,5 +1,6 @@
 import React, { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 interface LayoutProps {
@@ -37,7 +38,14 @@ const Layout = ({ children }: LayoutProps) => {
         <nav className="nav">
           <div className="nav-container">
             <Link href="/" className="logo">
-              <span className="gradient-text">SMARTER VENDING</span>
+              <Image 
+                src="/images/logos/Golden Coast Amenities (3).svg"
+                alt="Golden Coast Amenities"
+                width={180}
+                height={60}
+                priority
+                className="logo-image"
+              />
             </Link>
             
             <button 
@@ -193,14 +201,22 @@ const Layout = ({ children }: LayoutProps) => {
         }
 
         .logo {
-          font-size: 1.5rem;
-          font-weight: bold;
+          display: flex;
+          align-items: center;
           text-decoration: none;
           transition: transform 0.3s ease;
+          height: 60px;
         }
 
         .logo:hover {
           transform: scale(1.05);
+        }
+
+        .logo-image {
+          height: auto;
+          max-height: 50px;
+          width: auto;
+          object-fit: contain;
         }
 
         .menu-toggle {
@@ -427,6 +443,14 @@ const Layout = ({ children }: LayoutProps) => {
         @media (max-width: 768px) {
           .menu-toggle {
             display: flex;
+          }
+
+          .logo {
+            height: 50px;
+          }
+
+          .logo-image {
+            max-height: 40px;
           }
 
           .nav-menu {
