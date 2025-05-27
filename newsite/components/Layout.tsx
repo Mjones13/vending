@@ -41,8 +41,8 @@ const Layout = ({ children }: LayoutProps) => {
               <Image 
                 src="/images/logos/Golden Coast Amenities (3).svg"
                 alt="Golden Coast Amenities"
-                width={180}
-                height={60}
+                width={60}
+                height={20}
                 priority
                 className="logo-image"
               />
@@ -205,7 +205,7 @@ const Layout = ({ children }: LayoutProps) => {
           align-items: center;
           text-decoration: none;
           transition: transform 0.3s ease;
-          height: 60px;
+          height: 17px;
         }
 
         .logo:hover {
@@ -214,7 +214,7 @@ const Layout = ({ children }: LayoutProps) => {
 
         .logo-image {
           height: auto;
-          max-height: 50px;
+          max-height: 13px;
           width: auto;
           object-fit: contain;
         }
@@ -446,11 +446,11 @@ const Layout = ({ children }: LayoutProps) => {
           }
 
           .logo {
-            height: 50px;
+            height: 17px;
           }
 
           .logo-image {
-            max-height: 40px;
+            max-height: 13px;
           }
 
           .nav-menu {
