@@ -61,4 +61,10 @@ The user has requested to replace the current "SMARTER VENDING" text logo in the
   - Added proper alt text for accessibility
   - Logo includes hover effects (scale 1.05)
   - Build passes successfully with no errors
-  - Committed changes to feature branch 
+  - Committed changes to feature branch
+- [2024-12-23] UPDATED: Reduced logo size to one-third of original size per user request
+  - Updated Image component dimensions from 180x60 to 60x20
+  - Reduced desktop max-height from 50px to 17px
+  - Reduced mobile max-height from 40px to 13px
+  - Maintained responsive design and hover effects
+  - Build passes successfully with no errors 
