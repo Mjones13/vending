@@ -3,6 +3,7 @@
 ## References to Implementation Plans
 - [docs/implementation-plan/replicate-smarter-vending.md](implementation-plan/replicate-smarter-vending.md)
 - [docs/implementation-plan/replace-logo-golden-coast.md](implementation-plan/replace-logo-golden-coast.md) ✅ COMPLETED
+- [docs/implementation-plan/comprehensive-website-design-overhaul.md](implementation-plan/comprehensive-website-design-overhaul.md) 🔄 IN PROGRESS
 
 ## Lessons Learned
 - [2024-12-23] When updating content with exact text from reference sites, always escape apostrophes and quotes using HTML entities (&apos;, &ldquo;, &rdquo;) to avoid ESLint errors in React/Next.js
