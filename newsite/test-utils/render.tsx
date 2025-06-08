@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { render, RenderOptions } from '@testing-library/react'
+import { render, RenderOptions, waitFor, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
 // Mock the useRouter hook for testing
@@ -11,20 +11,54 @@ const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   router?: Partial<ReturnType<typeof useRouter>>
+  verifyMount?: boolean
+  mountTimeout?: number
 }
 
 /**
- * Custom render function that provides common test setup
+ * Verifies that a component has mounted correctly and is not an empty div
+ * @param container - The container element from render result
+ * @param timeout - Timeout for waiting for mount (default: 5000ms)
+ */
+export async function verifyComponentMounted(
+  container: HTMLElement,
+  timeout: number = 5000
+): Promise<void> {
+  await waitFor(() => {
+    // Check that container is not an empty div
+    expect(container.innerHTML).not.toBe('<div></div>')
+    expect(container.innerHTML).not.toBe('<div />')
+    expect(container.innerHTML).not.toBe('')
+  }, { timeout })
+}
+
+/**
+ * Verifies that Layout component has mounted correctly with navigation
+ * @param timeout - Timeout for waiting for mount (default: 5000ms)
+ */
+export async function verifyLayoutMounted(timeout: number = 5000): Promise<void> {
+  await waitFor(() => {
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
+  }, { timeout })
+}
+
+/**
+ * Enhanced render function with component mounting verification
  * @param ui - React component to render
- * @param options - Render options including router mock
+ * @param options - Render options including router mock and mount verification
  */
 export function renderWithProviders(
   ui: ReactElement,
   {
     router = {},
+    verifyMount = false,
+    mountTimeout = 5000,
     ...renderOptions
   }: CustomRenderOptions = {}
 ) {
+  // Clear DOM state before rendering
+  document.body.innerHTML = ''
+  
   // Set up router mock with defaults
   const mockRouter = {
     route: '/',
@@ -48,9 +82,18 @@ export function renderWithProviders(
 
   mockedUseRouter.mockReturnValue(mockRouter)
 
+  const result = render(ui, renderOptions)
+
+  // Optionally verify component mounted correctly
+  if (verifyMount) {
+    verifyComponentMounted(result.container, mountTimeout)
+  }
+
   return {
-    ...render(ui, renderOptions),
+    ...result,
     mockRouter,
+    verifyComponentMounted: (timeout?: number) => verifyComponentMounted(result.container, timeout),
+    verifyLayoutMounted: (timeout?: number) => verifyLayoutMounted(timeout),
   }
 }
 

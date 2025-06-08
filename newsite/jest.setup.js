@@ -105,14 +105,42 @@ window.getComputedStyle = function(element, pseudoElement) {
   return mockStyle
 }
 
-// Test isolation and cleanup
+// Enhanced test isolation and cleanup for parallel execution
 beforeEach(() => {
+  // Enhanced DOM cleanup for better test isolation
+  document.body.innerHTML = ''
+  document.head.querySelectorAll('[data-test-styles]').forEach(style => style.remove())
+  
+  // Clear any lingering event listeners
+  if (document.body.onscroll) {
+    document.body.onscroll = null
+  }
+  if (window.onscroll) {
+    window.onscroll = null
+  }
+  
+  // Reset scroll position
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value: 0
+  })
+  Object.defineProperty(window, 'pageYOffset', {
+    writable: true,
+    configurable: true,
+    value: 0
+  })
+  
   // Enable fake timers globally for consistent testing
   jest.useFakeTimers()
   
-  // Set up animation frame polyfills for each test
-  global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
-  global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
+  // Set up persistent animation frame polyfills (don't delete in afterEach)
+  if (!global.requestAnimationFrame) {
+    global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
+  }
+  if (!global.cancelAnimationFrame) {
+    global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
+  }
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
@@ -129,18 +157,59 @@ beforeEach(() => {
   
   // Enhanced mock isolation for parallel execution
   jest.clearAllMocks()
+  
+  // Reset router mock to clean state
+  const { useRouter } = require('next/router')
+  if (useRouter && typeof useRouter.mockReturnValue === 'function') {
+    useRouter.mockReturnValue({
+      route: '/',
+      pathname: '/',
+      query: {},
+      asPath: '/',
+      push: jest.fn(),
+      pop: jest.fn(),
+      reload: jest.fn(),
+      back: jest.fn(),
+      prefetch: jest.fn().mockResolvedValue(undefined),
+      beforePopState: jest.fn(),
+      events: {
+        on: jest.fn(),
+        off: jest.fn(),
+        emit: jest.fn(),
+      },
+      isFallback: false,
+    })
+  }
 })
 
 afterEach(() => {
+  // Enhanced DOM cleanup to prevent state bleeding
+  document.body.innerHTML = ''
+  
   // Clean up test styles to prevent parallel test pollution
   const testStyles = document.querySelectorAll('[data-test-styles="parallel-testing"]')
   testStyles.forEach(style => style.remove())
+  
+  // Clean up any remaining event listeners
+  const events = ['scroll', 'resize', 'click', 'mouseenter', 'mouseleave']
+  events.forEach(eventType => {
+    document.removeEventListener(eventType, () => {})
+    window.removeEventListener(eventType, () => {})
+  })
   
   // Run any pending timers and restore real timers
   jest.runOnlyPendingTimers()
   jest.useRealTimers()
   
-  // Clean up animation frame polyfills
-  delete global.requestAnimationFrame
-  delete global.cancelAnimationFrame
+  // Reset scroll position
+  Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value: 0
+  })
+  
+  // Clear all mocks for next test
+  jest.clearAllMocks()
+  
+  // Note: Keep animation frame polyfills persistent to prevent "not defined" errors
 })

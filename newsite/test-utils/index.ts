@@ -6,6 +6,8 @@ export * from './component-helpers'
 export * from './animation-testing'
 export * from './keyframe-testing'
 export * from './parallel-isolation'
+export * from './layout-test-patterns'
+export * from './performance-monitoring'
 
 // Parallel-safe test patterns
 export {
