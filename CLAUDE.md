@@ -172,6 +172,31 @@ After completing work:
 3. **Capture lessons**: Add lessons learned to prevent similar issues
 4. **Update timestamps**: Include dates for all documentation updates
 
+### Mandatory Error Documentation
+
+**CRITICAL: Document all errors and their solutions in scratchpad.md.**
+
+**Error Documentation Requirements:**
+1. **When encountering any error**: Immediately add/update entry in scratchpad.md
+2. **For repeated errors**: Overwrite existing entry with newest understanding and solution
+3. **Goal**: Build knowledge base to prevent future error recurrence
+
+**Scratchpad Entry Format:**
+```
+## Lessons Learned
+- [YYYY-MM-DD HH:MM] Error: [Brief description] - Solution: [How it was fixed]
+```
+
+**Example:**
+```
+- [2025-06-08 14:30] Error: Jest tests fail with "Cannot read property 'getComputedStyle'" - Solution: Add window.getComputedStyle mock in jest.setup.js and use jest-environment-jsdom
+```
+
+**Workflow:**
+- Update scratchpad IMMEDIATELY when error occurs and is resolved
+- Replace previous entries for the same error type with better solutions
+- Include specific file paths and technical details for future reference
+
 ### Step 4: Test-Driven Development (TDD) Requirements
 **CRITICAL: Every implementation task MUST follow TDD workflow:**
 
