@@ -187,3 +187,44 @@ After merge resolution:
 2. The server manager from main is more robust than the simple start script
 3. Both solutions complement each other - build isolation + process management
 4. Care needed to preserve both functionalities during merge
+
+## Post-Merge Observations
+
+### Current State After Merge:
+1. **dev:ai** - Runs dev server on port 3001 (works correctly)
+2. **build:ai** - Creates production build in `.next-ai` (works correctly)
+3. **start:ai** - Uses server manager which starts a DEV server, not production from `.next-ai`
+
+### Potential Enhancement:
+The `start:ai` command currently starts a development server via the server manager, but for true build isolation with production builds, it should serve from `.next-ai`. This could be addressed by:
+- Option A: Modify server manager to have a production mode that serves from `.next-ai`
+- Option B: Keep original `start-ai.js` for production serving
+- Option C: Create a new `start:ai:prod` command for production builds
+
+For now, the current setup works for development purposes, with the build isolation primarily preventing corruption during the build process itself.
+
+## Immediate Action Plan
+
+### What We Have Now (After Merge):
+1. **Build Isolation**: ✅ Working - `build:ai` creates isolated builds in `.next-ai`
+2. **Process Management**: ✅ Working - Server manager handles dev servers properly
+3. **Gap**: ❌ Production serving from `.next-ai` not integrated with server manager
+
+### Immediate Fix (Minimal Change):
+To maintain full functionality while we plan the comprehensive solution:
+
+1. **Add production command**: 
+   ```json
+   "start:ai:prod": "node scripts/start-ai.js"
+   ```
+   This preserves the ability to serve production builds from `.next-ai`
+
+2. **Update server manager start** to be development-focused:
+   - Current `start:ai` remains as managed dev server
+   - Document this clearly in CLAUDE.md
+
+3. **Clear Usage Pattern**:
+   - Development: `npm run dev:ai` or `npm run start:ai` (both managed)
+   - Production: `npm run build:ai` then `npm run start:ai:prod`
+
+This maintains all original functionality while we implement the comprehensive solution.

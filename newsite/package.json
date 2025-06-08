@@ -44,6 +44,7 @@
     "dev:ai": "next dev --turbopack --port 3001",
     "build:ai": "node scripts/build-ai-simple.js",
     "start:ai": "node scripts/ai-server-manager.js start",
+    "start:ai:prod": "node scripts/start-ai.js",
     "stop:ai": "node scripts/ai-server-manager.js stop",
     "status:ai": "node scripts/ai-server-manager.js status",
     "test:ai": "node scripts/ai-server-manager.js test",
