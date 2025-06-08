@@ -1,6 +1,7 @@
 #!/bin/sh
 # Pre-commit hook for Golden Coast Amenities website
-# Runs automated tests before allowing commits
+# Runs automated tests before allowing commits for code changes
+# Skips tests for documentation/configuration-only changes
 
 echo "🔍 Running pre-commit checks..."
 
@@ -15,6 +16,21 @@ if [ ! -f "package.json" ] || ! grep -q "next" package.json; then
   echo "Make sure you're in the newsite/ directory"
   exit 1
 fi
+
+# Check if this commit contains only non-code files
+# Non-code files: documentation (.md), config files, CLAUDE.md, directory structure
+git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx|css|scss|sass|json)$|pages/|components/|hooks/|styles/.*\.(css|scss|sass)$' > /dev/null
+HAS_CODE_CHANGES=$?
+
+if [ $HAS_CODE_CHANGES -ne 0 ]; then
+  echo "📝 Documentation/configuration-only changes detected"
+  echo "⏭️  Skipping test suite for non-code changes"
+  echo "✅ Pre-commit checks completed for documentation changes!"
+  echo "🚀 Proceeding with commit..."
+  exit 0
+fi
+
+echo "💻 Code changes detected - running full test suite..."
 
 echo "📦 Installing dependencies if needed..."
 npm ci --silent || {
