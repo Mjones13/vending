@@ -20,27 +20,70 @@ export default function Home() {
     }, 500);
   }, [triggerLogoAnimations]);
 
-  useEffect(() => {
-    // State machine for smooth text rotation
-    const interval = setInterval(() => {
-      // Phase 1: Start exit animation
-      setAnimationState('exiting');
-      
-      // Phase 2: After exit completes, change word and start entrance
-      setTimeout(() => {
-        setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length);
-        setAnimationState('entering');
-        
-        // Phase 3: After entrance completes, return to visible state
-        setTimeout(() => {
-          setAnimationState('visible');
-        }, 400); // Entrance animation duration
-      }, 400); // Exit animation duration
-      
-    }, 3000); // Total cycle time
+  // Robust word cycling utility
+  const getNextWordIndex = (currentIndex: number, wordsArray: string[]): number => {
+    if (!wordsArray || wordsArray.length === 0) return 0;
+    if (wordsArray.length === 1) return 0;
+    
+    const nextIndex = currentIndex + 1;
+    // Explicit bounds checking instead of relying solely on modulo
+    return nextIndex >= wordsArray.length ? 0 : nextIndex;
+  };
 
-    return () => clearInterval(interval);
-  }, [rotatingWords.length]);
+  useEffect(() => {
+    let animationId: number;
+    let startTime = performance.now();
+    let lastWordChangeTime = startTime;
+    
+    const CYCLE_DURATION = 3000;
+    const TRANSITION_DURATION = 400;
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const cycleProgress = (elapsed % CYCLE_DURATION) / CYCLE_DURATION;
+      
+      // Determine animation state based on cycle progress
+      if (cycleProgress < 0.8) {
+        // Visible state (80% of cycle)
+        if (animationState !== 'visible') {
+          setAnimationState('visible');
+        }
+      } else if (cycleProgress < 0.9) {
+        // Exit state (10% of cycle)
+        if (animationState !== 'exiting') {
+          setAnimationState('exiting');
+        }
+      } else {
+        // Enter state (10% of cycle)
+        if (animationState !== 'entering') {
+          // Robust word cycling with safety checks
+          setCurrentWordIndex((prevIndex) => {
+            const nextIndex = getNextWordIndex(prevIndex, rotatingWords);
+            return nextIndex;
+          });
+          setAnimationState('entering');
+          lastWordChangeTime = currentTime;
+        }
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [rotatingWords.length, animationState]);
+
+  // Add safeguard effect for stuck states
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      // If animation gets stuck, reset to visible state
+      if (animationState !== 'visible') {
+        setAnimationState('visible');
+      }
+    }, 2000); // Reset if stuck for more than 2 seconds
+    
+    return () => clearTimeout(timeoutId);
+  }, [animationState]);
 
   const handleRequestDemo = () => {
     router.push('/request-a-demo');
@@ -88,11 +131,12 @@ export default function Home() {
                   <span>California&apos;s #1 Choice</span>
                 </div>
                 <h1 className="hero-title">
-                  Premium Amenity for Modern{' '}
-                  <span className="rotating-text-container">
+                  <span data-testid="static-text">Premium Amenity for Modern</span>{' '}
+                  <span className="rotating-text-container" data-testid="rotating-text-container">
                     <span 
                       key={currentWordIndex}
                       className={`rotating-text rotating-text-${animationState}`}
+                      data-testid="rotating-text"
                     >
                       {rotatingWords[currentWordIndex]}
                     </span>
@@ -587,17 +631,25 @@ export default function Home() {
           overflow: hidden;
           vertical-align: baseline;
           line-height: inherit;
+          /* Baseline correction for proper text alignment */
+          top: 0.05em;
         }
 
         .rotating-text {
           color: var(--color-primary-600);
           display: inline-block;
           position: absolute;
+          /* Use baseline-relative positioning instead of top: 0 */
           top: 0;
           left: 0;
           width: 100%;
           white-space: nowrap;
           line-height: inherit;
+          /* Ensure consistent font baseline alignment */
+          font-feature-settings: 'kern' 1;
+          text-rendering: geometricPrecision;
+          /* Additional baseline correction */
+          transform: translateY(0);
         }
 
         .rotating-text-visible {
