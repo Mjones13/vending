@@ -41,7 +41,19 @@
     "resource:monitor": "node scripts/resource-integration.js",
     "test:concurrent:managed": "node scripts/concurrent-test-executor.js --mode=full --resource-management",
     "test:load-balanced:managed": "node scripts/load-balanced-test-runner.js --resource-management",
-    "setup:hooks": "bash scripts/setup-hooks.sh"
+    "setup:hooks": "bash scripts/setup-hooks.sh",
+    "dev:ai": "next dev --turbopack --port 3001",
+    "build:ai": "node scripts/build-ai-simple.js",
+    "start:ai": "node scripts/ai-server-manager.js start",
+    "start:ai:prod": "node scripts/start-ai.js",
+    "stop:ai": "node scripts/ai-server-manager.js stop",
+    "status:ai": "node scripts/ai-server-manager.js status",
+    "test:ai": "node scripts/ai-server-manager.js test",
+    "cleanup:ai": "node scripts/ai-server-manager.js cleanup",
+    "clean:ai": "rm -rf .next-ai",
+    "clean:all": "rm -rf .next .next-ai node_modules/.cache",
+    "test:ai:lifecycle": "node scripts/test-ai-server-lifecycle.js",
+    "test:ai:cleanup": "node scripts/test-ai-cleanup-validation.js"
   },
   "dependencies": {
     "next": "^15.3.2",

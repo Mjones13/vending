@@ -14,7 +14,141 @@ npm run start  # Start production server
 npm run lint   # Run ESLint
 ```
 
+### AI Agent Commands (Port 3001 + Build Isolation)
+**CRITICAL: AI agents (Claude, Claude Code, Kirshir) MUST use these commands to avoid conflicts:**
+
+```bash
+cd newsite
+npm run dev:ai      # AI development server on port 3001
+npm run build:ai    # AI build using separate .next-ai directory
+npm run start:ai    # AI production server on port 3001 from .next-ai
+npm run test:ai     # AI testing with dev server (fast)
+npm run test:ai:full # AI comprehensive testing
+npm run clean:ai    # Clean AI build artifacts (.next-ai)
+npm run clean:all   # Clean both .next and .next-ai directories
+```
+
+**Build Isolation Protocol:**
+- **Developer builds**: Use `.next` directory (unchanged workflow)
+- **AI agent builds**: Use `.next-ai` directory (completely isolated)
+- **No interference**: Both can build simultaneously without corruption
+- **NO EXCEPTIONS**: AI agents must NEVER use `npm run dev` or `npm run build` directly
+
 Always run these commands from the `newsite/` directory, not the root.
+
+## AI Agent Development Commands
+
+**CRITICAL: AI agents must use dedicated commands to prevent server conflicts and orphaned processes.**
+
+### Robust Server Management
+The project includes a comprehensive AI server management system that ensures reliable server lifecycle control, prevents orphaned processes, and enables concurrent development.
+
+### AI Server Commands
+
+```bash
+cd newsite
+npm run dev:ai          # Direct Next.js dev server on port 3001 (foreground)
+npm run start:ai        # Managed AI server with PID tracking (background)
+npm run stop:ai         # Gracefully stop AI server with cleanup
+npm run status:ai       # Check AI server status (JSON output)
+npm run test:ai         # Run complete server lifecycle test
+npm run cleanup:ai      # Emergency cleanup of orphaned processes
+```
+
+### Testing Commands
+```bash
+npm run test:ai:lifecycle  # Comprehensive server lifecycle tests
+npm run test:ai:cleanup    # Cleanup procedure validation tests
+```
+
+### Server Management Features
+- **PID File Tracking**: Server process IDs stored in `.next-ai/server.pid`
+- **Port Management**: AI server runs on port 3001, developer uses port 3000
+- **Graceful Shutdown**: SIGTERM with fallback to SIGKILL after timeout
+- **Health Checking**: Automatic HTTP health checks for server status
+- **Orphan Cleanup**: Multiple strategies to find and kill stuck processes
+
+### Best Practices
+1. **Always use managed commands**: Prefer `start:ai` over `dev:ai` for background operation
+2. **Check status before starting**: Run `status:ai` to verify clean state
+3. **Clean shutdown**: Use `stop:ai` rather than killing processes manually
+4. **Emergency cleanup**: Use `cleanup:ai` if processes become orphaned
+
+## AI Server Troubleshooting Guide
+
+### Common Issues and Solutions
+
+**1. Port 3001 Already in Use**
+```bash
+# Error: EADDRINUSE: address already in use :::3001
+npm run cleanup:ai      # Automatic cleanup
+npm run status:ai       # Verify port is free
+npm run start:ai        # Start fresh
+```
+
+**2. Server Won't Start**
+```bash
+# Check for orphaned processes
+npm run status:ai       # Check current state
+lsof -ti :3001         # Manual port check
+npm run cleanup:ai      # Force cleanup
+```
+
+**3. Server Not Responding**
+- Next.js dev servers can take 10-30 seconds to fully initialize
+- The health check may pass before HTTP routes are ready
+- Wait a moment after starting before making requests
+
+**4. Orphaned Processes After Crash**
+```bash
+# The cleanup command handles multiple scenarios:
+npm run cleanup:ai
+# - Checks PID file and kills that process
+# - Searches for processes on port 3001
+# - Removes stale PID files
+# - Uses SIGTERM then SIGKILL if needed
+```
+
+**5. Multiple Start Attempts**
+- The server manager detects if a healthy server is already running
+- Safe to call `start:ai` multiple times - it won't create duplicates
+- Returns success if server is already running and healthy
+
+**6. PID File Issues**
+```bash
+# Location: .next-ai/server.pid
+# If corrupted or wrong PID:
+rm -f .next-ai/server.pid
+npm run cleanup:ai
+npm run start:ai
+```
+
+**7. Concurrent Development**
+- Developer server: Port 3000 (use standard `npm run dev`)
+- AI server: Port 3001 (use `npm run start:ai`)
+- Both can run simultaneously without conflicts
+
+### Debug Commands
+```bash
+# Check what's on AI port
+lsof -ti :3001
+
+# Check server process
+ps aux | grep "next.*3001" | grep -v grep
+
+# Manual cleanup (if automated cleanup fails)
+kill -TERM $(lsof -ti :3001) 2>/dev/null
+kill -KILL $(lsof -ti :3001) 2>/dev/null
+
+# Check PID file
+cat .next-ai/server.pid 2>/dev/null || echo "No PID file"
+```
+
+### Server Lifecycle Logs
+All server operations are logged with timestamps:
+- `[AI-SERVER] [INFO]` - Normal operations
+- `[AI-SERVER] [WARN]` - Warnings (process already dead, etc.)
+- `[AI-SERVER] [ERROR]` - Failures (port unavailable, startup timeout)
 
 ## Architecture Overview
 
@@ -64,6 +198,20 @@ Examples:
 - `3-comprehensive-website-design-overhaul.md`
 
 ## Branch Management Protocol
+
+**CRITICAL SAFETY RULE: Never Delete Branches With Unmerged Changes**
+- Before deleting any branch, ALWAYS verify all changes are merged to main
+- Use `git log origin/main..branch-name` - must show NO commits
+- Use `git diff origin/main..branch-name` - must show NO differences
+- If any unique changes exist:
+  - STOP immediately and preserve the branch
+  - Notify the user: "Branch contains unmerged changes"
+  - Show the specific differences:
+    - List unmerged commits: `git log --oneline origin/main..branch-name`
+    - Show file differences: `git diff --name-status origin/main..branch-name`
+    - Explain what changes would be lost if deleted
+  - Ask user for explicit confirmation on how to proceed
+- Data loss from premature branch deletion is unacceptable
 
 **MANDATORY: Dedicated Branches for Non-Implementation Plan Tasks**
 Any task performed outside the scope of an existing implementation plan MUST be performed on a dedicated Git branch:
@@ -344,9 +492,32 @@ When all tasks in a phase are complete and verified:
 5. **Push final state**: `git push` to update remote branch
 6. **Switch to main and merge**: `git checkout main && git merge task-branch`
 7. **Push main**: `git push` to update remote main
-8. **Cleanup**: Delete local and remote branches:
-   - `git branch -d task-branch`
-   - `git push origin --delete task-branch`
+8. **Branch Deletion Safety Protocol** (CRITICAL - Never lose work):
+   
+   **MANDATORY: Before deleting ANY branch, verify no unmerged changes:**
+   ```bash
+   # Check for unmerged commits
+   git log origin/main..branch-name
+   # Check for uncommitted changes  
+   git status
+   # Check for any differences
+   git diff origin/main..branch-name
+   ```
+   
+   **Only proceed with deletion if ALL three commands show NO output**
+   
+   **If any differences found:**
+   - STOP and notify user immediately
+   - Show unmerged commits: `git log --oneline origin/main..branch-name`
+   - Show changed files: `git diff --name-status origin/main..branch-name`
+   - Explain: "This branch contains X commits and Y file changes not in main"
+   - Wait for explicit user decision
+   
+   **Safe deletion process (only if no differences):**
+   - If all checks pass: `git branch -d branch-name` (safe delete)
+   - Then: `git push origin --delete branch-name`
+   - NEVER use force delete (`-D`) without explicit user permission
+   - If ANY doubt exists, STOP and ask user for confirmation
 
 #### Output Requirements
 
@@ -371,6 +542,54 @@ When all tasks in a phase are complete and verified:
 - **Missing branches**: Run `git fetch --all --prune` to refresh remote branch list
 - **Outdated state**: Use `git pull` to get latest changes on current branch
 - **Uncertain state**: Run `git status` and `git log --oneline -5` to verify current position
+
+## AI Agent Command Requirements
+
+**MANDATORY: All AI agents must use dedicated commands with build isolation to prevent conflicts.**
+
+### Build Isolation System
+**CRITICAL**: This project uses separate build directories to prevent corruption between developer and AI workflows.
+
+**Build Directory Assignment:**
+- **Developer workflow**: `.next/` directory (unchanged)
+- **AI agent workflow**: `.next-ai/` directory (completely isolated)
+- **Result**: Zero build conflicts, no corruption, simultaneous operation
+
+### Port and Build Separation Protocol
+**For Development Servers:**
+- ✅ **Developer**: `npm run dev` (port 3000, uses `.next/`)
+- ✅ **AI Agent**: `npm run dev:ai` (port 3001, isolated)
+- ❌ **FORBIDDEN**: AI agents using `npm run dev` (causes port conflicts)
+
+**For Production Builds:**
+- ✅ **Developer**: `npm run build` (creates `.next/` artifacts)
+- ✅ **AI Agent**: `npm run build:ai` (creates `.next-ai/` artifacts)
+- ❌ **FORBIDDEN**: AI agents using `npm run build` (causes build corruption)
+
+**For Production Servers:**
+- ✅ **Developer**: `npm run start` (port 3000, serves from `.next/`)
+- ✅ **AI Agent**: `npm run start:ai` (port 3001, serves from `.next-ai/`)
+
+### Required AI Agent Commands
+**Testing and Validation:**
+- `npm run test:ai` - Quick AI server validation
+- `npm run test:ai:full` - Comprehensive testing with lint + type-check
+
+**Build Management:**
+- `npm run clean:ai` - Clean only AI build artifacts
+- `npm run clean:all` - Clean both developer and AI artifacts
+
+### Build Isolation Benefits
+1. **No corruption**: Eliminates ENOENT errors and build conflicts
+2. **Simultaneous operation**: Developer and AI can work in parallel
+3. **Independent artifacts**: Separate BUILD_IDs and static assets
+4. **Zero interference**: AI builds don't disrupt developer workflow
+
+### Enforcement Rules
+- **Zero tolerance**: AI agents must NEVER use developer commands
+- **Automatic isolation**: AI commands handle directory separation automatically
+- **Error prevention**: Commands designed to prevent accidental conflicts
+- **Cleanup integration**: Proper cleanup of isolated artifacts
 
 ## Parallel Testing Architecture
 
@@ -464,6 +683,104 @@ __tests__/
 2. **Use Testing Utilities**: Leverage pre-built testing utilities in `test-utils/`
 3. **Verify All Tests Pass**: After implementation, ensure all tests pass before proceeding
 4. **Test Coverage**: Maintain minimum 80% coverage, verify with `npm run test:coverage`
+
+## AI Agent Troubleshooting Guide
+
+### Build Issues
+
+**Common Build Errors and Solutions:**
+
+1. **ENOENT Build Corruption**
+   - **Error**: `ENOENT: no such file or directory` during builds
+   - **Cause**: AI agent building while developer's dev server is active, corrupting shared `.next` directory
+   - **Solution**: Use AI-specific build commands:
+     ```bash
+     npm run build:ai    # Uses separate .next-ai directory
+     npm run start:ai    # Serves from .next-ai on port 3001
+     ```
+
+2. **Port Conflicts**
+   - **Error**: `EADDRINUSE: address already in use :::3000`
+   - **Cause**: AI agent trying to use same port as developer
+   - **Solution**: Use AI-specific dev command:
+     ```bash
+     npm run dev:ai      # Runs on port 3001 instead of 3000
+     ```
+
+3. **Config File Detection Warnings**
+   - **Warning**: Next.js detects config changes during build
+   - **Cause**: AI build script temporarily swaps configuration files
+   - **Impact**: Brief dev server restart (normal behavior)
+   - **Solution**: This is expected - builds complete successfully
+
+4. **Corrupted Build Directories**
+   - **Symptoms**: Missing chunks, build manifest errors, dev server crashes
+   - **Diagnosis**: Check for mixed build artifacts:
+     ```bash
+     ls -la .next*/BUILD_ID     # Should show different build IDs
+     cat .next/BUILD_ID         # Developer build ID
+     cat .next-ai/BUILD_ID      # AI build ID (if exists)
+     ```
+   - **Solution**: Clean and rebuild:
+     ```bash
+     npm run clean:ai           # Remove .next-ai only
+     npm run clean:all          # Remove both .next and .next-ai
+     npm run build:ai           # Rebuild AI artifacts
+     ```
+
+### Port Management
+
+**Verify Port Usage:**
+```bash
+lsof -i :3000    # Check developer port
+lsof -i :3001    # Check AI agent port
+```
+
+**Test AI Server Isolation:**
+```bash
+npm run test:ai  # Automated test for AI server on port 3001
+```
+
+### Build Isolation Verification
+
+**Check Build Separation:**
+```bash
+# Verify separate build directories exist
+ls -la .next*
+# .next/     <- Developer builds
+# .next-ai/  <- AI agent builds
+
+# Compare build IDs (should be different)
+diff .next/BUILD_ID .next-ai/BUILD_ID
+```
+
+**Cleanup Commands:**
+```bash
+npm run clean:ai     # Remove AI build artifacts only
+npm run clean:all    # Remove all build artifacts
+```
+
+### Cleanup Procedures
+
+**When AI Work is Complete:**
+1. **Clean AI artifacts**: `npm run clean:ai` to remove `.next-ai` directory
+2. **Verify developer build**: Ensure developer's `.next` directory is intact
+3. **Test developer server**: Confirm `npm run dev` works normally on port 3000
+
+**Emergency Cleanup (Corrupted Builds):**
+1. **Stop all servers**: Kill any running Next.js processes
+2. **Full cleanup**: `npm run clean:all` to remove all build artifacts
+3. **Rebuild developer**: `npm run build` to recreate developer's `.next`
+4. **Restart development**: `npm run dev` to resume normal development
+
+**File System Verification:**
+```bash
+# Check build directory sizes (AI builds should be ~equal to developer builds)
+du -sh .next .next-ai 2>/dev/null || echo "One or both build directories missing"
+
+# Verify no mixed artifacts
+find .next* -name "BUILD_ID" -exec echo "File: {}" \; -exec cat {} \; 2>/dev/null
+```
 
 ## Important Notes
 
