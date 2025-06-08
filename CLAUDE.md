@@ -99,19 +99,28 @@ This project uses a structured two-role planning approach with Planner and Execu
 Before writing ANY code:
 1. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
 2. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
-3. **Get user approval**: Present plan to user before proceeding to implementation
+3. **MANDATORY CHECKBOX FORMAT**: All tasks in "High-Level Task Breakdown" MUST use checkboxes
+   - Format: `- [ ] **Task X.Y**: Description of task`
+   - Example: `- [ ] **Task 1.1**: Create tiered testing strategy`
+   - Example: `- [ ] **Task 2.3**: Implement CSS computed style mocking`
+4. **Get user approval**: Present plan to user before proceeding to implementation
 
 ### Step 2: Sequential Execution (REQUIRED)
 During implementation:
 1. **Follow plan step-by-step**: Execute tasks in exact order specified in implementation plan
-2. **Mark completion**: Explicitly mark off each task as completed in the plan document
-3. **Test each change**: After implementing each task, test the change thoroughly
-4. **COMMIT AFTER EACH TASK**: After completing and testing each task:
-   - Run `git add .` to stage all changes related to the task
+2. **MANDATORY FILE TRACKING**: As you work, track which files you create or modify for the current task
+3. **MANDATORY REAL-TIME UPDATES**: After completing each task, IMMEDIATELY update implementation plan:
+   - Mark checkbox as complete: `- [ ]` → `- [x]`
+   - Update status board with completion details
+   - Document any files created/modified
+   - Add completion timestamp and notes
+4. **Test each change**: After implementing each task, test the change thoroughly
+5. **COMMIT AFTER EACH TASK**: After completing and testing each task:
+   - Stage ONLY files created/modified for the current task
    - Make descriptive commit with format: "Complete [Task X.Y]: [brief description]"
    - Push commit to remote branch
-5. **Verify before proceeding**: Only move to next task after confirming current task works correctly AND is committed
-6. **Update progress**: Keep implementation plan progress tracking current
+6. **Verify before proceeding**: Only move to next task after confirming current task works correctly AND is committed AND implementation plan is updated
+7. **Update progress**: Keep implementation plan progress tracking current in real-time
 
 ### Step 2.5: Mandatory Commit Protocol (CRITICAL)
 **EVERY task completion MUST include a git commit. NO EXCEPTIONS.**
@@ -128,21 +137,26 @@ When making changes that do not touch any code—such as edits to the CLAUDE.md 
 - Non-code project files
 
 **Commit Requirements:**
-1. **After each completed task**: Immediately stage and commit all files created/modified for that task
-2. **Track new files**: Ensure ALL new files created during the task are properly tracked with `git add`
+1. **After each completed task**: Immediately stage and commit ONLY files created/modified for that task
+2. **Task-specific staging**: Use `git add <filename>` for each file related to the current task
 3. **Commit message format**: "Complete [Phase X Task Y]: [descriptive summary]"
-4. **Include all related files**: Use `git add .` or specifically add all files created/modified for the task
-5. **Verify commit**: Run `git status` after commit to ensure working directory is clean (no untracked or modified files)
-6. **Push regularly**: Push commits to remote at least after every major task or phase
+4. **Verify staged changes**: Use `git status` and `git diff --staged` to confirm only task-related files are staged
+5. **Push regularly**: Push commits to remote at least after every major task or phase
 
 **Example commit workflow:**
 ```bash
-# After completing Task 3.1
-git status  # Check what files were created/modified
-git add .   # Stage ALL files (including new untracked files)
+# After completing Task 3.1 which created animation test utilities
+git status  # Check what files exist
+
+# Stage ONLY files created/modified for this specific task
+git add test-utils/animation-testing.ts
+git add __tests__/animations/logo-stagger.test.tsx
+
+# Verify staged changes match the task
+git diff --staged  # Review changes being committed
+
 git commit -m "Complete Phase 3 Task 1: Create animation testing utilities for CSS keyframes"
 git push
-git status  # Verify clean working directory (should show "nothing to commit, working tree clean")
 ```
 
 **Commit Failures:**
@@ -181,7 +195,46 @@ After completing work:
    - Second commit: "Implement [feature/task] to pass tests"
    - This creates clear test-first development history
 
-### Step 5: No Exceptions Policy
+### Step 5: Implementation Plan Management (MANDATORY)
+
+**CRITICAL: Implementation plans MUST be maintained in real-time during execution.**
+
+**Implementation Plan Requirements:**
+1. **Checkbox Format**: Every task in High-Level Task Breakdown MUST use checkboxes
+   - Format: `- [ ] **Task X.Y**: Description of task`
+   - Uncompleted: `- [ ] **Task 1.1**: Create tiered testing strategy`
+   - Completed: `- [x] **Task 1.1**: Create tiered testing strategy`
+
+2. **Real-Time Updates**: Update implementation plan IMMEDIATELY after each task completion
+   - Mark checkbox as complete [x]
+   - Update status board with completion notes
+   - Add any lessons learned or issues encountered
+   - Update file modification lists with actual changes made
+
+3. **Status Board Maintenance**: Keep status board current throughout execution
+   - Update "Current Status / Progress Tracking" after each task
+   - Mark phases as complete when all tasks in phase are done
+   - Include timestamps and detailed completion notes
+
+4. **Documentation Accuracy**: Implementation plan must reflect reality at all times
+   - Never let implementation plan fall behind actual progress
+   - Document what was actually built, not what was planned
+   - Update file lists with actual files created/modified
+
+**Workflow Enforcement:**
+- **After each task completion**: Update implementation plan before proceeding
+- **During autonomous execution**: Maintain plan updates without breaking autonomy
+- **Before committing**: Verify implementation plan reflects current state
+- **Violation consequences**: Failing to update implementation plan is a critical workflow error
+
+### Phase Completion Marking
+
+When all tasks in a phase are complete and verified:
+- Add `✅ **COMPLETE**` to the end of the phase header
+- Example: `### Phase 1: Configure Jest for optimal M2 parallel execution ✅ **COMPLETE**`
+- Only mark complete when all subtasks show [x] and tests pass
+
+### Step 6: No Exceptions Policy
 - **Zero tolerance**: This workflow applies to ALL coding requests, no matter how small
 - **No shortcuts**: Even simple changes require implementation plans AND tests
 - **Consistent execution**: Follow every step regardless of urgency or simplicity
@@ -197,7 +250,9 @@ After completing work:
 **Autonomous Execution Rules:**
 - Work through tasks in order, marking each as complete only when fully tested, verified, AND committed
 - COMMIT after each task completion before proceeding to next task
-- Update implementation plan progress tracking as you complete each task
+- **MANDATORY**: Update implementation plan progress tracking IMMEDIATELY after completing each task
+- **MANDATORY**: Mark task checkboxes as complete [ ] → [x] in implementation plan after each task
+- **MANDATORY**: Update task status board with completion notes in real-time
 - Continue to next task immediately if current task is successful AND committed
 - Do NOT ask for permission between tasks when following an approved plan
 - EXCEPTION: If you realize you've completed multiple tasks without committing, STOP and ask for guidance
@@ -212,6 +267,7 @@ After completing work:
 - Document any issues encountered and solutions found in "Lessons Learned"
 - If same mistake occurs 3 times, stop and reflect before proceeding
 - Always maintain implementation plan updates even during autonomous execution
+- **CRITICAL**: Never complete multiple tasks without updating the implementation plan - this is a mandatory workflow violation
 
 ### Git Status Monitoring (REQUIRED)
 **Check git status frequently during implementation:**
@@ -227,28 +283,90 @@ After completing work:
 - Format: Add a separate line at the bottom showing "Total tokens consumed: [number]"
 - This applies to all task completion outputs, not just autonomous execution sessions
 
-## Testing Framework
+## Parallel Testing Architecture
 
-This project has a comprehensive automated testing framework that MUST be used for all development work.
+This project uses a sophisticated parallel testing architecture optimized for M2 MacBook performance while maintaining comprehensive code coverage.
+
+### Architecture Overview
+- **Tiered Testing Strategy**: Fast pre-commit validation (5-15s) + comprehensive pre-push testing (60-90s)
+- **Parallel Jest Execution**: Multiple workers running tests concurrently using 75% of available CPU cores
+- **Test Categorization**: Unit, integration, animation, and E2E tests run in parallel when appropriate
+- **Smart Resource Management**: Optimized for M2 MacBook thermal and memory constraints
 
 ### Testing Commands
 ```bash
 cd newsite
-npm test              # Run unit and component tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
-npm run test:e2e      # Run end-to-end tests
-npm run test:e2e:ui   # Run E2E tests with UI
-npm run test:all      # Run complete test suite
+# Fast parallel validation (pre-commit)
+npm run test:pre-commit    # Parallel: linting + type-check + critical tests (5-15s)
+
+# Comprehensive parallel testing (pre-push)  
+npm run test:pre-push      # Sequential: parallel tests + critical E2E + build (60-90s)
+
+# Individual test categories (run in parallel)
+npm run test:unit          # Component and utility tests
+npm run test:integration   # Page integration tests  
+npm run test:animations    # CSS animation and interaction tests
+npm run test:parallel      # All above categories in parallel
+
+# E2E testing
+npm run test:e2e:critical  # Essential user journey tests only
+npm run test:e2e          # Full end-to-end test suite
+npm run test:e2e:ui       # E2E tests with Playwright UI
+
+# Development and debugging
+npm run test:watch        # Jest watch mode for development
+npm run test:coverage     # Generate coverage reports
+npm run test:benchmark    # Performance monitoring with verbose output
+npm run test:all          # Complete sequential test suite
+
+# Direct parallel runner access
+npm run test:parallel-runner [pre-commit|pre-push]  # Custom parallel test runner
 ```
+
+### Parallel Testing Structure Requirements
+
+**CRITICAL: All tests must be designed for parallel execution compatibility.**
+
+**Test Design Principles:**
+- **Independent Execution**: Each test must run independently in any order without dependencies
+- **Isolated Setup/Teardown**: Fresh test data and clean state for every test
+- **No Shared State**: Avoid global variables or shared mutable state between tests
+- **Resource Safety**: Tests must not conflict over ports, files, or external resources
+- **Predictable Naming**: Follow clear naming patterns for automatic test categorization
+
+**Test File Organization:**
+```
+__tests__/
+├── components/          # Unit tests (parallel execution)
+├── pages/              # Integration tests (parallel execution)  
+├── animations/         # Animation tests (parallel execution)
+├── hooks/              # Hook tests (parallel execution)
+├── utils/              # Utility tests (parallel execution)
+└── e2e/               # End-to-end tests (selective parallel)
+```
+
+**Naming Conventions for Parallel Safety:**
+- Component tests: `__tests__/components/ComponentName.test.tsx` 
+- Page tests: `__tests__/pages/pagename.test.tsx`
+- Hook tests: `__tests__/hooks/hookName.test.tsx`
+- Critical path tests: Include `critical` or `smoke` in test names
+- E2E critical tests: Use `@critical` tags in test descriptions
+
+**Test Categories:**
+- **Unit Tests**: Components, hooks, utilities (always parallel)
+- **Integration Tests**: Page-level component interactions (parallel by default)
+- **Animation Tests**: CSS animations and transitions (parallel)
+- **Critical Path Tests**: Essential functionality for fast feedback (parallel)
+- **E2E Tests**: User journeys (@critical tests run in pre-push, full suite in CI)
 
 ### Testing Requirements for All Development
 
 **Unit & Component Tests:**
 - Required for all React components
-- Required for all utility functions
+- Required for all utility functions  
 - Required for all custom hooks
 - Tests must be written BEFORE implementation (TDD)
+- Must be parallel-safe with independent setup/teardown
 - Minimum 80% code coverage required
 
 **Animation Tests:**
