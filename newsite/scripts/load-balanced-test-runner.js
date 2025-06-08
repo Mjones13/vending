@@ -8,6 +8,7 @@ const { spawn } = require('child_process')
 const { performance } = require('perf_hooks')
 const os = require('os')
 const EventEmitter = require('events')
+const { TestRunnerMonitorIntegration, PerformanceMonitoring } = require('./monitoring-integration')
 
 class WorkerPool extends EventEmitter {
   constructor(maxWorkers, systemInfo) {
@@ -168,6 +169,13 @@ class LoadBalancedTestRunner {
     this.systemInfo = this.gatherSystemInfo()
     this.workerPool = new WorkerPool(this.getOptimalWorkerCount(), this.systemInfo)
     this.startTime = performance.now()
+    
+    // Initialize monitoring integration
+    this.monitoring = new TestRunnerMonitorIntegration('load-balanced-test-runner', {
+      type: 'load-balanced-runner',
+      maxWorkers: this.workerPool.maxWorkers,
+      systemInfo: this.systemInfo,
+    })
   }
 
   gatherSystemInfo() {
@@ -265,6 +273,12 @@ class LoadBalancedTestRunner {
   }
 
   async run() {
+    const sessionId = this.monitoring.startSession({
+      type: 'load-balanced',
+      maxWorkers: this.workerPool.maxWorkers,
+      systemInfo: this.systemInfo,
+    })
+    
     console.log('🎯 Load-Balanced Test Runner')
     console.log('=' * 50)
     console.log(`🖥️  System: ${this.systemInfo.cpuModel} (${this.systemInfo.cpuCount} cores)`)
@@ -280,6 +294,13 @@ class LoadBalancedTestRunner {
 
     const jobs = this.getTestJobDefinitions()
     
+    // Report initial progress
+    this.monitoring.reportProgress({
+      stage: 'starting',
+      totalJobs: jobs.length,
+      maxWorkers: this.workerPool.maxWorkers,
+    })
+    
     try {
       // Execute all jobs with load balancing
       const results = await Promise.allSettled(
@@ -290,6 +311,17 @@ class LoadBalancedTestRunner {
       this.generateLoadBalancedReport(results)
 
       const failedJobs = results.filter(r => r.status === 'rejected')
+      const success = failedJobs.length === 0
+      
+      // End monitoring session
+      this.monitoring.endSession({
+        success,
+        totalJobs: jobs.length,
+        completedJobs: results.length - failedJobs.length,
+        failedJobs: failedJobs.length,
+        totalDuration: performance.now() - this.startTime,
+      })
+      
       if (failedJobs.length > 0) {
         console.log(`\n❌ ${failedJobs.length} jobs failed`)
         process.exit(1)
@@ -300,6 +332,15 @@ class LoadBalancedTestRunner {
 
     } catch (error) {
       console.error('\n💥 Load-balanced test execution failed:', error.message)
+      
+      // Report error and end session
+      this.monitoring.reportError(error)
+      this.monitoring.endSession({
+        success: false,
+        error: error.message,
+        totalDuration: performance.now() - this.startTime,
+      })
+      
       process.exit(1)
     }
   }

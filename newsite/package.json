@@ -31,6 +31,11 @@
     "test:parallel-runner": "node scripts/parallel-test-runner.js",
     "test:benchmark": "VERBOSE=1 npm run test:parallel-runner pre-push",
     "test:performance": "node scripts/test-performance-monitor.js",
+    "monitor": "node scripts/parallel-execution-monitor.js start",
+    "monitor:status": "node scripts/parallel-execution-monitor.js status",
+    "monitor:report": "node scripts/parallel-execution-monitor.js report",
+    "monitor:dashboard": "node scripts/monitoring-dashboard.js",
+    "monitor:stop": "node scripts/parallel-execution-monitor.js stop",
     "setup:hooks": "bash scripts/setup-hooks.sh"
   },
   "dependencies": {

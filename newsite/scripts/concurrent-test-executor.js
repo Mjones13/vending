@@ -9,6 +9,7 @@ const { performance } = require('perf_hooks')
 const { Worker } = require('worker_threads')
 const os = require('os')
 const path = require('path')
+const { TestRunnerMonitorIntegration, PerformanceMonitoring } = require('./monitoring-integration')
 
 class ConcurrentTestExecutor {
   constructor(options = {}) {
@@ -20,6 +21,14 @@ class ConcurrentTestExecutor {
     this.failedTests = []
     this.startTime = performance.now()
     this.systemInfo = this.gatherSystemInfo()
+    
+    // Initialize monitoring integration
+    this.monitoring = new TestRunnerMonitorIntegration('concurrent-test-executor', {
+      type: 'concurrent-executor',
+      mode: this.mode,
+      maxConcurrency: this.maxConcurrency,
+      systemInfo: this.systemInfo,
+    })
   }
 
   gatherSystemInfo() {
@@ -132,6 +141,16 @@ class ConcurrentTestExecutor {
   async executeTestSuite(suite) {
     return new Promise((resolve, reject) => {
       const startTime = performance.now()
+      const workerId = `suite_${suite.name}_${Date.now()}`
+      
+      // Report worker start to monitoring
+      this.monitoring.reportWorkerStart(workerId, {
+        suiteName: suite.name,
+        command: suite.command,
+        args: suite.args,
+        priority: suite.priority,
+        expectedDuration: suite.expectedDuration,
+      })
       
       if (this.verbose) {
         console.log(`🚀 Starting ${suite.name}...`)
@@ -145,6 +164,7 @@ class ConcurrentTestExecutor {
           JEST_MAX_WORKERS: this.systemInfo.isM2 ? '75%' : '50%',
           // Add test suite identifier for monitoring
           TEST_SUITE_NAME: suite.name,
+          WORKER_ID: workerId,
         },
       })
 
@@ -184,7 +204,18 @@ class ConcurrentTestExecutor {
           priority: suite.priority,
           expectedDuration: suite.expectedDuration,
           performanceRatio: duration / suite.expectedDuration,
+          success: code === 0,
         }
+
+        // Report worker end to monitoring
+        this.monitoring.reportWorkerEnd(workerId, {
+          success: code === 0,
+          exitCode: code,
+          duration,
+          performanceRatio: result.performanceRatio,
+          stdout: stdout.length,
+          stderr: stderr.length,
+        })
 
         if (code === 0) {
           this.completedTests.push(result)
@@ -197,7 +228,15 @@ class ConcurrentTestExecutor {
           if (this.verbose) {
             console.log(`❌ ${suite.name} failed in ${(duration / 1000).toFixed(2)}s (exit code: ${code})`)
           }
-          reject(new Error(`${suite.name} failed with exit code ${code}`))
+          
+          // Report error to monitoring
+          const error = new Error(`${suite.name} failed with exit code ${code}`)
+          error.suite = suite.name
+          error.exitCode = code
+          error.stderr = stderr
+          this.monitoring.reportError(error)
+          
+          reject(error)
         }
       })
 
@@ -302,11 +341,36 @@ class ConcurrentTestExecutor {
   }
 
   async run() {
+    const sessionId = this.monitoring.startSession({
+      mode: this.mode,
+      maxConcurrency: this.maxConcurrency,
+      systemInfo: this.systemInfo,
+    })
+    
     try {
       const config = this.getTestConfiguration()
+      
+      // Report initial progress
+      this.monitoring.reportProgress({
+        stage: 'starting',
+        totalSuites: config.testSuites.length,
+        mode: this.mode,
+      })
+      
       await this.executeWithLoadBalancing(config.testSuites)
       
       this.generatePerformanceReport()
+      
+      const success = this.failedTests.length === 0
+      
+      // End monitoring session
+      this.monitoring.endSession({
+        success,
+        totalSuites: this.completedTests.length + this.failedTests.length,
+        completedSuites: this.completedTests.length,
+        failedSuites: this.failedTests.length,
+        totalDuration: performance.now() - this.startTime,
+      })
       
       if (this.failedTests.length > 0) {
         console.log('\n❌ Some tests failed. Check the details above.')
@@ -317,6 +381,15 @@ class ConcurrentTestExecutor {
       }
     } catch (error) {
       console.error('\n💥 Concurrent test execution failed:', error.message)
+      
+      // Report error and end session
+      this.monitoring.reportError(error)
+      this.monitoring.endSession({
+        success: false,
+        error: error.message,
+        totalDuration: performance.now() - this.startTime,
+      })
+      
       this.generatePerformanceReport()
       process.exit(1)
     }
