@@ -12,4 +12,18 @@ export {
   createParallelSafeTest,
   createIsolatedComponentTest,
   createParallelAnimationTest,
+  createParallelPageTest,
+  createParallelE2ETest,
+  createTestDataFactory,
+  createMockAPIFactory,
 } from './parallel-test-patterns'
+
+// Concurrent test data management
+export {
+  ConcurrentTestDataFactory,
+  TestDataRegistry,
+  IsolatedTestDatabase,
+  ConcurrentTestEnvironment,
+  useConcurrentTestEnvironment,
+  TestDataFactories,
+} from './concurrent-test-data'
