@@ -116,6 +116,9 @@ During implementation:
 ### Step 2.5: Mandatory Commit Protocol (CRITICAL)
 **EVERY task completion MUST include a git commit. NO EXCEPTIONS.**
 
+**Universal Commit Rule:**
+After completing any task that results in changes to the project—including edits to the CLAUDE.md file itself, edits to any code files, edits to any test files, or changes to any other project files—you must make a commit once the task is complete and the code is verified to be working. The commit must include all files that were changed as part of that task. This applies to every change, including edits to project documentation, configuration files, and the CLAUDE.md file itself. There should never be changes left uncommitted after completing a task. If any part of the task requires confirmation before proceeding (e.g. if the intended behavior is unclear), pause and request confirmation before proceeding to the commit step.
+
 **Commit Requirements:**
 1. **After each completed task**: Immediately stage and commit all files created/modified for that task
 2. **Track new files**: Ensure ALL new files created during the task are properly tracked with `git add`
@@ -161,6 +164,7 @@ After completing work:
 5. **Handle test failures**: If any test fails:
    - Diagnose why the test failed
    - Determine correct expected behavior
+   - **CRITICAL AMBIGUITY RULE**: If you are trying to fix a failing test and it is unclear whether the test is incorrect or the web UI behavior is incorrect—meaning it is not obvious what the intended or correct behavior should be—you must STOP and ask for confirmation on whether to fix the test or to fix the code itself. Do not proceed with modifying the test or the code in such cases until the intended behavior is clarified.
    - Update either code or test as appropriate to reflect proper behavior
    - Re-run tests to ensure all pass before proceeding
 
