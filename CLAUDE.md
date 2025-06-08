@@ -80,12 +80,12 @@ Any task performed outside the scope of an existing implementation plan MUST be 
 - **Continuing planned work**: When following tasks outlined in an approved implementation plan
 
 **Branch Workflow for Non-Implementation Plan Tasks:**
-1. **Start from main**: `git checkout main && git pull`
+1. **Start from main**: `git checkout main && git pull origin main`
 2. **Create task branch**: `git checkout -b descriptive-task-name`
 3. **Make changes**: Perform all task-related work on this branch
 4. **Commit changes**: Follow mandatory commit protocol
 5. **Pre-merge preparation**:
-   - Pull latest main: `git checkout main && git pull`
+   - Pull latest main: `git checkout main && git pull origin main`
    - Switch back to branch: `git checkout descriptive-task-name`
    - Merge main into branch: `git merge main`
    - Resolve any conflicts if they exist
@@ -114,7 +114,7 @@ Always verify you're on the correct branch before starting work:
 
 ### Step 1: Implementation Planning (REQUIRED)
 Before writing ANY code:
-1. **Pull latest main**: `git checkout main && git pull`
+1. **Pull latest main**: `git checkout main && git pull origin main`
 2. **Create task branch**: `git checkout -b task-name` (where task-name matches implementation plan)
 3. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
 4. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
@@ -294,7 +294,7 @@ When all tasks in a phase are complete and verified:
 
 ### Final Integration and Cleanup
 **After all phases complete:**
-1. **Pull latest main**: `git checkout main && git pull && git checkout task-branch && git merge main`
+1. **Pull latest main**: `git checkout main && git pull origin main && git checkout task-branch && git merge main`
 2. **Resolve conflicts**: If conflicts exist, follow merge conflict protocol
 3. **Final verification**: Ensure all tests pass and build succeeds
 4. **Push branch**: `git push origin task-branch`
