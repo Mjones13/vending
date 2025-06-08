@@ -40,7 +40,14 @@
     "resource:monitor": "node scripts/resource-integration.js",
     "test:concurrent:managed": "node scripts/concurrent-test-executor.js --mode=full --resource-management",
     "test:load-balanced:managed": "node scripts/load-balanced-test-runner.js --resource-management",
-    "setup:hooks": "bash scripts/setup-hooks.sh"
+    "setup:hooks": "bash scripts/setup-hooks.sh",
+    "dev:ai": "next dev --turbopack --port 3001",
+    "build:ai": "node scripts/build-ai.js",
+    "start:ai": "node scripts/start-ai.js",
+    "test:ai": "npm run dev:ai & sleep 5 && curl -s http://localhost:3001 > /dev/null && echo 'AI server test passed' && pkill -f 'next dev.*3001'",
+    "test:ai:full": "npm run dev:ai & sleep 5 && npm run lint && npm run type-check && pkill -f 'next dev.*3001'",
+    "clean:ai": "rm -rf .next-ai",
+    "clean:all": "rm -rf .next .next-ai node_modules/.cache"
   },
   "dependencies": {
     "next": "^15.3.2",
