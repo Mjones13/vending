@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Layout from "../components/Layout";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
@@ -10,7 +10,8 @@ export default function Home() {
   const router = useRouter();
   const [logoAnimations, triggerLogoAnimations] = useStaggeredAnimation(9, 150);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const rotatingWords = ['Workplaces', 'Apartments', 'Gyms', 'Businesses'];
+  const [animationState, setAnimationState] = useState<'visible' | 'exiting' | 'entering'>('visible');
+  const rotatingWords = useMemo(() => ['Workplaces', 'Apartments', 'Gyms', 'Businesses'], []);
 
   useEffect(() => {
     // Trigger logo animations on mount
@@ -19,16 +20,67 @@ export default function Home() {
     }, 500);
   }, [triggerLogoAnimations]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentWordIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1;
-        return nextIndex >= rotatingWords.length ? 0 : nextIndex;
-      });
-    }, 3000);
+  // Robust word cycling utility
+  const getNextWordIndex = (currentIndex: number, wordsArray: string[]): number => {
+    if (!wordsArray || wordsArray.length === 0) return 0;
+    if (wordsArray.length === 1) return 0;
+    
+    const nextIndex = currentIndex + 1;
+    // Explicit bounds checking instead of relying solely on modulo
+    return nextIndex >= wordsArray.length ? 0 : nextIndex;
+  };
 
-    return () => clearInterval(interval);
-  }, [rotatingWords.length]);
+  useEffect(() => {
+    let animationId: number;
+    const startTime = performance.now();
+    
+    const CYCLE_DURATION = 3000;
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const cycleProgress = (elapsed % CYCLE_DURATION) / CYCLE_DURATION;
+      
+      // Determine animation state based on cycle progress
+      if (cycleProgress < 0.8) {
+        // Visible state (80% of cycle)
+        if (animationState !== 'visible') {
+          setAnimationState('visible');
+        }
+      } else if (cycleProgress < 0.9) {
+        // Exit state (10% of cycle)
+        if (animationState !== 'exiting') {
+          setAnimationState('exiting');
+        }
+      } else {
+        // Enter state (10% of cycle)
+        if (animationState !== 'entering') {
+          // Robust word cycling with safety checks
+          setCurrentWordIndex((prevIndex) => {
+            const nextIndex = getNextWordIndex(prevIndex, rotatingWords);
+            return nextIndex;
+          });
+          setAnimationState('entering');
+        }
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    };
+    
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [rotatingWords, animationState]);
+
+  // Add safeguard effect for stuck states
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      // If animation gets stuck, reset to visible state
+      if (animationState !== 'visible') {
+        setAnimationState('visible');
+      }
+    }, 2000); // Reset if stuck for more than 2 seconds
+    
+    return () => clearTimeout(timeoutId);
+  }, [animationState]);
 
   const handleRequestDemo = () => {
     router.push('/request-a-demo');
@@ -80,7 +132,7 @@ export default function Home() {
                   <span className="rotating-text-container" data-testid="rotating-text-container">
                     <span 
                       key={currentWordIndex}
-                      className="rotating-text"
+                      className={`rotating-text rotating-text-${animationState}`}
                       data-testid="rotating-text"
                     >
                       {rotatingWords[currentWordIndex]}
