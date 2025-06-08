@@ -28,6 +28,7 @@
     "test:pre-commit": "npm run test:concurrent:fast",
     "test:pre-push": "npm run test:concurrent:full",
     "test:all": "run-s lint type-check test:concurrent:full test:e2e",
+    "migrate-plans": "node scripts/migrate-to-timestamp-ids.js",
     "test:parallel-runner": "node scripts/parallel-test-runner.js",
     "test:benchmark": "VERBOSE=1 npm run test:parallel-runner pre-push",
     "test:performance": "node scripts/test-performance-monitor.js",
