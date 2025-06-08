@@ -14,6 +14,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { execSync } = require('child_process');
 const readline = require('readline');
+const { promisify } = require('util');
+const glob = promisify(require('glob'));
 
 // Configuration
 const IMPLEMENTATION_PLAN_DIR = path.join(__dirname, '..', 'docs', 'implementation-plan');
@@ -113,10 +115,63 @@ async function performDryRun() {
     log(`   ${item.oldFileName}${padding} → ${item.newFileName}`);
   }
   
-  // Count references that will need updating
+  // Scan for references
+  log('\n🔍 Scanning for references to update...');
+  const references = await scanForReferences(migrationPlan);
+  
+  // Count total references
+  let totalReferences = 0;
+  const referenceSummary = new Map();
+  
+  for (const [file, refs] of references) {
+    for (const ref of refs) {
+      totalReferences += ref.count;
+      const key = `${ref.type}:${ref.pattern}`;
+      referenceSummary.set(key, (referenceSummary.get(key) || 0) + ref.count);
+    }
+  }
+  
   log('\n   Reference Updates:');
-  log('   - References will be scanned in Phase 2');
-  log('   - Patterns to update: #N, Plan N, implementation-plan/N-');
+  if (references.size > 0) {
+    // Group by file for summary
+    const fileGroups = {
+      'CLAUDE.md': 0,
+      'docs/scratchpad.md': 0,
+      'implementation plans': 0,
+      'test files': 0,
+      'source files': 0,
+      'other': 0
+    };
+    
+    for (const [file, refs] of references) {
+      const refCount = refs.reduce((sum, ref) => sum + ref.count, 0);
+      
+      if (file === 'CLAUDE.md') {
+        fileGroups['CLAUDE.md'] += refCount;
+      } else if (file === 'docs/scratchpad.md') {
+        fileGroups['docs/scratchpad.md'] += refCount;
+      } else if (file.includes('implementation-plan')) {
+        fileGroups['implementation plans'] += refCount;
+      } else if (file.includes('__tests__') || file.includes('test-utils')) {
+        fileGroups['test files'] += refCount;
+      } else if (file.includes('pages/') || file.includes('components/')) {
+        fileGroups['source files'] += refCount;
+      } else {
+        fileGroups['other'] += refCount;
+      }
+    }
+    
+    // Display summary
+    for (const [group, count] of Object.entries(fileGroups)) {
+      if (count > 0) {
+        log(`   - ${count} references in ${group}`);
+      }
+    }
+    
+    log(`\n   Total: ${totalReferences} references across ${references.size} files`);
+  } else {
+    log('   - No references found to update');
+  }
   
   log('\n💾 Backup will be created before migration');
   log('\n✅ Ready for migration. Use --execute to proceed.');
@@ -199,11 +254,284 @@ function generateSimplifiedTimestampId(timestamp) {
   return `${month}${day}_${hour}${minute}`;
 }
 
+// Function to scan for references in documentation files
+async function scanForReferences(migrationPlan) {
+  const referencePatterns = [
+    'CLAUDE.md',
+    'docs/scratchpad.md',
+    'docs/**/*.md',
+    'README.md',
+    '__tests__/**/*.{ts,tsx}',
+    'test-utils/**/*.{ts,tsx}',
+    'pages/**/*.{ts,tsx}',
+    'components/**/*.{ts,tsx}'
+  ];
+  
+  const references = new Map(); // Map of file -> array of references found
+  
+  for (const pattern of referencePatterns) {
+    try {
+      const files = await glob(pattern, { 
+        cwd: path.join(__dirname, '..'),
+        ignore: ['node_modules/**', '.next/**', '.next-ai/**', 'coverage/**']
+      });
+      
+      for (const file of files) {
+        const filePath = path.join(__dirname, '..', file);
+        const content = await fs.readFile(filePath, 'utf8');
+        const fileReferences = [];
+        
+        // Check for references to each plan number
+        for (const plan of migrationPlan) {
+          // Pattern 1: implementation-plan/N-
+          const implPlanPattern = new RegExp(`implementation-plan/${plan.oldNumber}-`, 'g');
+          const implPlanMatches = content.match(implPlanPattern);
+          if (implPlanMatches) {
+            fileReferences.push({
+              type: 'implementation-plan-path',
+              oldNumber: plan.oldNumber,
+              count: implPlanMatches.length,
+              pattern: `implementation-plan/${plan.oldNumber}-`
+            });
+          }
+          
+          // Pattern 2: plan #N (with word boundary)
+          const planHashPattern = new RegExp(`plan #${plan.oldNumber}(?!\\d)`, 'gi');
+          const planHashMatches = content.match(planHashPattern);
+          if (planHashMatches) {
+            fileReferences.push({
+              type: 'plan-hash',
+              oldNumber: plan.oldNumber,
+              count: planHashMatches.length,
+              pattern: `plan #${plan.oldNumber}`
+            });
+          }
+          
+          // Pattern 3: Plan N (capitalized)
+          const planCapPattern = new RegExp(`Plan ${plan.oldNumber}(?!\\d)`, 'g');
+          const planCapMatches = content.match(planCapPattern);
+          if (planCapMatches) {
+            fileReferences.push({
+              type: 'plan-capitalized',
+              oldNumber: plan.oldNumber,
+              count: planCapMatches.length,
+              pattern: `Plan ${plan.oldNumber}`
+            });
+          }
+          
+          // Pattern 4: implementation plan N
+          const implPlanTextPattern = new RegExp(`implementation plan ${plan.oldNumber}(?!\\d)`, 'gi');
+          const implPlanTextMatches = content.match(implPlanTextPattern);
+          if (implPlanTextMatches) {
+            fileReferences.push({
+              type: 'implementation-plan-text',
+              oldNumber: plan.oldNumber,
+              count: implPlanTextMatches.length,
+              pattern: `implementation plan ${plan.oldNumber}`
+            });
+          }
+          
+          // Pattern 5: Direct file reference (e.g., "8-layout-navigation-menu-test-fixes.md")
+          const fileNamePattern = new RegExp(`\\b${plan.oldFileName}\\b`, 'g');
+          const fileNameMatches = content.match(fileNamePattern);
+          if (fileNameMatches) {
+            fileReferences.push({
+              type: 'filename',
+              oldNumber: plan.oldNumber,
+              count: fileNameMatches.length,
+              pattern: plan.oldFileName
+            });
+          }
+        }
+        
+        if (fileReferences.length > 0) {
+          references.set(file, fileReferences);
+        }
+      }
+    } catch (error) {
+      log(`Error scanning pattern ${pattern}: ${error.message}`, 'verbose');
+    }
+  }
+  
+  return references;
+}
+
+// Function to update references in a file
+async function updateReferencesInFile(filePath, migrationPlan) {
+  let content = await fs.readFile(filePath, 'utf8');
+  let modified = false;
+  let changeCount = 0;
+  
+  // Create a map for quick lookup
+  const planMap = new Map();
+  for (const plan of migrationPlan) {
+    planMap.set(plan.oldNumber, plan);
+  }
+  
+  // Sort plans by number descending to avoid replacing "1" in "10"
+  const sortedPlans = [...migrationPlan].sort((a, b) => b.oldNumber - a.oldNumber);
+  
+  for (const plan of sortedPlans) {
+    // Pattern 1: implementation-plan/N-
+    const implPlanPattern = new RegExp(`implementation-plan/${plan.oldNumber}-`, 'g');
+    const implPlanReplacement = `implementation-plan/${plan.newId}-`;
+    if (implPlanPattern.test(content)) {
+      content = content.replace(implPlanPattern, implPlanReplacement);
+      modified = true;
+      changeCount++;
+    }
+    
+    // Pattern 2: plan #N (with word boundary)
+    const planHashPattern = new RegExp(`plan #${plan.oldNumber}(?!\\d)`, 'gi');
+    const planHashReplacement = `plan #${plan.newId}`;
+    if (planHashPattern.test(content)) {
+      content = content.replace(planHashPattern, (match) => {
+        // Preserve original case
+        return match.startsWith('Plan') ? `Plan #${plan.newId}` : `plan #${plan.newId}`;
+      });
+      modified = true;
+      changeCount++;
+    }
+    
+    // Pattern 3: Plan N (capitalized)
+    const planCapPattern = new RegExp(`Plan ${plan.oldNumber}(?!\\d)`, 'g');
+    const planCapReplacement = `Plan ${plan.newId}`;
+    if (planCapPattern.test(content)) {
+      content = content.replace(planCapPattern, planCapReplacement);
+      modified = true;
+      changeCount++;
+    }
+    
+    // Pattern 4: implementation plan N
+    const implPlanTextPattern = new RegExp(`implementation plan ${plan.oldNumber}(?!\\d)`, 'gi');
+    if (implPlanTextPattern.test(content)) {
+      content = content.replace(implPlanTextPattern, (match) => {
+        // Preserve original case
+        const prefix = match.startsWith('Implementation') ? 'Implementation' : 'implementation';
+        return `${prefix} plan ${plan.newId}`;
+      });
+      modified = true;
+      changeCount++;
+    }
+    
+    // Pattern 5: Direct file reference
+    const fileNamePattern = new RegExp(`\\b${plan.oldFileName}\\b`, 'g');
+    if (fileNamePattern.test(content)) {
+      content = content.replace(fileNamePattern, plan.newFileName);
+      modified = true;
+      changeCount++;
+    }
+  }
+  
+  return { content, modified, changeCount };
+}
+
+// Function to update all references
+async function updateAllReferences(migrationPlan, dryRun = false) {
+  const referencePatterns = [
+    'CLAUDE.md',
+    'docs/scratchpad.md',
+    'docs/**/*.md',
+    'README.md',
+    '__tests__/**/*.{ts,tsx}',
+    'test-utils/**/*.{ts,tsx}',
+    'pages/**/*.{ts,tsx}',
+    'components/**/*.{ts,tsx}'
+  ];
+  
+  const updatedFiles = [];
+  let totalChanges = 0;
+  
+  for (const pattern of referencePatterns) {
+    try {
+      const files = await glob(pattern, { 
+        cwd: path.join(__dirname, '..'),
+        ignore: ['node_modules/**', '.next/**', '.next-ai/**', 'coverage/**']
+      });
+      
+      for (const file of files) {
+        const filePath = path.join(__dirname, '..', file);
+        const result = await updateReferencesInFile(filePath, migrationPlan);
+        
+        if (result.modified) {
+          if (!dryRun) {
+            await fs.writeFile(filePath, result.content);
+            log(`   Updated references in ${file}`, 'verbose');
+          }
+          updatedFiles.push({ file, changeCount: result.changeCount });
+          totalChanges += result.changeCount;
+        }
+      }
+    } catch (error) {
+      log(`Error updating references in pattern ${pattern}: ${error.message}`, 'verbose');
+    }
+  }
+  
+  return { updatedFiles, totalChanges };
+}
+
+// Function to create human-readable mapping
+async function createReadableMapping(migrationPlan) {
+  // Sort by timestamp to get natural ordering
+  const sortedPlans = [...migrationPlan].sort((a, b) => a.creationTime - b.creationTime);
+  
+  const mapping = {
+    version: "1.0.0",
+    format: "simplified-timestamp",
+    migrationDate: new Date().toISOString(),
+    description: "Mapping of old numbered implementation plans to new timestamp-based IDs",
+    plans: {},
+    quickReference: []
+  };
+  
+  sortedPlans.forEach((plan, index) => {
+    const readableNumber = index + 1;
+    const createdDate = new Date(plan.creationTime * 1000);
+    
+    mapping.plans[readableNumber] = {
+      oldNumber: plan.oldNumber,
+      oldFileName: plan.oldFileName,
+      newId: plan.newId,
+      newFileName: plan.newFileName,
+      title: plan.taskName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      created: createdDate.toISOString(),
+      readableDate: createdDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+    
+    // Add to quick reference
+    mapping.quickReference.push({
+      old: `#${plan.oldNumber}`,
+      new: plan.newId,
+      title: mapping.plans[readableNumber].title
+    });
+  });
+  
+  return mapping;
+}
+
+// Function to save mapping file
+async function saveMappingFile(mapping) {
+  const mappingPath = path.join(IMPLEMENTATION_PLAN_DIR, '.timestamp-mapping.json');
+  await fs.writeFile(mappingPath, JSON.stringify(mapping, null, 2));
+  return mappingPath;
+}
+
 // Export functions for testing
 module.exports = {
   scanExistingPlans,
   getFileCreationTimestamp,
-  generateSimplifiedTimestampId
+  generateSimplifiedTimestampId,
+  scanForReferences,
+  updateReferencesInFile,
+  updateAllReferences,
+  createReadableMapping,
+  saveMappingFile
 };
 
 // Run the script if called directly
