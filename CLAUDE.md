@@ -80,19 +80,22 @@ Any task performed outside the scope of an existing implementation plan MUST be 
 - **Continuing planned work**: When following tasks outlined in an approved implementation plan
 
 **Branch Workflow for Non-Implementation Plan Tasks:**
-1. **Start from main**: `git checkout main && git pull`
+1. **Start with fresh state**: `git fetch --all --prune && git checkout main && git pull`
 2. **Create task branch**: `git checkout -b descriptive-task-name`
-3. **Make changes**: Perform all task-related work on this branch
-4. **Commit changes**: Follow mandatory commit protocol
-5. **Pre-merge preparation**:
-   - Pull latest main: `git checkout main && git pull`
+3. **Make initial commit**: Required before setting upstream
+4. **Set upstream**: `git push -u origin descriptive-task-name`
+5. **Make changes**: Perform all task-related work on this branch
+6. **Commit and push regularly**: Follow mandatory commit protocol with immediate push
+7. **Pre-merge preparation**:
+   - Fetch latest: `git fetch --all --prune`
+   - Switch to main: `git checkout main && git pull`
    - Switch back to branch: `git checkout descriptive-task-name`
    - Merge main into branch: `git merge main`
    - Resolve any conflicts if they exist
    - Verify stability: Run tests and ensure everything works
-6. **Push branch**: `git push origin descriptive-task-name`
-7. **Merge to main**: After verification, merge branch back to main
-8. **Clean up**: Delete branch after successful merge
+8. **Final push**: `git push` (after merge verification)
+9. **Merge to main**: After verification, merge branch back to main
+10. **Clean up**: Delete branch after successful merge
 
 **Before Any Work:**
 Always verify you're on the correct branch before starting work:
@@ -108,34 +111,65 @@ Always verify you're on the correct branch before starting work:
 - Ability to safely experiment and rollback
 - Maintains clean main branch history
 
+## Multi-Clone Repository Management
+
+**Environment Awareness**: This repository may be cloned in multiple folders on the same machine. Each clone typically works on separate branches to minimize conflicts.
+
+### Pre-Work Synchronization Protocol (MANDATORY)
+Before starting ANY task or implementation plan:
+1. **Fetch all remote updates**: `git fetch --all --prune`
+2. **Pull current branch**: `git pull` (handle conflicts if they occur)
+3. **Verify clean state**: `git status` must show clean working directory
+4. **Check branch visibility**: Use `git branch -r` to see all remote branches
+
+### New Branch Discovery Protocol
+When switching clones or starting work:
+1. **Always fetch first**: `git fetch --all --prune` 
+2. **Check for new branches**: `git branch -r` to see remote branches
+3. **Checkout new branches**: `git checkout branch-name` (Git will auto-track remote)
+4. **Verify branch setup**: `git branch -vv` to confirm upstream tracking
+
+### Branch Creation and Upstream Protocol
+When creating new branches:
+1. **Create and switch**: `git checkout -b new-branch-name`
+2. **Make initial commit**: Required before pushing new branch
+3. **Set upstream on first push**: `git push -u origin new-branch-name`
+4. **Verify remote visibility**: Check that branch appears in `git branch -r`
+
 ## MANDATORY CODING WORKFLOW
 
 **CRITICAL: This process MUST be followed for EVERY coding request without exception.**
 
 ### Step 1: Implementation Planning (REQUIRED)
 Before writing ANY code:
-1. **Pull latest main**: `git checkout main && git pull`
+1. **Fetch and pull latest**: `git fetch --all --prune && git checkout main && git pull`
 2. **Create task branch**: `git checkout -b task-name` (where task-name matches implementation plan)
 3. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
 4. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
 5. **Get user approval**: Present plan to user before proceeding to implementation
 
+**Important: When creating a new branch for an implementation plan, ALWAYS use `git checkout -b branch-name` to create AND switch to the new branch, not just `git checkout branch-name` which would attempt to switch to an existing branch.**
+
+**Multi-Clone Coordination**: After creating new branch and making first commit, immediately run `git push -u origin branch-name` to make branch visible to other clones.
+
 ### Step 2: Sequential Execution (REQUIRED)
 During implementation:
-1. **Follow plan step-by-step**: Execute tasks in exact order specified in implementation plan
-2. **MANDATORY FILE TRACKING**: As you work, track which files you create or modify for the current task
-3. **MANDATORY REAL-TIME UPDATES**: After completing each task, IMMEDIATELY update implementation plan:
+1. **Pre-task sync**: Before each task, run `git fetch --all --prune && git pull`
+2. **Follow plan step-by-step**: Execute tasks in exact order specified in implementation plan
+3. **MANDATORY FILE TRACKING**: As you work, track which files you create or modify for the current task
+4. **MANDATORY REAL-TIME UPDATES**: After completing each task, IMMEDIATELY update implementation plan:
    - Mark checkbox as complete: `- [ ]` → `- [x]`
    - Update status board with completion details
    - Document any files created/modified
    - Add completion timestamp and notes
-4. **Test each change**: After implementing each task, test the change thoroughly
-5. **COMMIT AFTER EACH TASK**: After completing and testing each task:
+5. **Test each change**: After implementing each task, test the change thoroughly
+6. **COMMIT AND PUSH AFTER EACH TASK**: After completing and testing each task:
    - Stage ONLY files created/modified for the current task
    - Make descriptive commit with format: "Complete [Task X.Y]: [brief description]"
-   - Push commit to remote branch
-6. **Verify before proceeding**: Only move to next task after confirming current task works correctly AND is committed AND implementation plan is updated
-7. **Update progress**: Keep implementation plan progress tracking current in real-time
+   - IMMEDIATELY push commit to remote branch with `git push`
+   - Verify push succeeded before proceeding to next task
+7. **Verify before proceeding**: Only move to next task after confirming current task works correctly AND is committed AND pushed AND implementation plan is updated
+8. **Update progress**: Keep implementation plan progress tracking current in real-time
 
 ### Step 2.5: Mandatory Commit Protocol (CRITICAL)
 **EVERY task completion MUST include a git commit. NO EXCEPTIONS.**
@@ -148,10 +182,15 @@ Documentation-only changes (*.md files, CLAUDE.md, configuration files) can bypa
 2. **Task-specific staging**: Use `git add <filename>` for each file related to the current task
 3. **Commit message format**: "Complete [Phase X Task Y]: [descriptive summary]"
 4. **Verify staged changes**: Use `git status` and `git diff --staged` to confirm only task-related files are staged
-5. **Push regularly**: Push commits to remote at least after every major task or phase
+5. **MANDATORY PUSH**: IMMEDIATELY push every commit to remote with `git push` - no exceptions
+6. **Verify push success**: Confirm push succeeded before proceeding to next task
 
 **Example commit workflow:**
 ```bash
+# Before starting any task - sync with remote
+git fetch --all --prune
+git pull
+
 # After completing Task 3.1 which created animation test utilities
 git status  # Check what files exist
 
@@ -163,7 +202,10 @@ git add __tests__/animations/logo-stagger.test.tsx
 git diff --staged  # Review changes being committed
 
 git commit -m "Complete Phase 3 Task 1: Create animation testing utilities for CSS keyframes"
-git push
+git push  # Immediate push to remote
+
+# Verify push succeeded
+git log --oneline -1  # Confirm commit is in history
 ```
 
 **Commit Failures:**
@@ -265,8 +307,8 @@ When all tasks in a phase are complete and verified:
 - Continue autonomously through the entire task list without checking in
 
 **Autonomous Execution Rules:**
-- Work through tasks in order, marking each as complete only when fully tested, verified, AND committed
-- COMMIT after each task completion before proceeding to next task
+- Work through tasks in order, marking each as complete only when fully tested, verified, committed, AND pushed
+- COMMIT AND PUSH after each task completion before proceeding to next task
 - Update implementation plan progress tracking IMMEDIATELY after completing each task
 - **Pull main after each phase completion** and handle merge conflicts per protocol
 - Continue to next task immediately if current task is successful AND committed
@@ -286,19 +328,23 @@ When all tasks in a phase are complete and verified:
 - **CRITICAL**: Never complete multiple tasks without updating the implementation plan - this is a mandatory workflow violation
 
 ### Git Status Monitoring (REQUIRED)
-**Check git status frequently during implementation:**
-1. **Before starting each task**: Run `git status` to ensure clean working directory
+**Check git status and sync frequently during implementation:**
+1. **Before starting each task**: Run `git fetch --all --prune && git pull && git status` to ensure clean, current working directory
 2. **After completing each task**: Run `git status` to see what files were modified
-3. **After each commit**: Run `git status` to verify clean working directory
-4. **If working directory shows many uncommitted files**: STOP and commit pending work before proceeding
+3. **After each commit and push**: Run `git status` to verify clean working directory
+4. **Regular sync checks**: Run `git fetch --all --prune` periodically to stay aware of remote changes
+5. **If working directory shows many uncommitted files**: STOP and commit pending work before proceeding
 
 ### Final Integration and Cleanup
 **After all phases complete:**
-1. **Pull latest main**: `git checkout main && git pull && git checkout task-branch && git merge main`
-2. **Resolve conflicts**: If conflicts exist, follow merge conflict protocol
-3. **Final verification**: Ensure all tests pass and build succeeds
-4. **Push branch**: `git push origin task-branch`
-5. **Cleanup**: After branch approval/merge, delete local and remote branches:
+1. **Sync with remote**: `git fetch --all --prune && git checkout main && git pull`
+2. **Merge branch to main**: `git checkout task-branch && git merge main`
+3. **Resolve conflicts**: If conflicts exist, follow merge conflict protocol
+4. **Final verification**: Ensure all tests pass and build succeeds
+5. **Push final state**: `git push` to update remote branch
+6. **Switch to main and merge**: `git checkout main && git merge task-branch`
+7. **Push main**: `git push` to update remote main
+8. **Cleanup**: Delete local and remote branches:
    - `git branch -d task-branch`
    - `git push origin --delete task-branch`
 
@@ -308,6 +354,23 @@ When all tasks in a phase are complete and verified:
 - At the end of every response where tasks have been completed, include total token consumption
 - Format: Add a separate line at the bottom showing "Total tokens consumed: [number]"
 - This applies to all task completion outputs, not just autonomous execution sessions
+
+## Multi-Clone Best Practices
+
+### Daily Workflow
+- **Start of work session**: `git fetch --all --prune` in both clones
+- **Before switching clones**: Ensure current clone has clean `git status`
+- **After significant work**: Push changes immediately to share with other clone
+
+### Branch Coordination
+- **Separate branches per clone**: Minimize overlap on same branches
+- **Main branch coordination**: Extra caution when both clones use main
+- **Branch naming**: Use descriptive names to avoid confusion across clones
+
+### Troubleshooting
+- **Missing branches**: Run `git fetch --all --prune` to refresh remote branch list
+- **Outdated state**: Use `git pull` to get latest changes on current branch
+- **Uncertain state**: Run `git status` and `git log --oneline -5` to verify current position
 
 ## Parallel Testing Architecture
 
