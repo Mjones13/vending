@@ -64,12 +64,53 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 }
 
+// Mock CSS computed styles for animation testing
+const originalGetComputedStyle = window.getComputedStyle
+window.getComputedStyle = function(element, pseudoElement) {
+  const computedStyle = originalGetComputedStyle.call(this, element, pseudoElement)
+  
+  // Mock common CSS properties needed for animation tests
+  const mockStyle = {
+    ...computedStyle,
+    opacity: element.style.opacity || '1',
+    transform: element.style.transform || 'none',
+    visibility: element.style.visibility || 'visible',
+    display: element.style.display || 'block',
+    animationName: element.style.animationName || 'none',
+    animationDuration: element.style.animationDuration || '0s',
+    animationDelay: element.style.animationDelay || '0s',
+    animationFillMode: element.style.animationFillMode || 'none',
+    animationPlayState: element.style.animationPlayState || 'running',
+    transitionProperty: element.style.transitionProperty || 'all',
+    transitionDuration: element.style.transitionDuration || '0s',
+    transitionDelay: element.style.transitionDelay || '0s',
+    transitionTimingFunction: element.style.transitionTimingFunction || 'ease',
+    // Mock CSS variables for design system
+    getPropertyValue: function(property) {
+      const cssVarPattern = /^--/
+      if (cssVarPattern.test(property)) {
+        // Return mock values for CSS custom properties
+        switch(property) {
+          case '--transition-all': return '0.3s ease'
+          case '--color-primary-600': return '#0066cc'
+          case '--color-primary-50': return '#f0f8ff'
+          case '--shadow-sm': return '0 1px 2px rgba(0,0,0,0.05)'
+          default: return ''
+        }
+      }
+      return this[property] || ''
+    }
+  }
+  
+  return mockStyle
+}
+
 // Test isolation and cleanup
 beforeEach(() => {
   // Enable fake timers globally for consistent testing
   jest.useFakeTimers()
   
-  // Mock requestAnimationFrame for consistent animation testing
+  // Set up animation frame polyfills for each test
   global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
   global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
   
@@ -88,7 +129,6 @@ beforeEach(() => {
   
   // Enhanced mock isolation for parallel execution
   jest.clearAllMocks()
-  jest.resetAllMocks()
 })
 
 afterEach(() => {
@@ -100,10 +140,7 @@ afterEach(() => {
   jest.runOnlyPendingTimers()
   jest.useRealTimers()
   
-  // Restore original animation frame functions
+  // Clean up animation frame polyfills
   delete global.requestAnimationFrame
   delete global.cancelAnimationFrame
-  
-  // Final mock cleanup
-  jest.restoreAllMocks()
 })

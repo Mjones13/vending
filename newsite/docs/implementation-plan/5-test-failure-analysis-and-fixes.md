@@ -65,9 +65,9 @@ The automated testing framework has been successfully implemented, but currently
 
 ### Phase 1: Environment and Selector Fixes
 - [x] **Task 1.1**: Fix multiple element query issues in Layout tests
-- [x] **Task 1.2**: Add proper React act() wrapping for state updates - Fixed header role and test isolation issues
-- [ ] **Task 1.3**: Implement CSS computed style mocking for test environment
-- [ ] **Task 1.4**: Fix timer and animation mocking setup
+- [ ] **Task 1.2**: Add proper React act() wrapping for state updates - Partially fixed header role, still has timer-based act() warnings
+- [x] **Task 1.3**: Implement CSS computed style mocking for test environment
+- [x] **Task 1.4**: Fix timer and animation mocking setup
 
 ### Phase 2: Layout Component Fixes
 - [ ] **Task 2.1**: Fix navigation menu selector specificity
