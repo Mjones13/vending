@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Layout from "../components/Layout";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
@@ -11,7 +11,7 @@ export default function Home() {
   const [logoAnimations, triggerLogoAnimations] = useStaggeredAnimation(9, 150);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [animationState, setAnimationState] = useState<'visible' | 'exiting' | 'entering'>('visible');
-  const rotatingWords = ['Workplaces', 'Apartments', 'Gyms', 'Businesses'];
+  const rotatingWords = useMemo(() => ['Workplaces', 'Apartments', 'Gyms', 'Businesses'], []);
 
   useEffect(() => {
     // Trigger logo animations on mount
@@ -32,11 +32,9 @@ export default function Home() {
 
   useEffect(() => {
     let animationId: number;
-    let startTime = performance.now();
-    let lastWordChangeTime = startTime;
+    const startTime = performance.now();
     
     const CYCLE_DURATION = 3000;
-    const TRANSITION_DURATION = 400;
     
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -62,7 +60,6 @@ export default function Home() {
             return nextIndex;
           });
           setAnimationState('entering');
-          lastWordChangeTime = currentTime;
         }
       }
       
@@ -71,7 +68,7 @@ export default function Home() {
     
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [rotatingWords.length, animationState]);
+  }, [rotatingWords, animationState]);
 
   // Add safeguard effect for stuck states
   useEffect(() => {
@@ -176,8 +173,8 @@ export default function Home() {
             <div className="hero-image-side">
               <div className="hero-image-container">
                 <Image 
-                  src="/images/hero-backgrounds/home/office-breakroom-hero.jpg"
-                  alt="Modern office breakroom with vending solutions"
+                  src="/images/hero-backgrounds/home/diverse-business-team-hero.jpg"
+                  alt="Diverse business team collaborating in modern office environment"
                   fill
                   className="hero-image"
                   priority
