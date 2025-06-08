@@ -16,6 +16,120 @@ npm run lint   # Run ESLint
 
 Always run these commands from the `newsite/` directory, not the root.
 
+## AI Agent Development Commands
+
+**CRITICAL: AI agents must use dedicated commands to prevent server conflicts and orphaned processes.**
+
+### Robust Server Management
+The project includes a comprehensive AI server management system that ensures reliable server lifecycle control, prevents orphaned processes, and enables concurrent development.
+
+### AI Server Commands
+
+```bash
+cd newsite
+npm run dev:ai          # Direct Next.js dev server on port 3001 (foreground)
+npm run start:ai        # Managed AI server with PID tracking (background)
+npm run stop:ai         # Gracefully stop AI server with cleanup
+npm run status:ai       # Check AI server status (JSON output)
+npm run test:ai         # Run complete server lifecycle test
+npm run cleanup:ai      # Emergency cleanup of orphaned processes
+```
+
+### Testing Commands
+```bash
+npm run test:ai:lifecycle  # Comprehensive server lifecycle tests
+npm run test:ai:cleanup    # Cleanup procedure validation tests
+```
+
+### Server Management Features
+- **PID File Tracking**: Server process IDs stored in `.next-ai/server.pid`
+- **Port Management**: AI server runs on port 3001, developer uses port 3000
+- **Graceful Shutdown**: SIGTERM with fallback to SIGKILL after timeout
+- **Health Checking**: Automatic HTTP health checks for server status
+- **Orphan Cleanup**: Multiple strategies to find and kill stuck processes
+
+### Best Practices
+1. **Always use managed commands**: Prefer `start:ai` over `dev:ai` for background operation
+2. **Check status before starting**: Run `status:ai` to verify clean state
+3. **Clean shutdown**: Use `stop:ai` rather than killing processes manually
+4. **Emergency cleanup**: Use `cleanup:ai` if processes become orphaned
+
+## AI Server Troubleshooting Guide
+
+### Common Issues and Solutions
+
+**1. Port 3001 Already in Use**
+```bash
+# Error: EADDRINUSE: address already in use :::3001
+npm run cleanup:ai      # Automatic cleanup
+npm run status:ai       # Verify port is free
+npm run start:ai        # Start fresh
+```
+
+**2. Server Won't Start**
+```bash
+# Check for orphaned processes
+npm run status:ai       # Check current state
+lsof -ti :3001         # Manual port check
+npm run cleanup:ai      # Force cleanup
+```
+
+**3. Server Not Responding**
+- Next.js dev servers can take 10-30 seconds to fully initialize
+- The health check may pass before HTTP routes are ready
+- Wait a moment after starting before making requests
+
+**4. Orphaned Processes After Crash**
+```bash
+# The cleanup command handles multiple scenarios:
+npm run cleanup:ai
+# - Checks PID file and kills that process
+# - Searches for processes on port 3001
+# - Removes stale PID files
+# - Uses SIGTERM then SIGKILL if needed
+```
+
+**5. Multiple Start Attempts**
+- The server manager detects if a healthy server is already running
+- Safe to call `start:ai` multiple times - it won't create duplicates
+- Returns success if server is already running and healthy
+
+**6. PID File Issues**
+```bash
+# Location: .next-ai/server.pid
+# If corrupted or wrong PID:
+rm -f .next-ai/server.pid
+npm run cleanup:ai
+npm run start:ai
+```
+
+**7. Concurrent Development**
+- Developer server: Port 3000 (use standard `npm run dev`)
+- AI server: Port 3001 (use `npm run start:ai`)
+- Both can run simultaneously without conflicts
+
+### Debug Commands
+```bash
+# Check what's on AI port
+lsof -ti :3001
+
+# Check server process
+ps aux | grep "next.*3001" | grep -v grep
+
+# Manual cleanup (if automated cleanup fails)
+kill -TERM $(lsof -ti :3001) 2>/dev/null
+kill -KILL $(lsof -ti :3001) 2>/dev/null
+
+# Check PID file
+cat .next-ai/server.pid 2>/dev/null || echo "No PID file"
+```
+
+### Server Lifecycle Logs
+All server operations are logged with timestamps:
+- `[AI-SERVER] [INFO]` - Normal operations
+- `[AI-SERVER] [WARN]` - Warnings (process already dead, etc.)
+- `[AI-SERVER] [ERROR]` - Failures (port unavailable, startup timeout)
+
 ## Architecture Overview
 
 This is a Next.js Pages Router application for Golden Coast Amenities (formerly Smarter Vending replica). Key architectural patterns:
