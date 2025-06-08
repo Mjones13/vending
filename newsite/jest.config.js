@@ -25,25 +25,31 @@ const customJestConfig = {
   projects: [
     {
       displayName: 'unit',
-      testMatch: [
-        '<rootDir>/__tests__/components/**/*.test.{js,jsx,ts,tsx}',
-        '<rootDir>/__tests__/hooks/**/*.test.{js,jsx,ts,tsx}',
-        '<rootDir>/__tests__/utils/**/*.test.{js,jsx,ts,tsx}'
-      ],
-      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-      testEnvironment: 'jsdom',
+      ...require('next/jest')({ dir: './' })({
+        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+        testEnvironment: 'jsdom',
+        testMatch: [
+          '<rootDir>/__tests__/components/**/*.test.{js,jsx,ts,tsx}',
+          '<rootDir>/__tests__/hooks/**/*.test.{js,jsx,ts,tsx}',
+          '<rootDir>/__tests__/utils/**/*.test.{js,jsx,ts,tsx}'
+        ],
+      }),
     },
     {
       displayName: 'integration',
-      testMatch: ['<rootDir>/__tests__/pages/**/*.test.{js,jsx,ts,tsx}'],
-      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-      testEnvironment: 'jsdom',
+      ...require('next/jest')({ dir: './' })({
+        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+        testEnvironment: 'jsdom',
+        testMatch: ['<rootDir>/__tests__/pages/**/*.test.{js,jsx,ts,tsx}'],
+      }),
     },
     {
       displayName: 'animations',
-      testMatch: ['<rootDir>/__tests__/animations/**/*.test.{js,jsx,ts,tsx}'],
-      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-      testEnvironment: 'jsdom',
+      ...require('next/jest')({ dir: './' })({
+        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+        testEnvironment: 'jsdom',
+        testMatch: ['<rootDir>/__tests__/animations/**/*.test.{js,jsx,ts,tsx}'],
+      }),
     }
   ],
   
