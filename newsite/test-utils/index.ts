@@ -27,3 +27,33 @@ export {
   useConcurrentTestEnvironment,
   TestDataFactories,
 } from './concurrent-test-data'
+
+// Test environment optimization
+export {
+  InMemoryTestDatabase,
+  MockAPIService,
+  InMemoryCache,
+  OptimizedTestEnvironment,
+  useOptimizedTestEnvironment,
+  TestEnvironments,
+} from './test-environment-optimizer'
+
+// Next.js test mocks
+export {
+  MockNextRouter,
+  MockNextImage,
+  MockNextLink,
+  MockNextHead,
+  MockNextAPI,
+  NextJSTestEnvironment,
+  useNextJSTestEnvironment,
+} from './nextjs-test-mocks'
+
+// Comprehensive test environment configurator
+export {
+  ComprehensiveTestEnvironment,
+  TestEnvironmentConfigurations,
+  useTestEnvironment,
+  TestEnvironmentFactory,
+} from './test-environment-configurator'
+export type { TestEnvironmentConfig } from './test-environment-configurator'
