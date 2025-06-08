@@ -42,7 +42,7 @@
     "test:load-balanced:managed": "node scripts/load-balanced-test-runner.js --resource-management",
     "setup:hooks": "bash scripts/setup-hooks.sh",
     "dev:ai": "next dev --turbopack --port 3001",
-    "build:ai": "node scripts/build-ai.js",
+    "build:ai": "node scripts/build-ai-simple.js",
     "start:ai": "node scripts/start-ai.js",
     "test:ai": "npm run dev:ai & sleep 5 && curl -s http://localhost:3001 > /dev/null && echo 'AI server test passed' && pkill -f 'next dev.*3001'",
     "test:ai:full": "npm run dev:ai & sleep 5 && npm run lint && npm run type-check && pkill -f 'next dev.*3001'",

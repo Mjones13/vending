@@ -7,38 +7,50 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-// Temporarily rename configs to force Next.js to use AI config
+// Build with AI config using environment variable approach
 const originalConfig = 'next.config.ts';
 const aiConfig = 'next.config.ai.js';
-const tempConfig = 'next.config.temp.ts';
 
 async function buildWithAIConfig() {
   try {
-    // Backup original config
-    if (fs.existsSync(originalConfig)) {
-      fs.renameSync(originalConfig, tempConfig);
+    // Check if dev server is running by testing ports
+    const net = require('net');
+    const isPortInUse = (port) => {
+      return new Promise((resolve) => {
+        const server = net.createServer();
+        server.listen(port, () => {
+          server.close(() => resolve(false));
+        });
+        server.on('error', () => resolve(true));
+      });
+    };
+
+    const devServerRunning = await isPortInUse(3000) || await isPortInUse(3001);
+    if (devServerRunning) {
+      console.log('⚠️  Dev server detected. Using alternative build method to avoid interference...');
     }
-    
-    // Rename AI config to be the active config
-    fs.renameSync(aiConfig, originalConfig.replace('.ts', '.js'));
+
+    // Use a copy-based approach instead of renaming to avoid triggering dev server restarts
+    const tempConfig = 'next.config.build.js';
+    fs.copyFileSync(aiConfig, tempConfig);
     
     console.log('🤖 Building with AI configuration (output: .next-ai)...');
     
-    // Run the build
+    // Run the build with the temporary config
     const buildProcess = spawn('npx', ['next', 'build'], {
       stdio: 'inherit',
-      shell: true
+      shell: true,
+      env: {
+        ...process.env,
+        NEXT_CONFIG: tempConfig
+      }
     });
     
     buildProcess.on('close', (code) => {
-      // Restore configs regardless of build result
+      // Clean up temporary config
       try {
-        // Restore AI config
-        fs.renameSync(originalConfig.replace('.ts', '.js'), aiConfig);
-        
-        // Restore original config
         if (fs.existsSync(tempConfig)) {
-          fs.renameSync(tempConfig, originalConfig);
+          fs.unlinkSync(tempConfig);
         }
         
         if (code === 0) {
@@ -47,8 +59,8 @@ async function buildWithAIConfig() {
           console.error('❌ AI build failed');
           process.exit(code);
         }
-      } catch (restoreError) {
-        console.error('❌ Error restoring configs:', restoreError);
+      } catch (cleanupError) {
+        console.error('❌ Error during cleanup:', cleanupError);
         process.exit(1);
       }
     });
@@ -56,16 +68,14 @@ async function buildWithAIConfig() {
   } catch (error) {
     console.error('❌ Error setting up AI build:', error);
     
-    // Attempt to restore configs on error
+    // Clean up temporary config on error
     try {
-      if (fs.existsSync(originalConfig.replace('.ts', '.js'))) {
-        fs.renameSync(originalConfig.replace('.ts', '.js'), aiConfig);
-      }
+      const tempConfig = 'next.config.build.js';
       if (fs.existsSync(tempConfig)) {
-        fs.renameSync(tempConfig, originalConfig);
+        fs.unlinkSync(tempConfig);
       }
-    } catch (restoreError) {
-      console.error('❌ Error restoring configs after failure:', restoreError);
+    } catch (cleanupError) {
+      console.error('❌ Error cleaning up after failure:', cleanupError);
     }
     
     process.exit(1);
