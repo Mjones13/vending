@@ -66,6 +66,9 @@ global.IntersectionObserver = class IntersectionObserver {
 
 // Test isolation and cleanup
 beforeEach(() => {
+  // Enable fake timers globally for consistent testing
+  jest.useFakeTimers()
+  
   // Mock requestAnimationFrame for consistent animation testing
   global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
   global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
@@ -92,6 +95,10 @@ afterEach(() => {
   // Clean up test styles to prevent parallel test pollution
   const testStyles = document.querySelectorAll('[data-test-styles="parallel-testing"]')
   testStyles.forEach(style => style.remove())
+  
+  // Run any pending timers and restore real timers
+  jest.runOnlyPendingTimers()
+  jest.useRealTimers()
   
   // Restore original animation frame functions
   delete global.requestAnimationFrame

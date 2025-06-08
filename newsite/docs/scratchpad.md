@@ -10,6 +10,7 @@
 - [docs/implementation-plan/7-homepage-rotating-text-fixes.md](implementation-plan/7-homepage-rotating-text-fixes.md) 🔄 IN PROGRESS
 
 ## Lessons Learned
+- [2025-06-08 17:45] Error: React act() warnings in animation tests due to uncontrolled state updates - Solution: Need to properly wrap timer-based state updates in act() and fix jest fake timers setup
 - [2024-12-23] When updating content with exact text from reference sites, always escape apostrophes and quotes using HTML entities (&apos;, &ldquo;, &rdquo;) to avoid ESLint errors in React/Next.js
 - [2024-12-23] Use web search to get exact content from reference sites rather than guessing or paraphrasing - this ensures 100% accuracy
 - [2024-12-23] When ESLint errors prevent builds, can use `npm run build -- --no-lint` as a temporary workaround, but better to fix the actual errors
