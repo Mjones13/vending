@@ -46,7 +46,9 @@
     "stop:ai": "node scripts/ai-server-manager.js stop",
     "status:ai": "node scripts/ai-server-manager.js status",
     "test:ai": "node scripts/ai-server-manager.js test",
-    "cleanup:ai": "node scripts/ai-server-manager.js cleanup"
+    "cleanup:ai": "node scripts/ai-server-manager.js cleanup",
+    "test:ai:lifecycle": "node scripts/test-ai-server-lifecycle.js",
+    "test:ai:cleanup": "node scripts/test-ai-cleanup-validation.js"
   },
   "dependencies": {
     "next": "^15.3.2",
