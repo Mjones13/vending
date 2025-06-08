@@ -35,11 +35,11 @@ The root cause is the problematic `npm run test:ai` command using background pro
 - [x] **Task 1.3**: Add PID file tracking for process management
 - [x] **Task 1.4**: Create graceful shutdown with timeout and force-kill fallbacks
 
-### Phase 2: Replace Fragile Package.json Commands
-- [ ] **Task 2.1**: Replace `test:ai` with robust Node.js script call
-- [ ] **Task 2.2**: Update `start:ai` to use server manager for better lifecycle control
-- [ ] **Task 2.3**: Add `stop:ai` command for explicit server shutdown
-- [ ] **Task 2.4**: Create `status:ai` command to check server state
+### Phase 2: Replace Fragile Package.json Commands ✅ **COMPLETE**
+- [x] **Task 2.1**: Replace `test:ai` with robust Node.js script call
+- [x] **Task 2.2**: Update `start:ai` to use server manager for better lifecycle control
+- [x] **Task 2.3**: Add `stop:ai` command for explicit server shutdown
+- [x] **Task 2.4**: Create `status:ai` command to check server state
 
 ### Phase 3: Enhanced Testing and Validation
 - [ ] **Task 3.1**: Create comprehensive AI server lifecycle tests

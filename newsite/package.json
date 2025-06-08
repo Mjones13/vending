@@ -40,7 +40,13 @@
     "resource:monitor": "node scripts/resource-integration.js",
     "test:concurrent:managed": "node scripts/concurrent-test-executor.js --mode=full --resource-management",
     "test:load-balanced:managed": "node scripts/load-balanced-test-runner.js --resource-management",
-    "setup:hooks": "bash scripts/setup-hooks.sh"
+    "setup:hooks": "bash scripts/setup-hooks.sh",
+    "dev:ai": "next dev --turbopack --port 3001",
+    "start:ai": "node scripts/ai-server-manager.js start",
+    "stop:ai": "node scripts/ai-server-manager.js stop",
+    "status:ai": "node scripts/ai-server-manager.js status",
+    "test:ai": "node scripts/ai-server-manager.js test",
+    "cleanup:ai": "node scripts/ai-server-manager.js cleanup"
   },
   "dependencies": {
     "next": "^15.3.2",
