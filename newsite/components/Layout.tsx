@@ -34,7 +34,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <>
-      <header className={`header ${isScrolled ? 'scrolled' : ''} ${isScrolled ? 'backdrop-blur' : ''}`}>
+      <header className={`header ${isScrolled ? 'scrolled' : ''} ${isScrolled ? 'backdrop-blur' : ''}`} data-testid="layout" role="banner">
         <nav className="nav" role="navigation">
           <div className="nav-container">
             <Link href="/" className="logo" aria-label="Home">

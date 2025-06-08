@@ -57,15 +57,15 @@ The automated testing framework has been successfully implemented, but currently
 
 ## High-Level Task Breakdown
 
-### Phase 0: Critical Environment Fixes
+### Phase 0: Critical Environment Fixes ✅ **COMPLETE**
 - [x] **Task 0.1**: Fix Next.js Image component boolean attribute warnings (fill, priority) - Already handled in jest.setup.js
 - [x] **Task 0.2**: Add requestAnimationFrame/cancelAnimationFrame polyfills to JSDOM - Already handled in jest.setup.js
 - [x] **Task 0.3**: Fix React act() wrapping for animation state updates - Fixed jest fake timers setup
 - [x] **Task 0.4**: Update test environment setup for modern React testing - Updated jest.setup.js with proper timer handling
 
 ### Phase 1: Environment and Selector Fixes
-- [ ] **Task 1.1**: Fix multiple element query issues in Layout tests
-- [ ] **Task 1.2**: Add proper React act() wrapping for state updates
+- [x] **Task 1.1**: Fix multiple element query issues in Layout tests
+- [x] **Task 1.2**: Add proper React act() wrapping for state updates - Fixed header role and test isolation issues
 - [ ] **Task 1.3**: Implement CSS computed style mocking for test environment
 - [ ] **Task 1.4**: Fix timer and animation mocking setup
 
