@@ -21,38 +21,6 @@ const customJestConfig = {
   resetMocks: true,
   restoreMocks: true,
   
-  // Test categorization for selective parallel execution
-  projects: [
-    {
-      displayName: 'unit',
-      ...require('next/jest')({ dir: './' })({
-        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-        testEnvironment: 'jsdom',
-        testMatch: [
-          '<rootDir>/__tests__/components/**/*.test.{js,jsx,ts,tsx}',
-          '<rootDir>/__tests__/hooks/**/*.test.{js,jsx,ts,tsx}',
-          '<rootDir>/__tests__/utils/**/*.test.{js,jsx,ts,tsx}'
-        ],
-      }),
-    },
-    {
-      displayName: 'integration',
-      ...require('next/jest')({ dir: './' })({
-        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-        testEnvironment: 'jsdom',
-        testMatch: ['<rootDir>/__tests__/pages/**/*.test.{js,jsx,ts,tsx}'],
-      }),
-    },
-    {
-      displayName: 'animations',
-      ...require('next/jest')({ dir: './' })({
-        setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-        testEnvironment: 'jsdom',
-        testMatch: ['<rootDir>/__tests__/animations/**/*.test.{js,jsx,ts,tsx}'],
-      }),
-    }
-  ],
-  
   // Default test matching (when not using projects)
   testMatch: [
     '**/__tests__/**/*.(js|jsx|ts|tsx)',
