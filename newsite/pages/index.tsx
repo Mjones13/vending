@@ -68,7 +68,7 @@ export default function Home() {
     
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [rotatingWords, animationState]);
+  }, [rotatingWords.length]);
 
   // Add safeguard effect for stuck states
   useEffect(() => {
