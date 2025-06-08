@@ -19,6 +19,7 @@
 # next.js
 /.next/
 /.next-ai/
+/.next-temp/
 /out/
 
 # production
