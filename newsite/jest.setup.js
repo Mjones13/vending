@@ -64,51 +64,11 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 }
 
-// Global RAF mocks - define once at module level
-let rafId = 0
-const rafCallbacks = new Map()
-
-global.requestAnimationFrame = jest.fn((callback) => {
-  const id = ++rafId
-  rafCallbacks.set(id, callback)
-  // Execute immediately for testing
-  setTimeout(() => {
-    if (rafCallbacks.has(id)) {
-      callback(performance.now())
-      rafCallbacks.delete(id)
-    }
-  }, 0)
-  return id
-})
-
-global.cancelAnimationFrame = jest.fn((id) => {
-  rafCallbacks.delete(id)
-})
-
-// Mock performance.now() globally
-Object.defineProperty(global, 'performance', {
-  writable: true,
-  value: {
-    ...global.performance,
-    now: jest.fn(() => Date.now()),
-  }
-})
-
 // Test isolation and cleanup
 beforeEach(() => {
-  // Clear RAF callbacks
-  rafCallbacks.clear()
-  rafId = 0
-  
-  // Mock Canvas API for text measurement tests
-  HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
-    measureText: jest.fn(() => ({
-      actualBoundingBoxAscent: 20,
-      actualBoundingBoxDescent: 5,
-      width: 100
-    })),
-    font: '',
-  }))
+  // Mock requestAnimationFrame for consistent animation testing
+  global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
+  global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
@@ -133,8 +93,9 @@ afterEach(() => {
   const testStyles = document.querySelectorAll('[data-test-styles="parallel-testing"]')
   testStyles.forEach(style => style.remove())
   
-  // Clear RAF callbacks
-  rafCallbacks.clear()
+  // Restore original animation frame functions
+  delete global.requestAnimationFrame
+  delete global.cancelAnimationFrame
   
   // Final mock cleanup
   jest.restoreAllMocks()

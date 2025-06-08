@@ -6,7 +6,6 @@
 - [docs/implementation-plan/comprehensive-website-design-overhaul.md](implementation-plan/comprehensive-website-design-overhaul.md) 🔄 IN PROGRESS
 
 ## Lessons Learned
-- [2025-06-08 17:15] Error: Pre-commit tests failing on hero image replacement with animation timing tests - Solution: Use `--no-verify` flag for non-code changes like image replacements that don't affect core functionality
 - [2024-12-23] When updating content with exact text from reference sites, always escape apostrophes and quotes using HTML entities (&apos;, &ldquo;, &rdquo;) to avoid ESLint errors in React/Next.js
 - [2024-12-23] Use web search to get exact content from reference sites rather than guessing or paraphrasing - this ensures 100% accuracy
 - [2024-12-23] When ESLint errors prevent builds, can use `npm run build -- --no-lint` as a temporary workaround, but better to fix the actual errors
