@@ -91,6 +91,89 @@ This project uses a structured two-role planning approach with Planner and Execu
 - Document lessons learned in scratchpad for future reference
 - Ask user to clarify which mode to proceed in if not specified
 
+## MANDATORY CODING WORKFLOW
+
+**CRITICAL: This process MUST be followed for EVERY coding request without exception.**
+
+### Step 1: Implementation Planning (REQUIRED)
+Before writing ANY code:
+1. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
+2. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
+3. **Get user approval**: Present plan to user before proceeding to implementation
+
+### Step 2: Sequential Execution (REQUIRED)
+During implementation:
+1. **Follow plan step-by-step**: Execute tasks in exact order specified in implementation plan
+2. **Mark completion**: Explicitly mark off each task as completed in the plan document
+3. **Test each change**: After implementing each task, test the change thoroughly
+4. **COMMIT AFTER EACH TASK**: After completing and testing each task:
+   - Run `git add .` to stage all changes related to the task
+   - Make descriptive commit with format: "Complete [Task X.Y]: [brief description]"
+   - Push commit to remote branch
+5. **Verify before proceeding**: Only move to next task after confirming current task works correctly AND is committed
+6. **Update progress**: Keep implementation plan progress tracking current
+
+### Step 2.5: Mandatory Commit Protocol (CRITICAL)
+**EVERY task completion MUST include a git commit. NO EXCEPTIONS.**
+
+**Commit Requirements:**
+1. **After each completed task**: Immediately stage and commit all files created/modified for that task
+2. **Track new files**: Ensure ALL new files created during the task are properly tracked with `git add`
+3. **Commit message format**: "Complete [Phase X Task Y]: [descriptive summary]"
+4. **Include all related files**: Use `git add .` or specifically add all files created/modified for the task
+5. **Verify commit**: Run `git status` after commit to ensure working directory is clean (no untracked or modified files)
+6. **Push regularly**: Push commits to remote at least after every major task or phase
+
+**Example commit workflow:**
+```bash
+# After completing Task 3.1
+git status  # Check what files were created/modified
+git add .   # Stage ALL files (including new untracked files)
+git commit -m "Complete Phase 3 Task 1: Create animation testing utilities for CSS keyframes"
+git push
+git status  # Verify clean working directory (should show "nothing to commit, working tree clean")
+```
+
+**Commit Failures:**
+- If you complete multiple tasks without committing, STOP immediately
+- Make individual commits for each completed task with appropriate messages
+- Update implementation plan to reflect which tasks have been committed
+- If untracked files remain after commit, you FAILED to properly track new files - fix immediately
+
+### Step 3: Documentation (REQUIRED)
+After completing work:
+1. **Document errors**: Record any errors encountered in `docs/scratchpad.md`
+2. **Record fixes**: Document solutions applied for future reference
+3. **Capture lessons**: Add lessons learned to prevent similar issues
+4. **Update timestamps**: Include dates for all documentation updates
+
+### Step 4: Test-Driven Development (TDD) Requirements
+**CRITICAL: Every implementation task MUST follow TDD workflow:**
+
+1. **Write failing tests first**: Before implementing any feature/change, write automated test(s) that currently fail
+2. **Test must validate expected behavior**: Tests should only pass when code behaves correctly according to task requirements
+3. **Implement code changes**: After writing failing tests, proceed with implementation
+4. **Verify all tests pass**: Before moving to next task, ensure:
+   - The specific test written for current task passes
+   - All existing tests for the site continue to pass
+   - Site behaves properly as expected for the task
+
+5. **Handle test failures**: If any test fails:
+   - Diagnose why the test failed
+   - Determine correct expected behavior
+   - Update either code or test as appropriate to reflect proper behavior
+   - Re-run tests to ensure all pass before proceeding
+
+6. **Commit test and implementation separately**:
+   - First commit: "Add failing tests for [feature/task]" 
+   - Second commit: "Implement [feature/task] to pass tests"
+   - This creates clear test-first development history
+
+### Step 5: No Exceptions Policy
+- **Zero tolerance**: This workflow applies to ALL coding requests, no matter how small
+- **No shortcuts**: Even simple changes require implementation plans AND tests
+- **Consistent execution**: Follow every step regardless of urgency or simplicity
+
 #### Autonomous Execution Model
 
 **When User Says "Go":**
@@ -100,10 +183,12 @@ This project uses a structured two-role planning approach with Planner and Execu
 - Continue autonomously through the entire task list without checking in
 
 **Autonomous Execution Rules:**
-- Work through tasks in order, marking each as complete only when fully tested and verified
+- Work through tasks in order, marking each as complete only when fully tested, verified, AND committed
+- COMMIT after each task completion before proceeding to next task
 - Update implementation plan progress tracking as you complete each task
-- Continue to next task immediately if current task is successful
+- Continue to next task immediately if current task is successful AND committed
 - Do NOT ask for permission between tasks when following an approved plan
+- EXCEPTION: If you realize you've completed multiple tasks without committing, STOP and ask for guidance
 
 **When to Break Autonomy (Ask for Help):**
 - Cannot resolve a technical issue or error after reasonable attempts
@@ -116,12 +201,80 @@ This project uses a structured two-role planning approach with Planner and Execu
 - If same mistake occurs 3 times, stop and reflect before proceeding
 - Always maintain implementation plan updates even during autonomous execution
 
+### Git Status Monitoring (REQUIRED)
+**Check git status frequently during implementation:**
+1. **Before starting each task**: Run `git status` to ensure clean working directory
+2. **After completing each task**: Run `git status` to see what files were modified
+3. **After each commit**: Run `git status` to verify clean working directory
+4. **If working directory shows many uncommitted files**: STOP and commit pending work before proceeding
+
 #### Output Requirements
 
 **Token Usage Reporting:**
 - At the end of every response where tasks have been completed, include total token consumption
 - Format: Add a separate line at the bottom showing "Total tokens consumed: [number]"
 - This applies to all task completion outputs, not just autonomous execution sessions
+
+## Testing Framework
+
+This project has a comprehensive automated testing framework that MUST be used for all development work.
+
+### Testing Commands
+```bash
+cd newsite
+npm test              # Run unit and component tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+npm run test:e2e      # Run end-to-end tests
+npm run test:e2e:ui   # Run E2E tests with UI
+npm run test:all      # Run complete test suite
+```
+
+### Testing Requirements for All Development
+
+**Unit & Component Tests:**
+- Required for all React components
+- Required for all utility functions
+- Required for all custom hooks
+- Tests must be written BEFORE implementation (TDD)
+- Minimum 80% code coverage required
+
+**Animation Tests:**
+- Required for ALL CSS animations and transitions
+- Use animation testing utilities in `test-utils/animation-testing.ts`
+- Test animation states, timing, and visual effects
+- Verify animations work correctly across different scenarios
+
+**E2E Tests:**
+- Required for all user-facing features and workflows
+- Test cross-browser compatibility (Chromium, Firefox, Webkit)
+- Test responsive design on mobile, tablet, and desktop
+- Verify accessibility compliance
+
+**Test Organization:**
+```
+__tests__/
+├── components/       # Component tests
+├── pages/           # Page integration tests
+├── animations/      # Animation-specific tests
+├── utils/          # Utility function tests
+└── e2e/            # End-to-end tests
+```
+
+### TDD Workflow Integration
+
+1. **Write Failing Tests**: Before implementing any feature, create failing tests that define expected behavior
+2. **Use Testing Utilities**: Leverage pre-built testing utilities for common patterns:
+   - `test-utils/render.tsx` for component rendering
+   - `test-utils/animation-testing.ts` for animation testing
+   - `test-utils/e2e-helpers.ts` for E2E workflows
+3. **Verify All Tests Pass**: After implementation, ensure all tests pass before proceeding
+4. **Test Coverage**: Maintain minimum 80% coverage, verify with `npm run test:coverage`
+
+### Testing Documentation
+- See `docs/testing-guide.md` for comprehensive testing patterns and examples
+- Follow established testing conventions for consistency
+- Add tests to appropriate test category based on functionality being tested
 
 ## Important Notes
 

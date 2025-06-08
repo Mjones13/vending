@@ -1,0 +1,44 @@
+#!/bin/sh
+# Pre-commit hook for Golden Coast Amenities website
+# Runs automated tests before allowing commits
+
+echo "🔍 Running pre-commit checks..."
+
+# Change to the correct directory
+cd newsite 2>/dev/null || {
+  echo "✓ Already in newsite directory"
+}
+
+# Check if we're in a Next.js project
+if [ ! -f "package.json" ] || ! grep -q "next" package.json; then
+  echo "❌ Error: Not in a Next.js project directory"
+  echo "Make sure you're in the newsite/ directory"
+  exit 1
+fi
+
+echo "📦 Installing dependencies if needed..."
+npm ci --silent || {
+  echo "❌ Failed to install dependencies"
+  exit 1
+}
+
+echo "🧪 Running unit tests..."
+npm test -- --watchAll=false --passWithNoTests || {
+  echo "❌ Unit tests failed. Fix tests before committing."
+  exit 1
+}
+
+echo "🔧 Running linter..."
+npm run lint || {
+  echo "❌ Linting failed. Fix ESLint errors before committing."
+  exit 1
+}
+
+echo "🏗️  Testing build..."
+npm run build || {
+  echo "❌ Build failed. Fix build errors before committing."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"
+echo "🚀 Proceeding with commit..."

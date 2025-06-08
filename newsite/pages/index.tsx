@@ -10,7 +10,7 @@ export default function Home() {
   const router = useRouter();
   const [logoAnimations, triggerLogoAnimations] = useStaggeredAnimation(9, 150);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [animationState, setAnimationState] = useState<'visible' | 'exiting' | 'entering'>('visible');
   const rotatingWords = ['Workplaces', 'Apartments', 'Gyms', 'Businesses'];
 
   useEffect(() => {
@@ -21,20 +21,23 @@ export default function Home() {
   }, [triggerLogoAnimations]);
 
   useEffect(() => {
-    // Rotating text effect with smoother transitions
+    // State machine for smooth text rotation
     const interval = setInterval(() => {
-      setIsAnimating(true);
+      // Phase 1: Start exit animation
+      setAnimationState('exiting');
       
-      // After the exit animation, change the word
+      // Phase 2: After exit completes, change word and start entrance
       setTimeout(() => {
         setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length);
-        // Small delay before removing animating class to ensure new word is rendered
+        setAnimationState('entering');
+        
+        // Phase 3: After entrance completes, return to visible state
         setTimeout(() => {
-          setIsAnimating(false);
-        }, 50);
-      }, 300); // Exit animation time
+          setAnimationState('visible');
+        }, 400); // Entrance animation duration
+      }, 400); // Exit animation duration
       
-    }, 3.5); // 2.5 seconds total cycle for better readability
+    }, 3000); // Total cycle time
 
     return () => clearInterval(interval);
   }, [rotatingWords.length]);
@@ -89,7 +92,7 @@ export default function Home() {
                   <span className="rotating-text-container">
                     <span 
                       key={currentWordIndex}
-                      className={`rotating-text ${isAnimating ? 'animating' : 'entering'}`}
+                      className={`rotating-text rotating-text-${animationState}`}
                     >
                       {rotatingWords[currentWordIndex]}
                     </span>
@@ -578,34 +581,50 @@ export default function Home() {
         .rotating-text-container {
           display: inline-block;
           position: relative;
-          min-width: 200px;
-          height: 1.5em;
+          min-width: 330px;
+          max-width: 100%;
+          height: 1.2em;
           overflow: hidden;
           vertical-align: baseline;
+          line-height: inherit;
         }
 
         .rotating-text {
           color: var(--color-primary-600);
+          display: inline-block;
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           white-space: nowrap;
-          transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          line-height: inherit;
+        }
+
+        .rotating-text-visible {
           transform: translateY(0);
           opacity: 1;
         }
 
-        .rotating-text.animating {
-          transform: translateY(-120%);
-          opacity: 0;
+        .rotating-text-exiting {
+          animation: slideUpAndOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        .rotating-text.entering {
-          animation: slideUpFromBottom 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        .rotating-text-entering {
+          animation: slideInFromBottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        @keyframes slideUpFromBottom {
+        @keyframes slideUpAndOut {
+          0% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-120%);
+            opacity: 0;
+          }
+        }
+
+        @keyframes slideInFromBottom {
           0% {
             transform: translateY(120%);
             opacity: 0;
@@ -1030,6 +1049,19 @@ export default function Home() {
         }
 
         /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+          .rotating-text-container {
+            min-width: 240px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .rotating-text-container {
+            min-width: 200px;
+            font-size: 0.9em;
+          }
+        }
+
         @media (max-width: 1024px) {
           .hero-split-container {
             grid-template-columns: 1fr;
