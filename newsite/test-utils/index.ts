@@ -8,6 +8,7 @@ export * from './keyframe-testing'
 export * from './parallel-isolation'
 export * from './layout-test-patterns'
 export * from './performance-monitoring'
+export * from './css-in-js-testing'
 
 // Parallel-safe test patterns
 export {

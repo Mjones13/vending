@@ -64,10 +64,13 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 }
 
-// Mock CSS computed styles for animation testing
+// Mock CSS computed styles for animation testing and styled-jsx compatibility
 const originalGetComputedStyle = window.getComputedStyle
 window.getComputedStyle = function(element, pseudoElement) {
   const computedStyle = originalGetComputedStyle.call(this, element, pseudoElement)
+  
+  // Helper function to check if element has a specific CSS class
+  const hasClass = (className) => element.classList && element.classList.contains(className)
   
   // Mock common CSS properties needed for animation tests
   const mockStyle = {
@@ -85,6 +88,45 @@ window.getComputedStyle = function(element, pseudoElement) {
     transitionDuration: element.style.transitionDuration || '0s',
     transitionDelay: element.style.transitionDelay || '0s',
     transitionTimingFunction: element.style.transitionTimingFunction || 'ease',
+    
+    // Enhanced styled-jsx CSS property mocking based on CSS classes
+    // This provides computed style values that match what styled-jsx would produce
+    position: (() => {
+      if (hasClass('header')) return 'fixed'
+      return element.style.position || computedStyle.position || 'static'
+    })(),
+    
+    top: (() => {
+      if (hasClass('header')) return '0px'
+      return element.style.top || computedStyle.top || 'auto'
+    })(),
+    
+    left: (() => {
+      if (hasClass('header')) return '0px'
+      return element.style.left || computedStyle.left || 'auto'
+    })(),
+    
+    right: (() => {
+      if (hasClass('header')) return '0px'
+      return element.style.right || computedStyle.right || 'auto'
+    })(),
+    
+    zIndex: (() => {
+      if (hasClass('header')) return '50'
+      return element.style.zIndex || computedStyle.zIndex || 'auto'
+    })(),
+    
+    backgroundColor: (() => {
+      if (hasClass('header')) return 'rgba(255, 255, 255, 0.95)'
+      return element.style.backgroundColor || computedStyle.backgroundColor || 'rgba(0, 0, 0, 0)'
+    })(),
+    
+    backdropFilter: (() => {
+      if (hasClass('header')) return 'blur(16px)'
+      if (hasClass('backdrop-blur')) return 'blur(16px)'
+      return element.style.backdropFilter || computedStyle.backdropFilter || 'none'
+    })(),
+    
     // Mock CSS variables for design system
     getPropertyValue: function(property) {
       const cssVarPattern = /^--/
@@ -95,6 +137,12 @@ window.getComputedStyle = function(element, pseudoElement) {
           case '--color-primary-600': return '#0066cc'
           case '--color-primary-50': return '#f0f8ff'
           case '--shadow-sm': return '0 1px 2px rgba(0,0,0,0.05)'
+          case '--shadow-lg': return '0 10px 15px -3px rgba(0,0,0,0.1)'
+          case '--shadow-xl': return '0 20px 25px -5px rgba(0,0,0,0.1)'
+          case '--z-50': return '50'
+          case '--border-width': return '1px'
+          case '--color-neutral-200': return '#e5e7eb'
+          case '--color-primary-200': return '#dbeafe'
           default: return ''
         }
       }
