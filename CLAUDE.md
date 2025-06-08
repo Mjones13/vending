@@ -41,8 +41,27 @@ This is a Next.js Pages Router application for Golden Coast Amenities (formerly 
 
 ### Documentation Structure
 - `docs/scratchpad.md` - Main reference file with links to implementation plans and lessons learned
-- `docs/implementation-plan/{task-name}.md` - Detailed task breakdowns with status boards
+- `docs/implementation-plan/{version}-{task-name}.md` - Detailed task breakdowns with status boards
 - Branch names match task slugs from implementation plans
+
+### Implementation Plan Versioning
+Each Implementation Plan must begin with a clearly visible Version Number in the filename, formatted as:
+
+`{version}-{task-name}.md`
+
+Where:
+- `{version}` is an incrementing integer (1, 2, 3, etc.)
+- `{task-name}` is the descriptive name of the implementation plan
+
+The Version Number must:
+- Increment sequentially over time with each new Implementation Plan added
+- Be placed at the very beginning of the filename, followed by a dash
+- Make it easier to track when Implementation Plans were created and differentiate between versions over time
+
+Examples:
+- `1-replicate-smarter-vending.md`
+- `2-replace-logo-golden-coast.md`
+- `3-comprehensive-website-design-overhaul.md`
 
 ## Branch Management Protocol
 
