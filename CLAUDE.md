@@ -65,42 +65,47 @@ Examples:
 
 ## Branch Management Protocol
 
-**MANDATORY: All Tasks Require Dedicated Branches**
-Every task, regardless of size, MUST be performed on a dedicated Git branch:
+**MANDATORY: Dedicated Branches for Non-Implementation Plan Tasks**
+Any task performed outside the scope of an existing implementation plan MUST be performed on a dedicated Git branch:
 
-**For ALL Tasks (Including Small Tasks):**
-1. **Create dedicated branch**: `git checkout -b descriptive-task-name`
-2. **Branch naming**: Use clear, descriptive names that encapsulate the task being performed
-3. **Work isolation**: ALL changes related to the task must be made within this branch
-4. **Follow complete workflow**: Each branch must follow the full process below
+**When to Create a New Branch:**
+- **Small tasks on main**: If currently on main branch and asked to perform any task
+- **Ad-hoc requests**: Any work not part of an existing implementation plan
+- **Quick fixes**: Bug fixes, documentation updates, or minor changes not in a plan
+- **New features**: Any feature work not covered by current implementation plan
 
-**Branch Workflow for Every Task:**
+**When NOT to Create a New Branch:**
+- **Implementation plan work**: When working within the scope of an existing implementation plan
+- **Existing task branch**: When already on a dedicated branch for the current work
+- **Continuing planned work**: When following tasks outlined in an approved implementation plan
+
+**Branch Workflow for Non-Implementation Plan Tasks:**
 1. **Start from main**: `git checkout main && git pull`
-2. **Create task branch**: `git checkout -b task-name`
+2. **Create task branch**: `git checkout -b descriptive-task-name`
 3. **Make changes**: Perform all task-related work on this branch
 4. **Commit changes**: Follow mandatory commit protocol
 5. **Pre-merge preparation**:
    - Pull latest main: `git checkout main && git pull`
-   - Switch back to branch: `git checkout task-name`
+   - Switch back to branch: `git checkout descriptive-task-name`
    - Merge main into branch: `git merge main`
    - Resolve any conflicts if they exist
    - Verify stability: Run tests and ensure everything works
-6. **Push branch**: `git push origin task-name`
+6. **Push branch**: `git push origin descriptive-task-name`
 7. **Merge to main**: After verification, merge branch back to main
 8. **Clean up**: Delete branch after successful merge
 
-**Before Any Implementation Work:**
+**Before Any Work:**
 Always verify you're on the correct branch before starting work:
-- **New session**: Check current branch matches the task you're working on
-- **Existing implementation plan**: Verify branch name matches implementation plan filename
-- **Branch verification**: Use `git branch` to check current branch
-- **Missing branch**: Ask user before creating new branch if one doesn't exist
+- **Check current branch**: Use `git branch` to verify current location
+- **On main + new task**: Create dedicated branch before proceeding
+- **In implementation plan**: Continue on existing implementation plan branch
+- **Branch verification**: Ensure branch name matches the work being performed
 
-**Benefits of Universal Branch Usage:**
-- Complete isolation of changes for every task
-- Full traceability through version control
+**Benefits of Task-Specific Branch Usage:**
+- Prevents direct changes to main branch
+- Complete isolation of ad-hoc changes
+- Full traceability for all modifications
 - Ability to safely experiment and rollback
-- Prevents conflicts between concurrent work
 - Maintains clean main branch history
 
 ## MANDATORY CODING WORKFLOW
