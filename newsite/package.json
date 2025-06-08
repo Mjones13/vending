@@ -36,6 +36,10 @@
     "monitor:report": "node scripts/parallel-execution-monitor.js report",
     "monitor:dashboard": "node scripts/monitoring-dashboard.js",
     "monitor:stop": "node scripts/parallel-execution-monitor.js stop",
+    "resource:report": "node scripts/resource-manager.js",
+    "resource:monitor": "node scripts/resource-integration.js",
+    "test:concurrent:managed": "node scripts/concurrent-test-executor.js --mode=full --resource-management",
+    "test:load-balanced:managed": "node scripts/load-balanced-test-runner.js --resource-management",
     "setup:hooks": "bash scripts/setup-hooks.sh"
   },
   "dependencies": {

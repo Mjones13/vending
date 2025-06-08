@@ -10,6 +10,7 @@ const { Worker } = require('worker_threads')
 const os = require('os')
 const path = require('path')
 const { TestRunnerMonitorIntegration, PerformanceMonitoring } = require('./monitoring-integration')
+const { ResourceManagedTestRunner } = require('./resource-integration')
 
 class ConcurrentTestExecutor {
   constructor(options = {}) {
@@ -28,6 +29,13 @@ class ConcurrentTestExecutor {
       mode: this.mode,
       maxConcurrency: this.maxConcurrency,
       systemInfo: this.systemInfo,
+    })
+    
+    // Initialize resource management
+    this.resourceManager = new ResourceManagedTestRunner(this, {
+      enableResourceManagement: options.enableResourceManagement !== false,
+      memoryThresholdMB: options.memoryThresholdMB || 400,
+      errorRetryAttempts: options.errorRetryAttempts || 2,
     })
   }
 
@@ -340,6 +348,47 @@ class ConcurrentTestExecutor {
     console.log('='.repeat(60))
   }
 
+  generateResourceReport(resourceReport) {
+    console.log('\n' + '='.repeat(60))
+    console.log('🔧 RESOURCE MANAGEMENT REPORT')
+    console.log('='.repeat(60))
+    
+    const summary = resourceReport.summary
+    console.log(`💾 Memory Usage: ${summary.memoryUsage.toFixed(1)}%`)
+    console.log(`🧠 CPU Usage: ${summary.cpuUsage.toFixed(1)}%`)
+    console.log(`👥 Workers Managed: ${summary.totalWorkers}`)
+    console.log(`✅ Healthy Workers: ${summary.healthyWorkers}`)
+    
+    if (summary.warningWorkers > 0) {
+      console.log(`⚠️  Warning Workers: ${summary.warningWorkers}`)
+    }
+    
+    if (summary.criticalWorkers > 0) {
+      console.log(`🚨 Critical Workers: ${summary.criticalWorkers}`)
+    }
+    
+    if (summary.errorRate > 0) {
+      console.log(`📊 Error Rate: ${summary.errorRate.toFixed(1)} errors/minute`)
+    }
+    
+    // Display recommendations
+    if (resourceReport.recommendations.length > 0) {
+      console.log('\n💡 Resource Recommendations:')
+      console.log('-'.repeat(60))
+      resourceReport.recommendations.forEach(rec => {
+        const icon = rec.severity === 'high' ? '🚨' : rec.severity === 'medium' ? '⚠️' : 'ℹ️'
+        console.log(`${icon} ${rec.message}`)
+        if (rec.action) {
+          console.log(`   Action: ${rec.action}`)
+        }
+      })
+    } else {
+      console.log('\n✅ No resource management issues detected')
+    }
+    
+    console.log('='.repeat(60))
+  }
+
   async run() {
     const sessionId = this.monitoring.startSession({
       mode: this.mode,
@@ -361,6 +410,10 @@ class ConcurrentTestExecutor {
       
       this.generatePerformanceReport()
       
+      // Generate resource management report
+      const resourceReport = this.resourceManager.getResourceHealthReport()
+      this.generateResourceReport(resourceReport)
+      
       const success = this.failedTests.length === 0
       
       // End monitoring session
@@ -374,9 +427,11 @@ class ConcurrentTestExecutor {
       
       if (this.failedTests.length > 0) {
         console.log('\n❌ Some tests failed. Check the details above.')
+        this.resourceManager.cleanup()
         process.exit(1)
       } else {
         console.log('\n✅ All tests passed successfully!')
+        this.resourceManager.cleanup()
         process.exit(0)
       }
     } catch (error) {
@@ -391,6 +446,7 @@ class ConcurrentTestExecutor {
       })
       
       this.generatePerformanceReport()
+      this.resourceManager.cleanup()
       process.exit(1)
     }
   }

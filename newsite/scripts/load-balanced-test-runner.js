@@ -9,6 +9,7 @@ const { performance } = require('perf_hooks')
 const os = require('os')
 const EventEmitter = require('events')
 const { TestRunnerMonitorIntegration, PerformanceMonitoring } = require('./monitoring-integration')
+const { ResourceManagedTestRunner } = require('./resource-integration')
 
 class WorkerPool extends EventEmitter {
   constructor(maxWorkers, systemInfo) {
@@ -176,6 +177,13 @@ class LoadBalancedTestRunner {
       maxWorkers: this.workerPool.maxWorkers,
       systemInfo: this.systemInfo,
     })
+    
+    // Initialize resource management
+    this.resourceManager = new ResourceManagedTestRunner(this, {
+      enableResourceManagement: true,
+      memoryThresholdMB: 600,
+      errorRetryAttempts: 3,
+    })
   }
 
   gatherSystemInfo() {
@@ -324,9 +332,11 @@ class LoadBalancedTestRunner {
       
       if (failedJobs.length > 0) {
         console.log(`\n❌ ${failedJobs.length} jobs failed`)
+        this.resourceManager.cleanup()
         process.exit(1)
       } else {
         console.log('\n✅ All tests completed successfully!')
+        this.resourceManager.cleanup()
         process.exit(0)
       }
 
@@ -341,6 +351,7 @@ class LoadBalancedTestRunner {
         totalDuration: performance.now() - this.startTime,
       })
       
+      this.resourceManager.cleanup()
       process.exit(1)
     }
   }
