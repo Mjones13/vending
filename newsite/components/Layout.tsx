@@ -60,62 +60,52 @@ const Layout = ({ children }: LayoutProps) => {
 
             <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
               <li className="nav-item">
-                <Link href="/" className={isActive('/') ? 'active' : ''}>
+                <Link href="/" className={isActive('/') ? 'nav-link active' : 'nav-link'}>
                   Home
                 </Link>
               </li>
               <li className="nav-item dropdown">
-                <Link href="/coffee-services" className={`dropdown-toggle ${isActive('/coffee-services') ? 'active' : ''}`}>
-                  Coffee Services
+                <Link href="/coffee-services" className={`nav-link dropdown-toggle ${isActive('/coffee-services') || isActive('/mini-markets') || isActive('/vending-machines') ? 'active' : ''}`}>
+                  Services
+                  <span className="dropdown-arrow">▼</span>
                 </Link>
                 <ul className="dropdown-menu">
-                  <li><Link href="/coffee-services">Overview</Link></li>
+                  <li><Link href="/coffee-services">Coffee Services</Link></li>
+                  <li><Link href="/mini-markets">Mini Markets</Link></li>
+                  <li><Link href="/vending-machines">Vending Machines</Link></li>
+                  <li className="dropdown-divider"></li>
                   <li><Link href="/coffee-services/ground-whole-bean">Ground & Whole Bean</Link></li>
                   <li><Link href="/coffee-services/airpot-portion-packets">Airpot Portion Packets</Link></li>
                   <li><Link href="/coffee-services/accessories">Accessories</Link></li>
                 </ul>
               </li>
               <li className="nav-item">
-                <Link href="/shop" className={isActive('/shop') ? 'active' : ''}>
+                <Link href="/shop" className={isActive('/shop') ? 'nav-link active' : 'nav-link'}>
                   Shop
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link href="/mini-markets" className={isActive('/mini-markets') ? 'active' : ''}>
-                  Mini Markets
+              <li className="nav-item dropdown">
+                <Link href="/about" className={`nav-link dropdown-toggle ${isActive('/about') || isActive('/blog') || isActive('/careers') ? 'active' : ''}`}>
+                  Company
+                  <span className="dropdown-arrow">▼</span>
                 </Link>
+                <ul className="dropdown-menu">
+                  <li><Link href="/about">About Us</Link></li>
+                  <li><Link href="/blog">Blog</Link></li>
+                  <li><Link href="/careers">Careers</Link></li>
+                </ul>
               </li>
               <li className="nav-item">
-                <Link href="/vending-machines" className={isActive('/vending-machines') ? 'active' : ''}>
-                  Vending Machines
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/blog" className={isActive('/blog') ? 'active' : ''}>
-                  Blog
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/about" className={isActive('/about') ? 'active' : ''}>
-                  About
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/careers" className={isActive('/careers') ? 'active' : ''}>
-                  Careers
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href="/contact" className={isActive('/contact') ? 'active' : ''}>
+                <Link href="/contact" className={isActive('/contact') ? 'nav-link active' : 'nav-link'}>
                   Contact
                 </Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item nav-cta">
                 <Link href="/request-a-demo" className="btn-demo">
                   Request Demo
                 </Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item nav-secondary">
                 <Link href="/login" className="btn-login">
                   Login
                 </Link>
@@ -194,12 +184,13 @@ const Layout = ({ children }: LayoutProps) => {
         }
 
         .nav-container {
-          max-width: 1200px;
+          max-width: 1400px;
           margin: 0 auto;
           padding: var(--space-4) var(--space-8);
           display: flex;
           justify-content: space-between;
           align-items: center;
+          position: relative;
         }
 
         .logo {
@@ -261,41 +252,76 @@ const Layout = ({ children }: LayoutProps) => {
           list-style: none;
           margin: 0;
           padding: 0;
-          gap: var(--space-2);
           align-items: center;
+          justify-content: center;
+          flex: 1;
+          max-width: 800px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         .nav-item {
           position: relative;
+          margin: 0 var(--space-1);
         }
 
-        .nav-item a {
+        .nav-item:not(.nav-cta):not(.nav-secondary) {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+        }
+
+        .nav-cta {
+          margin-left: var(--space-6);
+        }
+
+        .nav-secondary {
+          margin-left: var(--space-3);
+        }
+
+        .nav-link {
           text-decoration: none;
           color: var(--color-neutral-700);
-          font-weight: var(--font-weight-medium);
-          font-size: var(--font-size-sm);
-          padding: var(--space-2) var(--space-4);
+          font-weight: var(--font-weight-semibold);
+          font-size: var(--font-size-base);
+          padding: var(--space-3) var(--space-5);
           border-radius: var(--border-radius-lg);
           transition: var(--transition-all);
           position: relative;
           display: block;
+          white-space: nowrap;
+          letter-spacing: -0.01em;
         }
 
-        .nav-item a:hover {
+        .nav-link:hover {
           color: var(--color-primary-600);
           background: var(--color-primary-50);
           transform: translateY(-1px);
+          box-shadow: var(--shadow-sm);
         }
 
-        .nav-item a:focus {
+        .nav-link:focus {
           outline: 2px solid var(--color-primary-500);
           outline-offset: 2px;
         }
 
-        .nav-item a.active {
+        .nav-link.active {
           color: var(--color-primary-600);
           background: var(--color-primary-100);
-          font-weight: var(--font-weight-semibold);
+          font-weight: var(--font-weight-bold);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .nav-link.active::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 20px;
+          height: 2px;
+          background: var(--color-primary-600);
+          border-radius: var(--border-radius-full);
         }
 
         .dropdown {
@@ -305,14 +331,24 @@ const Layout = ({ children }: LayoutProps) => {
         .dropdown-toggle {
           cursor: pointer;
           color: var(--color-neutral-700);
-          font-weight: var(--font-weight-medium);
-          font-size: var(--font-size-sm);
-          padding: var(--space-2) var(--space-4);
+          font-weight: var(--font-weight-semibold);
+          font-size: var(--font-size-base);
+          padding: var(--space-3) var(--space-5);
           transition: var(--transition-all);
           text-decoration: none;
           border-radius: var(--border-radius-lg);
           position: relative;
-          display: block;
+          display: flex;
+          align-items: center;
+          gap: var(--space-2);
+          white-space: nowrap;
+          letter-spacing: -0.01em;
+        }
+
+        .dropdown-arrow {
+          font-size: 10px;
+          transition: var(--transition-transform);
+          opacity: 0.7;
         }
 
         .dropdown-toggle:hover,
@@ -320,6 +356,12 @@ const Layout = ({ children }: LayoutProps) => {
           color: var(--color-primary-600);
           background: var(--color-primary-50);
           transform: translateY(-1px);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .dropdown:hover .dropdown-arrow {
+          transform: rotate(180deg);
+          opacity: 1;
         }
 
         .dropdown-toggle:focus {
@@ -330,30 +372,44 @@ const Layout = ({ children }: LayoutProps) => {
         .dropdown-toggle.active {
           color: var(--color-primary-600);
           background: var(--color-primary-100);
-          font-weight: var(--font-weight-semibold);
+          font-weight: var(--font-weight-bold);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .dropdown-toggle.active::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 20px;
+          height: 2px;
+          background: var(--color-primary-600);
+          border-radius: var(--border-radius-full);
         }
 
         .dropdown-menu {
           position: absolute;
-          top: calc(100% + var(--space-2));
-          left: 0;
+          top: calc(100% + var(--space-3));
+          left: 50%;
+          transform: translateX(-50%) translateY(-8px);
           background: var(--color-white);
-          box-shadow: var(--shadow-xl);
+          box-shadow: var(--shadow-2xl);
           border: var(--border-width) solid var(--color-neutral-200);
-          border-radius: var(--border-radius-xl);
-          padding: var(--space-3);
-          min-width: 220px;
+          border-radius: var(--border-radius-2xl);
+          padding: var(--space-4);
+          min-width: 240px;
           opacity: 0;
           visibility: hidden;
-          transform: translateY(-8px);
           transition: var(--transition-all);
           z-index: var(--z-50);
+          backdrop-filter: blur(8px);
         }
 
         .dropdown:hover .dropdown-menu {
           opacity: 1;
           visibility: visible;
-          transform: translateY(0);
+          transform: translateX(-50%) translateY(0);
         }
 
         .dropdown-menu li {
@@ -363,18 +419,28 @@ const Layout = ({ children }: LayoutProps) => {
         .dropdown-menu a {
           display: block;
           padding: var(--space-3) var(--space-4);
-          color: var(--color-neutral-600);
+          color: var(--color-neutral-700);
           text-decoration: none;
           border-radius: var(--border-radius-lg);
           font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-medium);
           transition: var(--transition-all);
           margin-bottom: var(--space-1);
+          position: relative;
         }
 
         .dropdown-menu a:hover {
           background: var(--color-primary-50);
           color: var(--color-primary-600);
           transform: translateX(4px);
+          font-weight: var(--font-weight-semibold);
+        }
+
+        .dropdown-divider {
+          height: 1px;
+          background: var(--color-neutral-200);
+          margin: var(--space-3) 0;
+          border: none;
         }
 
         .dropdown-menu a:focus {
@@ -385,14 +451,19 @@ const Layout = ({ children }: LayoutProps) => {
         .btn-demo {
           background: var(--gradient-primary) !important;
           color: var(--color-white) !important;
-          padding: var(--space-3) var(--space-6) !important;
+          padding: var(--space-3) var(--space-7) !important;
           border-radius: var(--border-radius-full) !important;
-          font-weight: var(--font-weight-semibold) !important;
+          font-weight: var(--font-weight-bold) !important;
           font-size: var(--font-size-sm) !important;
           transition: var(--transition-all) !important;
-          box-shadow: var(--shadow-md) !important;
+          box-shadow: var(--shadow-lg) !important;
           text-transform: uppercase !important;
-          letter-spacing: 0.025em !important;
+          letter-spacing: 0.05em !important;
+          text-decoration: none !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          white-space: nowrap !important;
         }
 
         .btn-demo:hover {
@@ -407,26 +478,31 @@ const Layout = ({ children }: LayoutProps) => {
         }
 
         .btn-login {
-          background: var(--gradient-accent) !important;
-          color: var(--color-white) !important;
-          padding: var(--space-3) var(--space-6) !important;
+          background: transparent !important;
+          color: var(--color-neutral-600) !important;
+          border: 2px solid var(--color-neutral-300) !important;
+          padding: var(--space-2) var(--space-5) !important;
           border-radius: var(--border-radius-full) !important;
           font-weight: var(--font-weight-semibold) !important;
           font-size: var(--font-size-sm) !important;
           transition: var(--transition-all) !important;
-          box-shadow: var(--shadow-md) !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.025em !important;
+          text-decoration: none !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          white-space: nowrap !important;
         }
 
         .btn-login:hover {
-          background: linear-gradient(135deg, var(--color-accent-600), var(--color-accent-700)) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: var(--shadow-lg) !important;
+          background: var(--color-neutral-600) !important;
+          color: var(--color-white) !important;
+          border-color: var(--color-neutral-600) !important;
+          transform: translateY(-1px) !important;
+          box-shadow: var(--shadow-md) !important;
         }
 
         .btn-login:focus {
-          outline: 2px solid var(--color-accent-300) !important;
+          outline: 2px solid var(--color-neutral-400) !important;
           outline-offset: 2px !important;
         }
 
@@ -550,6 +626,9 @@ const Layout = ({ children }: LayoutProps) => {
             visibility: hidden;
             transition: var(--transition-all);
             gap: var(--space-4);
+            max-width: none;
+            margin: 0;
+            justify-content: flex-start;
           }
 
           .nav-menu.active {
@@ -562,11 +641,28 @@ const Layout = ({ children }: LayoutProps) => {
             width: 100%;
           }
 
-          .nav-item a {
+          .nav-item:not(.nav-cta):not(.nav-secondary) {
+            flex: none;
+            justify-content: center;
+          }
+
+          .nav-cta,
+          .nav-secondary {
+            margin-left: 0;
+            margin-top: var(--space-4);
+          }
+
+          .nav-link,
+          .dropdown-toggle {
             text-align: center;
             padding: var(--space-4);
             border-radius: var(--border-radius-xl);
             font-size: var(--font-size-base);
+            justify-content: center;
+          }
+
+          .dropdown-arrow {
+            display: none;
           }
 
           .dropdown-menu {
@@ -576,10 +672,16 @@ const Layout = ({ children }: LayoutProps) => {
             transform: none;
             box-shadow: none;
             border: none;
-            padding: var(--space-2) var(--space-4);
+            padding: var(--space-3) var(--space-4);
             background: var(--color-neutral-50);
             margin-top: var(--space-2);
             border-radius: var(--border-radius-lg);
+            min-width: auto;
+            backdrop-filter: none;
+          }
+
+          .dropdown-divider {
+            margin: var(--space-2) 0;
           }
 
           .footer-content {
