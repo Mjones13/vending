@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
 import { createE2EHelpers } from '../../test-utils/e2e-helpers'
 
 test.describe('Homepage E2E Tests', () => {
-  test('should load homepage and verify basic elements', async ({ page }) => {
+  test('should load homepage and verify basic elements @critical', async ({ page }) => {
     const helpers = createE2EHelpers(page)
     
     // Navigate to homepage

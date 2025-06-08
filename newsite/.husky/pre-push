@@ -1,31 +1,48 @@
 #!/bin/sh
 # Pre-push hook for Golden Coast Amenities website
-# Runs comprehensive tests before pushing to remote
+# Comprehensive parallel testing before pushing to remote
 
-echo "🚀 Running pre-push checks..."
+echo "🧪 Running comprehensive pre-push validation..."
 
 # Change to the correct directory
 cd newsite 2>/dev/null || {
   echo "✓ Already in newsite directory"
 }
 
-echo "🧪 Running full test suite..."
-npm run test:coverage -- --watchAll=false || {
-  echo "❌ Test coverage check failed"
+# Check if we're in a Next.js project
+if [ ! -f "package.json" ] || ! grep -q "next" package.json; then
+  echo "❌ Error: Not in a Next.js project directory"
+  echo "Make sure you're in the newsite/ directory"
+  exit 1
+fi
+
+# Check if this push contains only documentation changes
+cd ..
+if ! git diff HEAD~1..HEAD --name-only | grep -qE '\.(js|jsx|ts|tsx|css|scss|sass)$|newsite/(pages|components|hooks)/|newsite/styles/.*\.(css|scss|sass)$|package\.json$'; then
+  echo "📝 Documentation-only changes detected in commit history"
+  echo "⏭️  Skipping comprehensive testing for documentation changes"
+  echo "✅ Pre-push checks completed for documentation changes!"
+  echo "🚀 Proceeding with push..."
+  exit 0
+fi
+
+cd newsite
+
+echo "💻 Code changes detected - running comprehensive parallel validation..."
+
+# Ensure dependencies are installed
+echo "📦 Ensuring dependencies are up to date..."
+npm ci --silent || {
+  echo "❌ Failed to install dependencies"
   exit 1
 }
 
-echo "🌐 Running E2E tests (critical paths only)..."
-npm run test:e2e -- --grep "Phase 4 Core E2E Framework Verification" --project=chromium || {
-  echo "❌ Critical E2E tests failed"
+# Use our custom parallel test runner for comprehensive testing
+node scripts/parallel-test-runner.js pre-push || {
+  echo "❌ Pre-push validation failed. Please fix issues before pushing."
+  echo "💡 Tip: Run 'npm run test:all' locally to reproduce the issues"
   exit 1
 }
 
-echo "📊 Checking coverage thresholds..."
-node scripts/coverage-report.js --check-only || {
-  echo "❌ Coverage thresholds not met"
-  exit 1
-}
-
-echo "✅ All pre-push checks passed!"
-echo "🌍 Safe to push to remote repository"
+echo "✅ All pre-push validation passed!"
+echo "🚀 Code is ready for remote repository!"

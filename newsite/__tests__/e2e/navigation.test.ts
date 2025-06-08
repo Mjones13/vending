@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
 import { createE2EHelpers } from '../../test-utils/e2e-helpers'
 
 test.describe('Navigation E2E Tests', () => {
-  test('should navigate to all main pages from header menu', async ({ page }) => {
+  test('should navigate to all main pages from header menu @critical', async ({ page }) => {
     const helpers = createE2EHelpers(page)
     
     // Start at homepage

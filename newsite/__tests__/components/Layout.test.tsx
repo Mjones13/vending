@@ -11,7 +11,7 @@ const MockChild = () => <div data-testid="child-content">Test Content</div>
 
 describe('Layout Component', () => {
   describe('Basic Rendering', () => {
-    it('should render children content correctly', () => {
+    it('critical: should render children content correctly', () => {
       render(
         <Layout>
           <MockChild />
@@ -22,7 +22,7 @@ describe('Layout Component', () => {
       expect(screen.getByText('Test Content')).toBeInTheDocument()
     })
 
-    it('should render header with logo', () => {
+    it('critical: should render header with logo', () => {
       render(
         <Layout>
           <MockChild />

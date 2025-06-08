@@ -9,6 +9,45 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
+  
+  // Parallel execution optimization for M2 MacBook
+  maxWorkers: process.env.CI ? '100%' : '75%', // Use 6-8 cores on M2, leave some for system
+  workerIdleMemoryLimit: '512MB', // Manage memory per worker
+  maxConcurrency: 8, // Limit concurrent tests per worker
+  testTimeout: 30000, // Increased timeout for parallel execution overhead
+  
+  // Test isolation for parallel safety
+  clearMocks: true,
+  resetMocks: true,
+  restoreMocks: true,
+  
+  // Test categorization for selective parallel execution
+  projects: [
+    {
+      displayName: 'unit',
+      testMatch: [
+        '<rootDir>/__tests__/components/**/*.test.{js,jsx,ts,tsx}',
+        '<rootDir>/__tests__/hooks/**/*.test.{js,jsx,ts,tsx}',
+        '<rootDir>/__tests__/utils/**/*.test.{js,jsx,ts,tsx}'
+      ],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      testEnvironment: 'jsdom',
+    },
+    {
+      displayName: 'integration',
+      testMatch: ['<rootDir>/__tests__/pages/**/*.test.{js,jsx,ts,tsx}'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      testEnvironment: 'jsdom',
+    },
+    {
+      displayName: 'animations',
+      testMatch: ['<rootDir>/__tests__/animations/**/*.test.{js,jsx,ts,tsx}'],
+      setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      testEnvironment: 'jsdom',
+    }
+  ],
+  
+  // Default test matching (when not using projects)
   testMatch: [
     '**/__tests__/**/*.(js|jsx|ts|tsx)',
     '**/*.(test|spec).(js|jsx|ts|tsx)'

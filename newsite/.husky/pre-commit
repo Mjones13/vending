@@ -1,9 +1,8 @@
 #!/bin/sh
 # Pre-commit hook for Golden Coast Amenities website
-# Runs automated tests before allowing commits for code changes
-# Skips tests for documentation/configuration-only changes
+# Fast parallel validation for immediate feedback
 
-echo "🔍 Running pre-commit checks..."
+echo "🚀 Running fast pre-commit validation..."
 
 # Change to the correct directory
 cd newsite 2>/dev/null || {
@@ -18,14 +17,10 @@ if [ ! -f "package.json" ] || ! grep -q "next" package.json; then
 fi
 
 # Check if this commit contains only non-code files
-# Non-code files: documentation (.md), config files, CLAUDE.md, directory structure
-# Go back to root to check all staged files
 cd ..
-
-# Get list of staged files and check if any are code files
 if ! git diff --cached --name-only | grep -qE '\.(js|jsx|ts|tsx|css|scss|sass)$|newsite/(pages|components|hooks)/|newsite/styles/.*\.(css|scss|sass)$|package\.json$'; then
   echo "📝 Documentation/configuration-only changes detected"
-  echo "⏭️  Skipping test suite for non-code changes"
+  echo "⏭️  Skipping all tests for non-code changes"
   echo "✅ Pre-commit checks completed for documentation changes!"
   echo "🚀 Proceeding with commit..."
   exit 0
@@ -33,31 +28,14 @@ fi
 
 cd newsite
 
-echo "💻 Code changes detected - running full test suite..."
+# Run fast parallel pre-commit validation
+echo "💻 Code changes detected - running parallel validation..."
 
-echo "📦 Installing dependencies if needed..."
-npm ci --silent || {
-  echo "❌ Failed to install dependencies"
+# Use our custom parallel test runner for optimal performance
+node scripts/parallel-test-runner.js pre-commit || {
+  echo "❌ Pre-commit validation failed. Please fix issues before committing."
   exit 1
 }
 
-echo "🧪 Running unit tests..."
-npm test -- --watchAll=false --passWithNoTests || {
-  echo "❌ Unit tests failed. Fix tests before committing."
-  exit 1
-}
-
-echo "🔧 Running linter..."
-npm run lint || {
-  echo "❌ Linting failed. Fix ESLint errors before committing."
-  exit 1
-}
-
-echo "🏗️  Testing build..."
-npm run build || {
-  echo "❌ Build failed. Fix build errors before committing."
-  exit 1
-}
-
-echo "✅ All pre-commit checks passed!"
+echo "✅ Fast pre-commit validation passed!"
 echo "🚀 Proceeding with commit..."
