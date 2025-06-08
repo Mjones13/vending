@@ -19,11 +19,44 @@ class ParallelTestRunner {
   detectM2MacBook() {
     try {
       const cpus = os.cpus();
-      // M2 MacBooks have specific CPU identifiers
-      return cpus.length >= 8 && cpus[0].model.includes('Apple');
+      const platform = os.platform();
+      const arch = os.arch();
+      
+      // Enhanced M2 detection
+      const isAppleSilicon = arch === 'arm64' && platform === 'darwin';
+      const hasAppleCPU = cpus[0]?.model?.includes('Apple');
+      const hasEnoughCores = cpus.length >= 8;
+      
+      return isAppleSilicon && hasAppleCPU && hasEnoughCores;
     } catch {
       return false;
     }
+  }
+  
+  getOptimalWorkerCount() {
+    const cpus = os.cpus().length;
+    
+    if (this.isM2) {
+      // M2 optimization: use 75% of cores for optimal performance
+      return Math.max(1, Math.floor(cpus * 0.75));
+    }
+    
+    // Conservative approach for other systems
+    return Math.max(1, Math.floor(cpus * 0.5));
+  }
+  
+  checkSystemResources() {
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const memoryUsage = (totalMemory - freeMemory) / totalMemory;
+    const loadAvg = os.loadavg()[0];
+    
+    return {
+      memoryUsage: memoryUsage * 100,
+      cpuLoad: loadAvg,
+      availableMemoryGB: freeMemory / (1024 * 1024 * 1024),
+      canRunParallel: memoryUsage < 0.8 && loadAvg < os.cpus().length * 0.8
+    };
   }
 
   async runCommand(name, command, args = []) {
@@ -83,9 +116,24 @@ class ParallelTestRunner {
   }
 
   async runParallel(commands) {
+    const resources = this.checkSystemResources();
+    const optimalWorkers = this.getOptimalWorkerCount();
+    
     console.log(`🔥 Running ${commands.length} test suites in parallel...`);
+    
     if (this.isM2) {
       console.log('🍎 M2 MacBook detected - optimizing for performance');
+      console.log(`   Optimal workers: ${optimalWorkers}`);
+    }
+    
+    console.log(`📊 System Resources:`);
+    console.log(`   Memory usage: ${resources.memoryUsage.toFixed(1)}%`);
+    console.log(`   CPU load: ${resources.cpuLoad.toFixed(2)}`);
+    console.log(`   Available memory: ${resources.availableMemoryGB.toFixed(1)}GB`);
+    
+    if (!resources.canRunParallel) {
+      console.log('⚠️  High system load detected - running sequentially for stability');
+      return this.runSequential(commands);
     }
 
     try {
