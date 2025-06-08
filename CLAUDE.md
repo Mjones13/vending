@@ -179,6 +179,20 @@ Examples:
 
 ## Branch Management Protocol
 
+**CRITICAL SAFETY RULE: Never Delete Branches With Unmerged Changes**
+- Before deleting any branch, ALWAYS verify all changes are merged to main
+- Use `git log origin/main..branch-name` - must show NO commits
+- Use `git diff origin/main..branch-name` - must show NO differences
+- If any unique changes exist:
+  - STOP immediately and preserve the branch
+  - Notify the user: "Branch contains unmerged changes"
+  - Show the specific differences:
+    - List unmerged commits: `git log --oneline origin/main..branch-name`
+    - Show file differences: `git diff --name-status origin/main..branch-name`
+    - Explain what changes would be lost if deleted
+  - Ask user for explicit confirmation on how to proceed
+- Data loss from premature branch deletion is unacceptable
+
 **MANDATORY: Dedicated Branches for Non-Implementation Plan Tasks**
 Any task performed outside the scope of an existing implementation plan MUST be performed on a dedicated Git branch:
 
@@ -458,9 +472,32 @@ When all tasks in a phase are complete and verified:
 5. **Push final state**: `git push` to update remote branch
 6. **Switch to main and merge**: `git checkout main && git merge task-branch`
 7. **Push main**: `git push` to update remote main
-8. **Cleanup**: Delete local and remote branches:
-   - `git branch -d task-branch`
-   - `git push origin --delete task-branch`
+8. **Branch Deletion Safety Protocol** (CRITICAL - Never lose work):
+   
+   **MANDATORY: Before deleting ANY branch, verify no unmerged changes:**
+   ```bash
+   # Check for unmerged commits
+   git log origin/main..branch-name
+   # Check for uncommitted changes  
+   git status
+   # Check for any differences
+   git diff origin/main..branch-name
+   ```
+   
+   **Only proceed with deletion if ALL three commands show NO output**
+   
+   **If any differences found:**
+   - STOP and notify user immediately
+   - Show unmerged commits: `git log --oneline origin/main..branch-name`
+   - Show changed files: `git diff --name-status origin/main..branch-name`
+   - Explain: "This branch contains X commits and Y file changes not in main"
+   - Wait for explicit user decision
+   
+   **Safe deletion process (only if no differences):**
+   - If all checks pass: `git branch -d branch-name` (safe delete)
+   - Then: `git push origin --delete branch-name`
+   - NEVER use force delete (`-D`) without explicit user permission
+   - If ANY doubt exists, STOP and ask user for confirmation
 
 #### Output Requirements
 
