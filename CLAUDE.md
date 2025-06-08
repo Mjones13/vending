@@ -65,12 +65,43 @@ Examples:
 
 ## Branch Management Protocol
 
+**MANDATORY: All Tasks Require Dedicated Branches**
+Every task, regardless of size, MUST be performed on a dedicated Git branch:
+
+**For ALL Tasks (Including Small Tasks):**
+1. **Create dedicated branch**: `git checkout -b descriptive-task-name`
+2. **Branch naming**: Use clear, descriptive names that encapsulate the task being performed
+3. **Work isolation**: ALL changes related to the task must be made within this branch
+4. **Follow complete workflow**: Each branch must follow the full process below
+
+**Branch Workflow for Every Task:**
+1. **Start from main**: `git checkout main && git pull`
+2. **Create task branch**: `git checkout -b task-name`
+3. **Make changes**: Perform all task-related work on this branch
+4. **Commit changes**: Follow mandatory commit protocol
+5. **Pre-merge preparation**:
+   - Pull latest main: `git checkout main && git pull`
+   - Switch back to branch: `git checkout task-name`
+   - Merge main into branch: `git merge main`
+   - Resolve any conflicts if they exist
+   - Verify stability: Run tests and ensure everything works
+6. **Push branch**: `git push origin task-name`
+7. **Merge to main**: After verification, merge branch back to main
+8. **Clean up**: Delete branch after successful merge
+
 **Before Any Implementation Work:**
 Always verify you're on the correct branch before starting work:
 - **New session**: Check current branch matches the task you're working on
 - **Existing implementation plan**: Verify branch name matches implementation plan filename
 - **Branch verification**: Use `git branch` to check current branch
 - **Missing branch**: Ask user before creating new branch if one doesn't exist
+
+**Benefits of Universal Branch Usage:**
+- Complete isolation of changes for every task
+- Full traceability through version control
+- Ability to safely experiment and rollback
+- Prevents conflicts between concurrent work
+- Maintains clean main branch history
 
 ## MANDATORY CODING WORKFLOW
 
