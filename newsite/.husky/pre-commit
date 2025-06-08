@@ -19,16 +19,19 @@ fi
 
 # Check if this commit contains only non-code files
 # Non-code files: documentation (.md), config files, CLAUDE.md, directory structure
-git diff --cached --name-only | grep -E '\.(js|jsx|ts|tsx|css|scss|sass|json)$|pages/|components/|hooks/|styles/.*\.(css|scss|sass)$' > /dev/null
-HAS_CODE_CHANGES=$?
+# Go back to root to check all staged files
+cd ..
 
-if [ $HAS_CODE_CHANGES -ne 0 ]; then
+# Get list of staged files and check if any are code files
+if ! git diff --cached --name-only | grep -qE '\.(js|jsx|ts|tsx|css|scss|sass)$|newsite/(pages|components|hooks)/|newsite/styles/.*\.(css|scss|sass)$|package\.json$'; then
   echo "📝 Documentation/configuration-only changes detected"
   echo "⏭️  Skipping test suite for non-code changes"
   echo "✅ Pre-commit checks completed for documentation changes!"
   echo "🚀 Proceeding with commit..."
   exit 0
 fi
+
+cd newsite
 
 echo "💻 Code changes detected - running full test suite..."
 
