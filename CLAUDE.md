@@ -44,15 +44,26 @@ This is a Next.js Pages Router application for Golden Coast Amenities (formerly 
 - `docs/implementation-plan/{task-name}.md` - Detailed task breakdowns with status boards
 - Branch names match task slugs from implementation plans
 
+## Branch Management Protocol
+
+**Before Any Implementation Work:**
+Always verify you're on the correct branch before starting work:
+- **New session**: Check current branch matches the task you're working on
+- **Existing implementation plan**: Verify branch name matches implementation plan filename
+- **Branch verification**: Use `git branch` to check current branch
+- **Missing branch**: Ask user before creating new branch if one doesn't exist
+
 ## MANDATORY CODING WORKFLOW
 
 **CRITICAL: This process MUST be followed for EVERY coding request without exception.**
 
 ### Step 1: Implementation Planning (REQUIRED)
 Before writing ANY code:
-1. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
-2. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
-3. **Get user approval**: Present plan to user before proceeding to implementation
+1. **Pull latest main**: `git checkout main && git pull`
+2. **Create task branch**: `git checkout -b task-name` (where task-name matches implementation plan)
+3. **Create implementation plan**: Write a clear, detailed plan in `docs/implementation-plan/{task-name}.md`
+4. **Include all required sections**: Background, challenges, task breakdown, acceptance criteria
+5. **Get user approval**: Present plan to user before proceeding to implementation
 
 ### Step 2: Sequential Execution (REQUIRED)
 During implementation:
@@ -160,6 +171,20 @@ git push
    - Update file modification lists with actual changes made
 3. **Documentation Accuracy**: Implementation plan must reflect reality at all times
 
+**Phase Completion Protocol:**
+- **After each phase**: Pull latest main and check for conflicts
+- **No conflicts**: Merge autonomously and continue
+- **Conflicts exist**: STOP, notify user, document conflicts
+
+**Merge Conflict Documentation:**
+Add section to implementation plan when conflicts occur:
+```markdown
+## Merge Conflict Documentation
+**Files with conflicts:**
+- file1.tsx: 15 conflict lines
+- file2.ts: 3 conflict lines
+```
+
 **Enforcement:**
 - Update implementation plan before proceeding to next task
 - Verify implementation plan reflects current state before committing
@@ -188,6 +213,7 @@ When all tasks in a phase are complete and verified:
 - Work through tasks in order, marking each as complete only when fully tested, verified, AND committed
 - COMMIT after each task completion before proceeding to next task
 - Update implementation plan progress tracking IMMEDIATELY after completing each task
+- **Pull main after each phase completion** and handle merge conflicts per protocol
 - Continue to next task immediately if current task is successful AND committed
 - Do NOT ask for permission between tasks when following an approved plan
 - EXCEPTION: If you realize you've completed multiple tasks without committing, STOP and ask for guidance
@@ -210,6 +236,16 @@ When all tasks in a phase are complete and verified:
 2. **After completing each task**: Run `git status` to see what files were modified
 3. **After each commit**: Run `git status` to verify clean working directory
 4. **If working directory shows many uncommitted files**: STOP and commit pending work before proceeding
+
+### Final Integration and Cleanup
+**After all phases complete:**
+1. **Pull latest main**: `git checkout main && git pull && git checkout task-branch && git merge main`
+2. **Resolve conflicts**: If conflicts exist, follow merge conflict protocol
+3. **Final verification**: Ensure all tests pass and build succeeds
+4. **Push branch**: `git push origin task-branch`
+5. **Cleanup**: After branch approval/merge, delete local and remote branches:
+   - `git branch -d task-branch`
+   - `git push origin --delete task-branch`
 
 #### Output Requirements
 
