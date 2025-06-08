@@ -121,8 +121,14 @@ class ResourceManagementTestSuite {
       return 'success'
     }
     
-    const error = new Error('Test recoverable error')
+    // Use a network error which should be recoverable
+    const error = new Error('ECONNREFUSED connection refused')
     const errorInfo = errorManager.categorizeError(error)
+    
+    // Verify it's marked as recoverable
+    if (!errorInfo.recoverable) {
+      throw new Error('Network error should be recoverable')
+    }
     
     const recovered = await errorManager.attemptRecovery(
       errorInfo,

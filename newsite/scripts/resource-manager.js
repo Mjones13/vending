@@ -258,62 +258,74 @@ class ErrorRecoveryManager extends EventEmitter {
   
   async attemptRecovery(errorInfo, recoveryFunction, context = {}) {
     const key = `${context.workerId || 'unknown'}_${errorInfo.category}`
-    const attempts = this.recoveryAttempts.get(key) || 0
+    let attempts = this.recoveryAttempts.get(key) || 0
     
-    if (attempts >= this.options.maxRetryAttempts) {
-      this.emit('recoveryFailed', {
-        ...errorInfo,
-        context,
-        reason: 'max_attempts_exceeded'
-      })
-      return false
-    }
-    
-    // Calculate retry delay with exponential backoff
-    const delay = this.options.retryDelayMs * Math.pow(this.options.retryBackoffMultiplier, attempts)
-    
-    this.emit('recoveryAttempt', {
-      ...errorInfo,
-      context,
-      attempt: attempts + 1,
-      maxAttempts: this.options.maxRetryAttempts,
-      delay
-    })
-    
-    // Wait before retry
-    await new Promise(resolve => setTimeout(resolve, delay))
-    
-    try {
-      this.recoveryAttempts.set(key, attempts + 1)
-      const result = await recoveryFunction()
+    // Loop through retry attempts
+    while (attempts < this.options.maxRetryAttempts) {
+      // Calculate retry delay with exponential backoff (no delay on first attempt)
+      const delay = attempts > 0 ? this.options.retryDelayMs * Math.pow(this.options.retryBackoffMultiplier, attempts - 1) : 0
       
-      // Recovery successful - reset attempt counter
-      this.recoveryAttempts.delete(key)
-      
-      this.emit('recoverySuccessful', {
+      this.emit('recoveryAttempt', {
         ...errorInfo,
         context,
         attempt: attempts + 1,
-        result
+        maxAttempts: this.options.maxRetryAttempts,
+        delay
       })
       
-      return true
-    } catch (recoveryError) {
-      const newErrorInfo = this.categorizeError(recoveryError, {
-        ...context,
-        recoveryAttempt: attempts + 1,
-        originalError: errorInfo
-      })
+      // Wait before retry (except for first attempt)
+      if (delay > 0) {
+        await new Promise(resolve => setTimeout(resolve, delay))
+      }
       
-      this.emit('recoveryError', {
-        originalError: errorInfo,
-        recoveryError: newErrorInfo,
-        context,
-        attempt: attempts + 1
-      })
-      
-      return false
+      try {
+        attempts++
+        this.recoveryAttempts.set(key, attempts)
+        
+        const result = await recoveryFunction()
+        
+        // Recovery successful - reset attempt counter
+        this.recoveryAttempts.delete(key)
+        
+        this.emit('recoverySuccessful', {
+          ...errorInfo,
+          context,
+          attempt: attempts,
+          result
+        })
+        
+        return true
+        
+      } catch (recoveryError) {
+        const newErrorInfo = this.categorizeError(recoveryError, {
+          ...context,
+          recoveryAttempt: attempts,
+          originalError: errorInfo
+        })
+        
+        this.emit('recoveryError', {
+          originalError: errorInfo,
+          recoveryError: newErrorInfo,
+          context,
+          attempt: attempts
+        })
+        
+        // Continue to next attempt if we haven't reached max
+        if (attempts >= this.options.maxRetryAttempts) {
+          break
+        }
+      }
     }
+    
+    // All attempts failed
+    this.emit('recoveryFailed', {
+      ...errorInfo,
+      context,
+      reason: 'max_attempts_exceeded',
+      totalAttempts: attempts
+    })
+    
+    return false
   }
   
   getErrorStatistics() {
