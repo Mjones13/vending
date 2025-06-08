@@ -350,6 +350,120 @@ export function createAnimationTestSuite(container: Element) {
 }
 
 /**
+ * Test staggered animations like logo fade-ins
+ */
+export class StaggeredAnimationTester {
+  private selector: string
+  private expectedDelay: number
+
+  constructor(selector: string, expectedDelay: number) {
+    this.selector = selector
+    this.expectedDelay = expectedDelay
+  }
+
+  /**
+   * Get the number of elements that match the selector
+   */
+  getElementCount(): number {
+    return document.querySelectorAll(this.selector).length
+  }
+
+  /**
+   * Verify that animations are triggered in staggered sequence
+   */
+  async verifyStaggeredAnimation(animationClass: string, timeout = 5000): Promise<void> {
+    const elements = document.querySelectorAll(this.selector)
+    const animationTimes: number[] = []
+
+    // Monitor when each element gets the animation class
+    for (let i = 0; i < elements.length; i++) {
+      const element = elements[i]
+      
+      await waitFor(
+        () => {
+          expect(element).toHaveClass(animationClass)
+          animationTimes.push(performance.now())
+        },
+        { timeout }
+      )
+    }
+
+    // Verify stagger timing
+    for (let i = 1; i < animationTimes.length; i++) {
+      const delay = animationTimes[i] - animationTimes[i - 1]
+      expect(delay).toBeGreaterThanOrEqual(this.expectedDelay - 20) // Allow tolerance
+      expect(delay).toBeLessThanOrEqual(this.expectedDelay + 20)
+    }
+  }
+}
+
+/**
+ * Specialized tester for rotating text state machine
+ */
+export class RotatingTextTester {
+  private element: Element
+
+  constructor(element: Element) {
+    this.element = element
+  }
+
+  /**
+   * Test the complete rotation cycle
+   */
+  async testFullRotationCycle(timeout = 10000): Promise<void> {
+    const states: string[] = []
+    
+    // Monitor state changes
+    const observer = new MutationObserver(() => {
+      const classes = Array.from(this.element.classList)
+      const animationState = classes.find(cls => cls.includes('rotating-text-'))
+      if (animationState && !states.includes(animationState)) {
+        states.push(animationState)
+      }
+    })
+    
+    observer.observe(this.element, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+
+    // Wait for complete cycle
+    await waitFor(
+      () => {
+        expect(states).toContain('rotating-text-visible')
+        expect(states).toContain('rotating-text-exiting')
+        expect(states).toContain('rotating-text-entering')
+      },
+      { timeout }
+    )
+
+    observer.disconnect()
+  }
+
+  /**
+   * Test word cycling behavior
+   */
+  async testWordCycling(expectedWords: string[], timeout = 15000): Promise<void> {
+    const observedWords: string[] = []
+    
+    for (let i = 0; i < expectedWords.length; i++) {
+      await waitFor(
+        () => {
+          const currentWord = this.element.textContent || ''
+          if (!observedWords.includes(currentWord)) {
+            observedWords.push(currentWord)
+          }
+          expect(observedWords).toHaveLength(i + 1)
+        },
+        { timeout: 4000 }
+      )
+    }
+    
+    expect(observedWords).toEqual(expectedWords)
+  }
+}
+
+/**
  * Global animation testing utilities
  */
 

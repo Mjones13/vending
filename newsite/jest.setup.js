@@ -64,14 +64,15 @@ global.IntersectionObserver = class IntersectionObserver {
   }
 }
 
-// Speed up animations for testing
+// Test isolation and cleanup
 beforeEach(() => {
-  // Mock requestAnimationFrame
-  global.requestAnimationFrame = (cb) => setTimeout(cb, 0)
-  global.cancelAnimationFrame = (id) => clearTimeout(id)
+  // Mock requestAnimationFrame for consistent animation testing
+  global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
+  global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
   
-  // Speed up CSS animations
+  // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
+  style.setAttribute('data-test-styles', 'parallel-testing')
   style.innerHTML = `
     *, *::before, *::after {
       animation-duration: 0.01s !important;
@@ -81,4 +82,21 @@ beforeEach(() => {
     }
   `
   document.head.appendChild(style)
+  
+  // Enhanced mock isolation for parallel execution
+  jest.clearAllMocks()
+  jest.resetAllMocks()
+})
+
+afterEach(() => {
+  // Clean up test styles to prevent parallel test pollution
+  const testStyles = document.querySelectorAll('[data-test-styles="parallel-testing"]')
+  testStyles.forEach(style => style.remove())
+  
+  // Restore original animation frame functions
+  delete global.requestAnimationFrame
+  delete global.cancelAnimationFrame
+  
+  // Final mock cleanup
+  jest.restoreAllMocks()
 })

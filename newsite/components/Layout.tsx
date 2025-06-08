@@ -34,10 +34,10 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <>
-      <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-        <nav className="nav">
+      <header className={`header ${isScrolled ? 'scrolled' : ''} ${isScrolled ? 'backdrop-blur' : ''}`}>
+        <nav className="nav" role="navigation">
           <div className="nav-container">
-            <Link href="/" className="logo">
+            <Link href="/" className="logo" aria-label="Home">
               <Image 
                 src="/images/logos/Golden Coast Amenities (3).svg"
                 alt="Golden Coast Amenities"
@@ -52,13 +52,14 @@ const Layout = ({ children }: LayoutProps) => {
               className="menu-toggle"
               onClick={toggleMenu}
               aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
             >
               <span></span>
               <span></span>
               <span></span>
             </button>
 
-            <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+            <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`} data-testid="mobile-menu">
               <li className="nav-item">
                 <Link href="/" className={isActive('/') ? 'nav-link active' : 'nav-link'}>
                   Home
