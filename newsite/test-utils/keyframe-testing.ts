@@ -468,9 +468,12 @@ export class RotatingTextTester {
  */
 
 /**
- * Disable all animations for faster testing
+ * Disable all animations for faster testing with test-scoped isolation
  */
 export function disableAnimations(): void {
+  // Generate unique test identifier to prevent parallel test interference
+  const testId = `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
   const style = document.createElement('style')
   style.innerHTML = `
     *, *::before, *::after {
@@ -480,16 +483,35 @@ export function disableAnimations(): void {
       transition-delay: 0s !important;
     }
   `
-  style.setAttribute('data-test-disable-animations', 'true')
+  style.setAttribute('data-test-disable-animations', testId)
+  style.setAttribute('data-test-scoped-animations', 'true')
   document.head.appendChild(style)
+  
+  // Store test ID for cleanup
+  if (typeof globalThis !== 'undefined') {
+    globalThis.__currentTestAnimationId = testId
+  }
 }
 
 /**
- * Re-enable animations
+ * Re-enable animations with test-scoped cleanup
  */
 export function enableAnimations(): void {
-  const disableStyles = document.querySelectorAll('[data-test-disable-animations]')
-  disableStyles.forEach(style => style.remove())
+  // Only remove styles created by current test
+  const currentTestId = globalThis.__currentTestAnimationId
+  
+  if (currentTestId) {
+    // Remove only this test's animation disable styles
+    const testSpecificStyles = document.querySelectorAll(`[data-test-disable-animations="${currentTestId}"]`)
+    testSpecificStyles.forEach(style => style.remove())
+    
+    // Clear the test ID
+    delete globalThis.__currentTestAnimationId
+  } else {
+    // Fallback: remove all disable styles (less safe for parallel execution)
+    const disableStyles = document.querySelectorAll('[data-test-scoped-animations]')
+    disableStyles.forEach(style => style.remove())
+  }
 }
 
 /**

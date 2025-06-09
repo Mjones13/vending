@@ -47,8 +47,17 @@ export class TestIsolation {
     // Restore real timers
     jest.useRealTimers()
     
-    // Restore original functions
-    Object.assign(global, this.originalEnv)
+    // Restore original functions with fallback polyfills - never set to undefined
+    global.requestAnimationFrame = this.originalEnv.requestAnimationFrame || ((callback: FrameRequestCallback) => {
+      return setTimeout(callback, 16) as unknown as number;
+    })
+    global.cancelAnimationFrame = this.originalEnv.cancelAnimationFrame || ((id: number) => {
+      clearTimeout(id);
+    })
+    global.setTimeout = this.originalEnv.setTimeout
+    global.clearTimeout = this.originalEnv.clearTimeout
+    global.setInterval = this.originalEnv.setInterval
+    global.clearInterval = this.originalEnv.clearInterval
     
     // Final mock cleanup
     jest.restoreAllMocks()

@@ -6,6 +6,31 @@ configure({
   asyncUtilTimeout: 5000, // 5 seconds for async operations
 })
 
+// RAF polyfill validation function to ensure they're never undefined
+function ensureRAFPolyfills() {
+  if (!global.requestAnimationFrame || typeof global.requestAnimationFrame !== 'function') {
+    global.requestAnimationFrame = (callback) => {
+      return setTimeout(callback, 16); // 16ms for ~60fps
+    };
+  }
+  
+  if (!global.cancelAnimationFrame || typeof global.cancelAnimationFrame !== 'function') {
+    global.cancelAnimationFrame = (id) => {
+      clearTimeout(id);
+    };
+  }
+  
+  // Also ensure they're available on window
+  if (typeof window !== 'undefined') {
+    if (!window.requestAnimationFrame || typeof window.requestAnimationFrame !== 'function') {
+      window.requestAnimationFrame = global.requestAnimationFrame;
+    }
+    if (!window.cancelAnimationFrame || typeof window.cancelAnimationFrame !== 'function') {
+      window.cancelAnimationFrame = global.cancelAnimationFrame;
+    }
+  }
+}
+
 // Global browser API polyfills - must be available before any tests run
 // These are defined at the top level to ensure they exist even before beforeEach runs
 global.requestAnimationFrame = global.requestAnimationFrame || ((callback) => {
@@ -204,32 +229,9 @@ beforeEach(() => {
   // DO NOT enable fake timers globally - let tests control this
   // jest.useFakeTimers() - REMOVED to prevent conflicts
   
-  // Set up persistent animation frame polyfills with improved implementation
-  if (!global.requestAnimationFrame || global.requestAnimationFrame.toString().includes('setTimeout')) {
-    let rafId = 0;
-    const rafCallbacks = new Map();
-    
-    global.requestAnimationFrame = (callback) => {
-      rafId++;
-      const id = rafId;
-      rafCallbacks.set(id, callback);
-      
-      // Use setImmediate for more accurate frame timing
-      const handle = setImmediate(() => {
-        const cb = rafCallbacks.get(id);
-        if (cb) {
-          rafCallbacks.delete(id);
-          cb(performance.now());
-        }
-      });
-      
-      return id;
-    };
-    
-    global.cancelAnimationFrame = (id) => {
-      rafCallbacks.delete(id);
-    };
-  }
+  // Ensure animation frame polyfills are always available
+  // Re-apply in every test to handle cases where they might be cleared
+  ensureRAFPolyfills()
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
@@ -330,16 +332,9 @@ afterEach(() => {
   // Clear all mocks for next test
   jest.clearAllMocks()
   
-  // Ensure no pending microtasks that could cause act() warnings
-  if (global.gc) {
-    try {
-      global.gc()
-    } catch (e) {
-      // gc() not available in all environments
-    }
-  }
-  
-  // Note: Keep animation frame polyfills persistent to prevent "not defined" errors
+  // CRITICAL: Validate and restore RAF polyfills after cleanup
+  // Some test utilities may clear these, causing "not defined" errors
+  ensureRAFPolyfills()
 })
 
 // Global withAct utility for easy act() wrapping in tests
