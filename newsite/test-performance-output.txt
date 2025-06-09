@@ -1,0 +1,3794 @@
+
+> newsite@0.1.0 test:performance
+> node scripts/test-performance-monitor.js
+
+🎯 Starting Test Performance Monitoring
+==================================================
+
+🔍 Monitoring: Unit Tests
+🔍 Monitoring test execution: npm run test:unit
+
+> newsite@0.1.0 test:unit
+> jest --testPathPattern='__tests__/(components|hooks|utils)' --verbose
+
+FAIL __tests__/components/Layout.test.tsx (30.669 s)
+  Layout Component
+    Basic Rendering
+      ✓ critical: should render children content correctly (35 ms)
+      ✓ critical: should render header with logo (13 ms)
+      ✓ should render navigation menu (82 ms)
+      ✓ should render footer (10 ms)
+    Navigation Functionality
+      ✓ should have correct href attributes for navigation links (25 ms)
+      ✓ should have correct href for logo link (7 ms)
+    Responsive Behavior
+      ✓ should show mobile menu button on small screens (7 ms)
+      ✓ should hide navigation on mobile screens when not active (7 ms)
+      ✓ should show navigation on large screens (7 ms)
+      ✕ should toggle mobile menu when button is clicked (30028 ms)
+    Header Scroll Effects
+      ✕ should add backdrop blur class when scrolled (8 ms)
+      ✕ should maintain fixed positioning on scroll (3 ms)
+    Logo Specifications
+      ✕ should display logo with correct dimensions on desktop (2 ms)
+      ✕ should maintain aspect ratio on mobile (2 ms)
+    Accessibility
+      ✕ should have proper heading hierarchy (2 ms)
+      ✕ should support keyboard navigation (1 ms)
+      ✕ should have proper ARIA labels for mobile menu (1 ms)
+    Dropdown Menu Functionality
+      ✕ should show dropdown on hover for services (15 ms)
+      ✕ should hide dropdown when mouse leaves (11 ms)
+
+  ● Layout Component › Responsive Behavior › should toggle mobile menu when button is clicked
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      179 |     })
+      180 |
+    > 181 |     it('should toggle mobile menu when button is clicked', async () => {
+          |     ^
+      182 |       simulateScreenSize(SCREEN_SIZES.mobile.width, SCREEN_SIZES.mobile.height)
+      183 |       
+      184 |       render(
+
+      at it (__tests__/components/Layout.test.tsx:181:5)
+      at describe (__tests__/components/Layout.test.tsx:132:3)
+      at Object.describe (__tests__/components/Layout.test.tsx:12:1)
+
+  ● Layout Component › Header Scroll Effects › should add backdrop blur class when scrolled
+
+    TestingLibraryElementError: Unable to find an accessible element with the role "banner"
+
+    There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      229 |       )
+      230 |       
+    > 231 |       const header = screen.getByRole('banner')
+          |                             ^
+      232 |       
+      233 |       // Simulate scroll event with act() to handle React state updates
+      234 |       await act(async () => {
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByRole (__tests__/components/Layout.test.tsx:231:29)
+
+  ● Layout Component › Header Scroll Effects › should maintain fixed positioning on scroll
+
+    TestingLibraryElementError: Unable to find an accessible element with the role "banner"
+
+    There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      254 |       )
+      255 |       
+    > 256 |       const header = screen.getByRole('banner')
+          |                             ^
+      257 |       
+      258 |       // Verify header has fixed positioning class initially
+      259 |       // Note: Testing CSS class presence instead of computed styles due to styled-jsx + Jest limitations
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByRole (__tests__/components/Layout.test.tsx:256:29)
+
+  ● Layout Component › Logo Specifications › should display logo with correct dimensions on desktop
+
+    TestingLibraryElementError: Unable to find an element with the alt text: /golden coast amenities/i
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      289 |       )
+      290 |       
+    > 291 |       const logo = screen.getByAltText(/golden coast amenities/i)
+          |                           ^
+      292 |       expect(logo).toHaveAttribute('width', '60')
+      293 |       expect(logo).toHaveAttribute('height', '20')
+      294 |     })
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/Layout.test.tsx:291:27)
+
+  ● Layout Component › Logo Specifications › should maintain aspect ratio on mobile
+
+    TestingLibraryElementError: Unable to find an element with the alt text: /golden coast amenities/i
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      303 |       )
+      304 |       
+    > 305 |       const logo = screen.getByAltText(/golden coast amenities/i)
+          |                           ^
+      306 |       expect(logo).toHaveAttribute('width', '60')
+      307 |       expect(logo).toHaveAttribute('height', '20')
+      308 |       expect(logo).toHaveClass('logo-image')
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByAltText (__tests__/components/Layout.test.tsx:305:27)
+
+  ● Layout Component › Accessibility › should have proper heading hierarchy
+
+    TestingLibraryElementError: Unable to find a label with the text of: /home/i
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      319 |       
+      320 |       // Logo link should have accessible name
+    > 321 |       const logoLink = screen.getByLabelText(/home/i)
+          |                               ^
+      322 |       expect(logoLink).toBeInTheDocument()
+      323 |       
+      324 |       // Navigation should be properly labeled
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at getAllByLabelText (node_modules/@testing-library/dom/dist/queries/label-text.js:111:38)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByLabelText (__tests__/components/Layout.test.tsx:321:31)
+
+  ● Layout Component › Accessibility › should support keyboard navigation
+
+    TestingLibraryElementError: Unable to find a label with the text of: /home/i
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      338 |       
+      339 |       // Get first focusable link (logo)
+    > 340 |       const logoLink = screen.getByLabelText(/home/i)
+          |                               ^
+      341 |       
+      342 |       // Tab to first navigation link
+      343 |       await userEvent.tab()
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at getAllByLabelText (node_modules/@testing-library/dom/dist/queries/label-text.js:111:38)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByLabelText (__tests__/components/Layout.test.tsx:340:31)
+
+  ● Layout Component › Accessibility › should have proper ARIA labels for mobile menu
+
+    TestingLibraryElementError: Unable to find a label with the text of: /toggle menu/i
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      354 |       )
+      355 |       
+    > 356 |       const mobileMenuButton = screen.getByLabelText(/toggle menu/i)
+          |                                       ^
+      357 |       expect(mobileMenuButton).toHaveAttribute('aria-label', 'Toggle menu')
+      358 |       expect(mobileMenuButton).toHaveAttribute('aria-expanded', 'false')
+      359 |     })
+
+      at Object.getElementError (node_modules/@testing-library/dom/dist/config.js:37:19)
+      at getAllByLabelText (node_modules/@testing-library/dom/dist/queries/label-text.js:111:38)
+      at node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+      at node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+      at Object.getByLabelText (__tests__/components/Layout.test.tsx:356:39)
+
+  ● Layout Component › Dropdown Menu Functionality › should show dropdown on hover for services
+
+    Unable to find role="navigation"
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      369 |       
+      370 |       // Wait for component to fully mount
+    > 371 |       await waitFor(() => {
+          |                    ^
+      372 |         expect(container.innerHTML).not.toBe('<div></div>')
+      373 |         expect(container.innerHTML).not.toBe('<div />')
+      374 |         expect(screen.getByRole('navigation')).toBeInTheDocument()
+
+      at waitForWrapper (node_modules/@testing-library/dom/dist/wait-for.js:163:27)
+      at Object.<anonymous> (__tests__/components/Layout.test.tsx:371:20)
+
+  ● Layout Component › Dropdown Menu Functionality › should hide dropdown when mouse leaves
+
+    Unable to find role="navigation"
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div />[39m
+    [36m</body>[39m
+
+      399 |       
+      400 |       // Wait for component to fully mount
+    > 401 |       await waitFor(() => {
+          |                    ^
+      402 |         expect(container.innerHTML).not.toBe('<div></div>')
+      403 |         expect(container.innerHTML).not.toBe('<div />')
+      404 |         expect(screen.getByRole('navigation')).toBeInTheDocument()
+
+      at waitForWrapper (node_modules/@testing-library/dom/dist/wait-for.js:163:27)
+      at Object.<anonymous> (__tests__/components/Layout.test.tsx:401:20)
+
+Test Suites: 1 failed, 1 total
+Tests:       10 failed, 9 passed, 19 total
+Snapshots:   0 total
+Time:        31.361 s
+Ran all test suites matching /__tests__\/(components|hooks|utils)/i.
+❌ Unit Tests failed: Test execution failed with exit code 1
+
+🔍 Monitoring: Animation Tests
+🔍 Monitoring test execution: npm run test:animations
+
+> newsite@0.1.0 test:animations
+> jest --testPathPattern='__tests__/animations' --verbose
+
+  console.error
+    Received `true` for a non-boolean attribute `fill`.
+    
+    If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      74 |   describe('Baseline Alignment', () => {
+      75 |     it('should align rotating text baseline with static text baseline', async () => {
+    > 76 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      77 |       
+      78 |       const staticText = getByTestId('static-text');
+      79 |       const rotatingText = getByTestId('rotating-text');
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-alignment.test.tsx:76:37)
+
+  console.error
+    Received `true` for a non-boolean attribute `fill`.
+    
+    If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      62 |   describe('Word Sequence Cycling', () => {
+      63 |     it('should cycle through all words in correct order', async () => {
+    > 64 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      65 |       const rotatingText = getByTestId('rotating-text');
+      66 |       
+      67 |       const observer = new WordSequenceObserver(rotatingText);
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:64:37)
+
+  console.error
+    Received `true` for a non-boolean attribute `priority`.
+    
+    If you want to write it to the DOM, pass a string instead: priority="true" or priority={value.toString()}.
+
+      74 |   describe('Baseline Alignment', () => {
+      75 |     it('should align rotating text baseline with static text baseline', async () => {
+    > 76 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      77 |       
+      78 |       const staticText = getByTestId('static-text');
+      79 |       const rotatingText = getByTestId('rotating-text');
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-alignment.test.tsx:76:37)
+
+  console.error
+    Received `true` for a non-boolean attribute `priority`.
+    
+    If you want to write it to the DOM, pass a string instead: priority="true" or priority={value.toString()}.
+
+      62 |   describe('Word Sequence Cycling', () => {
+      63 |     it('should cycle through all words in correct order', async () => {
+    > 64 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      65 |       const rotatingText = getByTestId('rotating-text');
+      66 |       
+      67 |       const observer = new WordSequenceObserver(rotatingText);
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:64:37)
+
+  console.error
+    Received `true` for a non-boolean attribute `fill`.
+    
+    If you want to write it to the DOM, pass a string instead: fill="true" or fill={value.toString()}.
+
+      62 |   describe('Rotation Timing Accuracy', () => {
+      63 |     it('should rotate words at exactly 3-second intervals', async () => {
+    > 64 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      65 |       const rotatingText = getByTestId('rotating-text');
+      66 |       
+      67 |       const observer = new WordSequenceObserver(rotatingText);
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-timing.test.tsx:64:37)
+
+  console.error
+    Received `true` for a non-boolean attribute `priority`.
+    
+    If you want to write it to the DOM, pass a string instead: priority="true" or priority={value.toString()}.
+
+      62 |   describe('Rotation Timing Accuracy', () => {
+      63 |     it('should rotate words at exactly 3-second intervals', async () => {
+    > 64 |       const { getByTestId } = render(<Home />);
+         |                                     ^
+      65 |       const rotatingText = getByTestId('rotating-text');
+      66 |       
+      67 |       const observer = new WordSequenceObserver(rotatingText);
+
+      at validateProperty (node_modules/react-dom/cjs/react-dom-client.development.js:3078:27)
+      at warnUnknownProperties (node_modules/react-dom/cjs/react-dom-client.development.js:3154:9)
+      at validatePropertiesInDevelopment (node_modules/react-dom/cjs/react-dom-client.development.js:17117:9)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:17741:7)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:11391:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15268:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:15149:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:14956:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:14936:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:14419:13)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:16216:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:566:34)
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:859:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:190:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:292:10)
+      at Object.<anonymous> (__tests__/animations/rotating-text-timing.test.tsx:64:37)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      23 |     const interval = setInterval(() => {
+      24 |       // Phase 1: Start exit animation
+    > 25 |       setAnimationState('exiting')
+         |       ^
+      26 |       
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:25:7)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+    > 29 |         setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length)
+         |         ^
+      30 |         setAnimationState('entering')
+      31 |         
+      32 |         // Phase 3: After entrance completes, return to visible state
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setCurrentWordIndex (__tests__/animations/rotating-text.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      28 |       setTimeout(() => {
+      29 |         setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length)
+    > 30 |         setAnimationState('entering')
+         |         ^
+      31 |         
+      32 |         // Phase 3: After entrance completes, return to visible state
+      33 |         setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:30:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      32 |         // Phase 3: After entrance completes, return to visible state
+      33 |         setTimeout(() => {
+    > 34 |           setAnimationState('visible')
+         |           ^
+      35 |         }, 400) // Entrance animation duration
+      36 |       }, 400) // Exit animation duration
+      37 |       
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:34:11)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      23 |     const interval = setInterval(() => {
+      24 |       // Phase 1: Start exit animation
+    > 25 |       setAnimationState('exiting')
+         |       ^
+      26 |       
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:25:7)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to LogoStaggerComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      27 |       setTimeout(() => {
+      28 |         newAnimations[index] = true
+    > 29 |         setLogoAnimations([...newAnimations])
+         |         ^
+      30 |       }, index * 150)
+      31 |     })
+      32 |   }, [logoAnimations])
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setLogoAnimations (__tests__/animations/logo-stagger.test.tsx:29:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      23 |     const interval = setInterval(() => {
+      24 |       // Phase 1: Start exit animation
+    > 25 |       setAnimationState('exiting')
+         |       ^
+      26 |       
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:25:7)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      23 |     const interval = setInterval(() => {
+      24 |       // Phase 1: Start exit animation
+    > 25 |       setAnimationState('exiting')
+         |       ^
+      26 |       
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:25:7)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to RotatingTextComponent inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      23 |     const interval = setInterval(() => {
+      24 |       // Phase 1: Start exit animation
+    > 25 |       setAnimationState('exiting')
+         |       ^
+      26 |       
+      27 |       // Phase 2: After exit completes, change word and start entrance
+      28 |       setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (__tests__/animations/rotating-text.test.tsx:25:7)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+FAIL __tests__/animations/logo-stagger.test.tsx
+  Logo Staggered Animations
+    Staggered Animation Timing
+      ✓ should render all logo elements initially without animation class (24 ms)
+      ✕ should trigger animations in staggered sequence (14 ms)
+      ✓ should start animations after initial delay (30 ms)
+      ✓ should animate all logos within reasonable timeframe (8 ms)
+    Animation CSS Properties
+      ✓ should apply fade-in animation to animated logos (8 ms)
+      ✓ should have proper CSS animation properties on animated elements (30 ms)
+    Logo Content and Accessibility
+      ✓ should render correct logo images with proper alt text (4 ms)
+      ✓ should maintain logo visibility during and after animation (13 ms)
+      ✓ should have proper data attributes for testing (4 ms)
+    Staggered Animation Utilities
+      ✕ should work with StaggeredAnimationTester utility (9 ms)
+    Performance and Efficiency
+      ✓ should not cause excessive re-renders (9 ms)
+      ✓ should clean up timers on unmount (2 ms)
+    Edge Cases
+      ✓ should handle empty logo array gracefully (2 ms)
+      ✓ should handle component unmount during animation (2 ms)
+      ✓ should work correctly with different numbers of logos (2 ms)
+
+  ● Logo Staggered Animations › Staggered Animation Timing › should trigger animations in staggered sequence
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 140
+    Received:    100
+
+      107 |       for (let i = 1; i < animationTimes.length; i++) {
+      108 |         const delay = animationTimes[i] - animationTimes[i - 1]
+    > 109 |         expect(delay).toBeGreaterThanOrEqual(140) // Allow 10ms tolerance
+          |                       ^
+      110 |         expect(delay).toBeLessThanOrEqual(160)
+      111 |       }
+      112 |     }, 5000)
+
+      at Object.toBeGreaterThanOrEqual (__tests__/animations/logo-stagger.test.tsx:109:23)
+
+  ● Logo Staggered Animations › Staggered Animation Utilities › should work with StaggeredAnimationTester utility
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 130
+    Received:    100
+
+      392 |     for (let i = 1; i < animationTimes.length; i++) {
+      393 |       const delay = animationTimes[i] - animationTimes[i - 1]
+    > 394 |       expect(delay).toBeGreaterThanOrEqual(this.expectedDelay - 20) // Allow tolerance
+          |                     ^
+      395 |       expect(delay).toBeLessThanOrEqual(this.expectedDelay + 20)
+      396 |     }
+      397 |   }
+
+      at StaggeredAnimationTester.toBeGreaterThanOrEqual [as verifyStaggeredAnimation] (test-utils/keyframe-testing.ts:394:21)
+      at Object.<anonymous> (__tests__/animations/logo-stagger.test.tsx:257:7)
+
+FAIL __tests__/animations/rotating-text.test.tsx
+  Rotating Text Animation States
+    Animation State Machine
+      ✓ should start in visible state (44 ms)
+      ✕ should transition through all animation states correctly (21 ms)
+      ✕ should change words during the entering phase (15 ms)
+      ✕ should cycle through all words in correct order (11 ms)
+    CSS Animation Properties
+      ✓ should have correct keyframe animations for exiting state (12 ms)
+      ✕ should have correct keyframe animations for entering state (11 ms)
+    Animation Timing
+      ✕ should complete each phase within expected timeframes (12 ms)
+      ✕ should maintain consistent cycle timing (10 ms)
+    Container Properties
+      ✓ should have proper container styling to prevent cutoff (6 ms)
+      ✓ should maintain text alignment with surrounding content (4 ms)
+    React Key Prop Behavior
+      ✕ should re-mount component when word changes due to key prop (13 ms)
+    Error Resilience
+      ✓ should handle rapid state changes gracefully (4 ms)
+      ✕ should not get stuck in any particular state (19 ms)
+
+  ● Rotating Text Animation States › Animation State Machine › should transition through all animation states correctly
+
+    expect(element).toHaveClass("rotating-text-entering")
+
+    Expected the element to have class:
+      rotating-text-entering
+    Received:
+      rotating-text rotating-text-exiting
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+       97 |       await waitFor(
+       98 |         () => {
+    >  99 |           expect(rotatingText).toHaveClass('rotating-text-entering')
+          |                                ^
+      100 |         },
+      101 |         { timeout: 1000 }
+      102 |       )
+
+      at toHaveClass (__tests__/animations/rotating-text.test.tsx:99:32)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › Animation State Machine › should change words during the entering phase
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      120 |       await waitFor(
+      121 |         () => {
+    > 122 |           expect(rotatingText.textContent).not.toBe(initialWord)
+          |                                                ^
+      123 |         },
+      124 |         { timeout: 5000 }
+      125 |       )
+
+      at toBe (__tests__/animations/rotating-text.test.tsx:122:48)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › Animation State Machine › should cycle through all words in correct order
+
+    expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 1
+    Received array:  ["Workplaces"]
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      145 |               observedWords.push(currentWord)
+      146 |             }
+    > 147 |             expect(observedWords).toHaveLength(i + 1)
+          |                                   ^
+      148 |           },
+      149 |           { timeout: 4000 }
+      150 |         )
+
+      at toHaveLength (__tests__/animations/rotating-text.test.tsx:147:35)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › CSS Animation Properties › should have correct keyframe animations for entering state
+
+    expect(element).toHaveClass("rotating-text-entering")
+
+    Expected the element to have class:
+      rotating-text-entering
+    Received:
+      rotating-text rotating-text-exiting
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      182 |       await waitFor(
+      183 |         () => {
+    > 184 |           expect(rotatingText).toHaveClass('rotating-text-entering')
+          |                                ^
+      185 |         },
+      186 |         { timeout: 5000 }
+      187 |       )
+
+      at toHaveClass (__tests__/animations/rotating-text.test.tsx:184:32)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › Animation Timing › should complete each phase within expected timeframes
+
+    expect(element).toHaveClass("rotating-text-visible")
+
+    Expected the element to have class:
+      rotating-text-visible
+    Received:
+      rotating-text rotating-text-exiting
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      211 |       await waitFor(
+      212 |         () => {
+    > 213 |           expect(rotatingText).toHaveClass('rotating-text-visible')
+          |                                ^
+      214 |         },
+      215 |         { timeout: 2000 }
+      216 |       )
+
+      at toHaveClass (__tests__/animations/rotating-text.test.tsx:213:32)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › Animation Timing › should maintain consistent cycle timing
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      234 |         await waitFor(
+      235 |           () => {
+    > 236 |             expect(rotatingText.textContent).not.toBe(initialWord)
+          |                                                  ^
+      237 |           },
+      238 |           { timeout: 4000 }
+      239 |         )
+
+      at toBe (__tests__/animations/rotating-text.test.tsx:236:50)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › React Key Prop Behavior › should re-mount component when word changes due to key prop
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mApartments[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      294 |         () => {
+      295 |           const currentWord = rotatingText.textContent
+    > 296 |           expect(currentWord).not.toBe(initialWord)
+          |                                   ^
+      297 |         },
+      298 |         { timeout: 5000 }
+      299 |       )
+
+      at toBe (__tests__/animations/rotating-text.test.tsx:296:35)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Rotating Text Animation States › Error Resilience › should not get stuck in any particular state
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 3
+    Received:    2
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head />[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div>[39m
+            [36m<h1>[39m
+              [0mPremium Amenity for Modern[0m
+              [0m [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"rotating-text-container"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"rotating-text rotating-text-visible"[39m
+                  [33mdata-testid[39m=[32m"rotating-text"[39m
+                [36m>[39m
+                  [0mBusinesses[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</h1>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</body>[39m
+    [36m</html>[39m
+
+      351 |       await waitFor(
+      352 |         () => {
+    > 353 |           expect(stateHistory.length).toBeGreaterThanOrEqual(3)
+          |                                       ^
+      354 |           expect(stateHistory).toContain('rotating-text-visible')
+      355 |           expect(stateHistory).toContain('rotating-text-exiting')
+      356 |           expect(stateHistory).toContain('rotating-text-entering')
+
+      at toBeGreaterThanOrEqual (__tests__/animations/rotating-text.test.tsx:353:39)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    An update to Home inside a test was not wrapped in act(...).
+    
+    When testing, code that causes React state updates should be wrapped into act(...):
+    
+    act(() => {
+      /* fire events that update state */
+    });
+    /* assert on the output */
+    
+    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      76 |       // If animation gets stuck, reset to visible state
+      77 |       if (animationState !== 'visible') {
+    > 78 |         setAnimationState('visible');
+         |         ^
+      79 |       }
+      80 |     }, 2000); // Reset if stuck for more than 2 seconds
+      81 |     
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:16023:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:1522:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16022:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (pages/index.tsx:78:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-timing.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          55 |
+          56 |   afterEach(() => {
+        > 57 |     jest.runOnlyPendingTimers();
+             |          ^
+          58 |     jest.useRealTimers();
+          59 |     jest.restoreAllMocks();
+          60 |   });
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-timing.test.tsx:57:10)
+
+      55 |
+      56 |   afterEach(() => {
+    > 57 |     jest.runOnlyPendingTimers();
+         |          ^
+      58 |     jest.useRealTimers();
+      59 |     jest.restoreAllMocks();
+      60 |   });
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-timing.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    The current testing environment is not configured to support act(...)
+
+      76 |       // If animation gets stuck, reset to visible state
+      77 |       if (animationState !== 'visible') {
+    > 78 |         setAnimationState('visible');
+         |         ^
+      79 |       }
+      80 |     }, 2000); // Reset if stuck for more than 2 seconds
+      81 |     
+
+      at isConcurrentActEnvironment (node_modules/react-dom/cjs/react-dom-client.development.js:14318:17)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16020:7)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (pages/index.tsx:78:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-timing.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+FAIL __tests__/animations/rotating-text-timing.test.tsx (6.105 s)
+  Homepage Rotating Text Timing
+    Rotation Timing Accuracy
+      ✕ should rotate words at exactly 3-second intervals (97 ms)
+      ✕ should maintain consistent timing across multiple cycles (77 ms)
+      ✓ should handle timing precision under stress conditions (62 ms)
+    Animation State Timing
+      ✓ should spend correct amount of time in each animation state (26 ms)
+      ✓ should transition between states without timing gaps (30 ms)
+    Performance Impact
+      ✓ should maintain smooth 60fps during animations (5025 ms)
+      ✕ should not interfere with other page animations (42 ms)
+    Component Lifecycle Timing
+      ✓ should handle rapid component mounting/unmounting (34 ms)
+      ✕ should start timing correctly after component mount (18 ms)
+    Error Recovery Timing
+      ✕ should recover timing after errors (80 ms)
+
+  ● Homepage Rotating Text Timing › Rotation Timing Accuracy › should rotate words at exactly 3-second intervals
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head>[39m
+        [36m<title[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+        [36m>[39m
+          [0mSMARTER VENDING[0m
+        [36m</title>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"Traditional & healthy vending, coffee, and mini-market services for workplaces. Request a demo today!"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"width=device-width, initial-scale=1"[39m
+          [33mname[39m=[32m"viewport"[39m
+        [36m/>[39m
+        [36m<link[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mhref[39m=[32m"/favicon.ico"[39m
+          [33mrel[39m=[32m"icon"[39m
+        [36m/>[39m
+      [36m</head>[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"layout"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split-container"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-inner"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-badge"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                      [36m>[39m
+                        [0mCalifornia's #1 Choice[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<h1[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-title"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                        [33mdata-testid[39m=[32m"static-text"[39m
+                      [36m>[39m
+                        [0mPremium Amenity for Modern[0m
+                      [36m</span>[39m
+                      [0m [0m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text-container"[39m
+                        [33mdata-testid[39m=[32m"rotating-text-container"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text rotating-text-entering"[39m
+                          [33mdata-testid[39m=[32m"rotating-text"[39m
+                        [36m>[39m
+                          [0mBusinesses[0m
+                        [36m</span>[39m
+                      [36m</span>[39m
+                    [36m</h1>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-description"[39m
+                    [36m>[39m
+                      [0mTransform your workplace with comprehensive vending, coffee, and mini-market services. We serve businesses of 150-25,000 employees across California with premium solutions that keep teams energized and productive.[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-stats"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m200+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mLocations Served[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m50,000+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mHappy Employees[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m15+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mYears Experience[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-actions"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f btn btn-primary btn-lg btn-shimmer"[39m
+                      [36m>[39m
+                        [0mRequest a Demo[0m
+                      [36m</button>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-contact"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-text"[39m
+                        [36m>[39m
+                          [0mOr call us today[0m
+                        [36m</span>[39m
+                        [36m<a[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-phone"[39m
+                          [33mhref[39m=[32m"tel:909.258.9848"[39m
+                        [36m>[39m
+                          [0m909.258.9848[0m
+                        [36m</a>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-container"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Di...
+
+      77 |         
+      78 |         await waitFor(() => {
+    > 79 |           expect(rotatingText.textContent).not.toBe(initialWord);
+         |                                                ^
+      80 |         });
+      81 |         
+      82 |         // Test multiple intervals
+
+      at toBe (__tests__/animations/rotating-text-timing.test.tsx:79:48)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Homepage Rotating Text Timing › Rotation Timing Accuracy › should maintain consistent timing across multiple cycles
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      141 |         const timingValidation = observer.validateTiming(ROTATION_INTERVAL, TIMING_TOLERANCE);
+      142 |         
+    > 143 |         expect(timingValidation.timingCorrect).toBe(true);
+          |                                                ^
+      144 |         expect(timingValidation.averageInterval).toBeCloseTo(ROTATION_INTERVAL, -2); // Within 100ms
+      145 |         
+      146 |         if (!timingValidation.timingCorrect) {
+
+      at Object.toBe (__tests__/animations/rotating-text-timing.test.tsx:143:48)
+
+  ● Homepage Rotating Text Timing › Performance Impact › should not interfere with other page animations
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 1
+    Received:   1
+
+      357 |         // Verify rotation still works correctly
+      358 |         const sequence = observer.getWordSequence();
+    > 359 |         expect(sequence.length).toBeGreaterThan(1);
+          |                                 ^
+      360 |         
+      361 |         sequence.forEach(word => {
+      362 |           expect(expectedWords).toContain(word);
+
+      at Object.toBeGreaterThan (__tests__/animations/rotating-text-timing.test.tsx:359:33)
+
+  ● Homepage Rotating Text Timing › Component Lifecycle Timing › should start timing correctly after component mount
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 1
+    Received:   1
+
+      437 |         
+      438 |         const observations = observer.getObservations();
+    > 439 |         expect(observations.length).toBeGreaterThan(1);
+          |                                     ^
+      440 |         
+      441 |         // Verify timing started properly
+      442 |         const firstTransition = observations[1];
+
+      at Object.toBeGreaterThan (__tests__/animations/rotating-text-timing.test.tsx:439:37)
+
+  ● Homepage Rotating Text Timing › Error Recovery Timing › should recover timing after errors
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head>[39m
+        [36m<title[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+        [36m>[39m
+          [0mSMARTER VENDING[0m
+        [36m</title>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"Traditional & healthy vending, coffee, and mini-market services for workplaces. Request a demo today!"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"width=device-width, initial-scale=1"[39m
+          [33mname[39m=[32m"viewport"[39m
+        [36m/>[39m
+        [36m<link[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mhref[39m=[32m"/favicon.ico"[39m
+          [33mrel[39m=[32m"icon"[39m
+        [36m/>[39m
+      [36m</head>[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"layout"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split-container"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-inner"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-badge"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                      [36m>[39m
+                        [0mCalifornia's #1 Choice[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<h1[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-title"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                        [33mdata-testid[39m=[32m"static-text"[39m
+                      [36m>[39m
+                        [0mPremium Amenity for Modern[0m
+                      [36m</span>[39m
+                      [0m [0m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text-container"[39m
+                        [33mdata-testid[39m=[32m"rotating-text-container"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text rotating-text-entering"[39m
+                          [33mdata-testid[39m=[32m"rotating-text"[39m
+                        [36m>[39m
+                          [0mApartments[0m
+                        [36m</span>[39m
+                      [36m</span>[39m
+                    [36m</h1>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-description"[39m
+                    [36m>[39m
+                      [0mTransform your workplace with comprehensive vending, coffee, and mini-market services. We serve businesses of 150-25,000 employees across California with premium solutions that keep teams energized and productive.[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-stats"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m200+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mLocations Served[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m50,000+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mHappy Employees[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m15+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mYears Experience[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-actions"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f btn btn-primary btn-lg btn-shimmer"[39m
+                      [36m>[39m
+                        [0mRequest a Demo[0m
+                      [36m</button>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-contact"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-text"[39m
+                        [36m>[39m
+                          [0mOr call us today[0m
+                        [36m</span>[39m
+                        [36m<a[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-phone"[39m
+                          [33mhref[39m=[32m"tel:909.258.9848"[39m
+                        [36m>[39m
+                          [0m909.258.9848[0m
+                        [36m</a>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-container"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Di...
+
+      487 |           expect(expectedWords).toContain(wordAfter);
+      488 |           // Should have progressed
+    > 489 |           expect(wordAfter).not.toBe(wordBefore);
+          |                                 ^
+      490 |         });
+      491 |         
+      492 |         // Verify timing is back to normal
+
+      at toBe (__tests__/animations/rotating-text-timing.test.tsx:489:33)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          55 |
+          56 |   afterEach(() => {
+        > 57 |     jest.runOnlyPendingTimers();
+             |          ^
+          58 |     jest.useRealTimers();
+          59 |     jest.restoreAllMocks();
+          60 |   });
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-cycling.test.tsx:57:10)
+
+      55 |
+      56 |   afterEach(() => {
+    > 57 |     jest.runOnlyPendingTimers();
+         |          ^
+      58 |     jest.useRealTimers();
+      59 |     jest.restoreAllMocks();
+      60 |   });
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-cycling.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          152 |         for (let i = 0; i < 10; i++) {
+          153 |           act(() => {
+        > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+              |                  ^
+          155 |           });
+          156 |           
+          157 |           await new Promise(resolve => setTimeout(resolve, 50));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+      152 |         for (let i = 0; i < 10; i++) {
+      153 |           act(() => {
+    > 154 |             jest.advanceTimersByTime(300); // Rapid time jumps
+          |                  ^
+      155 |           });
+      156 |           
+      157 |           await new Promise(resolve => setTimeout(resolve, 50));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:154:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:153:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          55 |
+          56 |   afterEach(() => {
+        > 57 |     jest.runOnlyPendingTimers();
+             |          ^
+          58 |     jest.useRealTimers();
+          59 |     jest.restoreAllMocks();
+          60 |   });
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-cycling.test.tsx:57:10)
+
+      55 |
+      56 |   afterEach(() => {
+    > 57 |     jest.runOnlyPendingTimers();
+         |          ^
+      58 |     jest.useRealTimers();
+      59 |     jest.restoreAllMocks();
+      60 |   });
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-cycling.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    The current testing environment is not configured to support act(...)
+
+      76 |       // If animation gets stuck, reset to visible state
+      77 |       if (animationState !== 'visible') {
+    > 78 |         setAnimationState('visible');
+         |         ^
+      79 |       }
+      80 |     }, 2000); // Reset if stuck for more than 2 seconds
+      81 |     
+
+      at isConcurrentActEnvironment (node_modules/react-dom/cjs/react-dom-client.development.js:14318:17)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:16020:7)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:14396:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:6969:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:6927:7)
+      at setAnimationState (pages/index.tsx:78:9)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:806:24)
+      at doTickInner (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1413:29)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1494:20)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at Object.runToLast (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1661:26)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:542:19)
+      at Object.runOnlyPendingTimers (__tests__/animations/rotating-text-cycling.test.tsx:57:10)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          405 |         for (let i = 0; i < 20; i++) {
+          406 |           act(() => {
+        > 407 |             jest.advanceTimersByTime(100);
+              |                  ^
+          408 |           });
+          409 |           
+          410 |           await new Promise(resolve => setTimeout(resolve, 10));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:407:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:406:14)
+
+      405 |         for (let i = 0; i < 20; i++) {
+      406 |           act(() => {
+    > 407 |             jest.advanceTimersByTime(100);
+          |                  ^
+      408 |           });
+      409 |           
+      410 |           await new Promise(resolve => setTimeout(resolve, 10));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:407:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:406:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+  console.error
+    You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);
+
+      405 |         for (let i = 0; i < 20; i++) {
+      406 |           act(() => {
+    > 407 |             jest.advanceTimersByTime(100);
+          |                  ^
+      408 |           });
+      409 |           
+      410 |           await new Promise(resolve => setTimeout(resolve, 10));
+
+      at node_modules/react/cjs/react.development.js:810:21
+      at runJobs (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:573:22)
+      at doTick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1394:13)
+      at Object.tick (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1502:20)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:576:19)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:407:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:406:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          405 |         for (let i = 0; i < 20; i++) {
+          406 |           act(() => {
+        > 407 |             jest.advanceTimersByTime(100);
+              |                  ^
+          408 |           });
+          409 |           
+          410 |           await new Promise(resolve => setTimeout(resolve, 10));
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+          at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:407:18)
+          at node_modules/@testing-library/react/dist/act-compat.js:48:24
+          at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+          at node_modules/@testing-library/react/dist/act-compat.js:47:25
+          at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:406:14)
+
+      405 |         for (let i = 0; i < 20; i++) {
+      406 |           act(() => {
+    > 407 |             jest.advanceTimersByTime(100);
+          |                  ^
+      408 |           });
+      409 |           
+      410 |           await new Promise(resolve => setTimeout(resolve, 10));
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.advanceTimersByTime (node_modules/@jest/fake-timers/build/index.js:575:14)
+      at advanceTimersByTime (__tests__/animations/rotating-text-cycling.test.tsx:407:18)
+      at node_modules/@testing-library/react/dist/act-compat.js:48:24
+      at Object.<anonymous>.process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:789:22)
+      at node_modules/@testing-library/react/dist/act-compat.js:47:25
+      at Object.<anonymous> (__tests__/animations/rotating-text-cycling.test.tsx:406:14)
+
+  console.warn
+    A function to advance timers was called but the timers APIs are not replaced with fake timers. Call `jest.useFakeTimers()` in this test file or enable fake timers for all tests by setting 'fakeTimers': {'enableGlobally': true} in Jest configuration file.
+    Stack Trace:
+    
+          247 |   
+          248 |   // Run any pending timers and restore real timers
+        > 249 |   jest.runOnlyPendingTimers()
+              |        ^
+          250 |   jest.useRealTimers()
+          251 |   
+          252 |   // Reset scroll position
+    
+          Error: 
+          at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:641:7)
+          at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+          at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+      247 |   
+      248 |   // Run any pending timers and restore real timers
+    > 249 |   jest.runOnlyPendingTimers()
+          |        ^
+      250 |   jest.useRealTimers()
+      251 |   
+      252 |   // Reset scroll position
+
+      at FakeTimers._checkFakeTimers (node_modules/@jest/fake-timers/build/index.js:639:28)
+      at FakeTimers.runOnlyPendingTimers (node_modules/@jest/fake-timers/build/index.js:541:14)
+      at Object.runOnlyPendingTimers (jest.setup.js:249:8)
+
+FAIL __tests__/animations/rotating-text-cycling.test.tsx (66.276 s)
+  Homepage Rotating Text Cycling
+    Word Sequence Cycling
+      ✕ should cycle through all words in correct order (109 ms)
+      ✕ should properly loop back to first word after last word (219 ms)
+      ✕ should handle edge cases with word array changes (30023 ms)
+      ✕ should maintain sequence integrity during timing glitches (53 ms)
+    Complete Cycle Validation
+      ✕ should complete full cycles without missing words (16 ms)
+      ✓ should never display empty text during transitions (29 ms)
+      ✕ should complete full word cycling sequence correctly (59 ms)
+    Animation State Management
+      ✓ should transition through animation states correctly (5024 ms)
+      ✕ should handle component re-renders without breaking cycling (54 ms)
+    Edge Case Handling
+      ✕ should handle rapid state changes gracefully (30027 ms)
+      ✕ should recover from stuck animation states (42 ms)
+
+  ● Homepage Rotating Text Cycling › Word Sequence Cycling › should cycle through all words in correct order
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      87 |         
+      88 |         const validation = observer.validateExpectedSequence(expectedWords, 2);
+    > 89 |         expect(validation.valid).toBe(true);
+         |                                  ^
+      90 |         
+      91 |         if (!validation.valid) {
+      92 |           console.log('Sequence validation failed:', {
+
+      at Object.toBe (__tests__/animations/rotating-text-cycling.test.tsx:89:34)
+
+  ● Homepage Rotating Text Cycling › Word Sequence Cycling › should properly loop back to first word after last word
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Businesses"
+    Received: "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head>[39m
+        [36m<title[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+        [36m>[39m
+          [0mSMARTER VENDING[0m
+        [36m</title>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"Traditional & healthy vending, coffee, and mini-market services for workplaces. Request a demo today!"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"width=device-width, initial-scale=1"[39m
+          [33mname[39m=[32m"viewport"[39m
+        [36m/>[39m
+        [36m<link[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mhref[39m=[32m"/favicon.ico"[39m
+          [33mrel[39m=[32m"icon"[39m
+        [36m/>[39m
+      [36m</head>[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"layout"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split-container"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-inner"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-badge"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                      [36m>[39m
+                        [0mCalifornia's #1 Choice[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<h1[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-title"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                        [33mdata-testid[39m=[32m"static-text"[39m
+                      [36m>[39m
+                        [0mPremium Amenity for Modern[0m
+                      [36m</span>[39m
+                      [0m [0m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text-container"[39m
+                        [33mdata-testid[39m=[32m"rotating-text-container"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text rotating-text-entering"[39m
+                          [33mdata-testid[39m=[32m"rotating-text"[39m
+                        [36m>[39m
+                          [0mGyms[0m
+                        [36m</span>[39m
+                      [36m</span>[39m
+                    [36m</h1>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-description"[39m
+                    [36m>[39m
+                      [0mTransform your workplace with comprehensive vending, coffee, and mini-market services. We serve businesses of 150-25,000 employees across California with premium solutions that keep teams energized and productive.[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-stats"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m200+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mLocations Served[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m50,000+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mHappy Employees[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m15+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mYears Experience[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-actions"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f btn btn-primary btn-lg btn-shimmer"[39m
+                      [36m>[39m
+                        [0mRequest a Demo[0m
+                      [36m</button>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-contact"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-text"[39m
+                        [36m>[39m
+                          [0mOr call us today[0m
+                        [36m</span>[39m
+                        [36m<a[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-phone"[39m
+                          [33mhref[39m=[32m"tel:909.258.9848"[39m
+                        [36m>[39m
+                          [0m909.258.9848[0m
+                        [36m</a>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-container"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Diverse ...
+
+      111 |         // Wait for the last word in sequence
+      112 |         await waitFor(() => {
+    > 113 |           expect(rotatingText.textContent).toBe('Businesses');
+          |                                            ^
+      114 |         }, { timeout: 15000 });
+      115 |         
+      116 |         // Advance to next word (should cycle back to first)
+
+      at toBe (__tests__/animations/rotating-text-cycling.test.tsx:113:44)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Homepage Rotating Text Cycling › Word Sequence Cycling › should handle edge cases with word array changes
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      138 |     });
+      139 |
+    > 140 |     it('should handle edge cases with word array changes', async () => {
+          |     ^
+      141 |       // This test would require modifying the component to accept dynamic word arrays
+      142 |       // For now, we'll test the robustness of the current implementation
+      143 |       
+
+      at it (__tests__/animations/rotating-text-cycling.test.tsx:140:5)
+      at describe (__tests__/animations/rotating-text-cycling.test.tsx:62:3)
+      at Object.describe (__tests__/animations/rotating-text-cycling.test.tsx:48:1)
+
+  ● Homepage Rotating Text Cycling › Word Sequence Cycling › should maintain sequence integrity during timing glitches
+
+    expect(received).toBeGreaterThan(expected)
+
+    Expected: > 2
+    Received:   1
+
+      206 |         
+      207 |         // Should have progressed through sequence despite irregular timing
+    > 208 |         expect(sequence.length).toBeGreaterThan(2);
+          |                                 ^
+      209 |       } finally {
+      210 |         observer.stop();
+      211 |       }
+
+      at Object.toBeGreaterThan (__tests__/animations/rotating-text-cycling.test.tsx:208:33)
+
+  ● Homepage Rotating Text Cycling › Complete Cycle Validation › should complete full cycles without missing words
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      222 |       const cycleResult = await waitForCompleteCycle(rotatingText, expectedWords, 20000);
+      223 |       
+    > 224 |       expect(cycleResult.success).toBe(true);
+          |                                   ^
+      225 |       expect(cycleResult.observedWords).toEqual(expect.arrayContaining(expectedWords));
+      226 |       expect(cycleResult.observedWords.length).toBe(expectedWords.length);
+      227 |       
+
+      at Object.toBe (__tests__/animations/rotating-text-cycling.test.tsx:224:35)
+
+  ● Homepage Rotating Text Cycling › Complete Cycle Validation › should complete full word cycling sequence correctly
+
+    expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 5
+    Received:    1
+
+      298 |         
+      299 |         // Verify proper cycling pattern
+    > 300 |         expect(observedSequence.length).toBeGreaterThanOrEqual(expectedWords.length + 1);
+          |                                         ^
+      301 |         
+      302 |         // Find the cycle transition point
+      303 |         let cycleTransitionFound = false;
+
+      at Object.toBeGreaterThanOrEqual (__tests__/animations/rotating-text-cycling.test.tsx:300:41)
+
+  ● Homepage Rotating Text Cycling › Animation State Management › should handle component re-renders without breaking cycling
+
+    expect(element).toBeInTheDocument()
+
+    element could not be found in the document
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head>[39m
+        [36m<title[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+        [36m>[39m
+          [0mSMARTER VENDING[0m
+        [36m</title>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"Traditional & healthy vending, coffee, and mini-market services for workplaces. Request a demo today!"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"width=device-width, initial-scale=1"[39m
+          [33mname[39m=[32m"viewport"[39m
+        [36m/>[39m
+        [36m<link[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mhref[39m=[32m"/favicon.ico"[39m
+          [33mrel[39m=[32m"icon"[39m
+        [36m/>[39m
+      [36m</head>[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"layout"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split-container"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-inner"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-badge"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                      [36m>[39m
+                        [0mCalifornia's #1 Choice[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<h1[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-title"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                        [33mdata-testid[39m=[32m"static-text"[39m
+                      [36m>[39m
+                        [0mPremium Amenity for Modern[0m
+                      [36m</span>[39m
+                      [0m [0m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text-container"[39m
+                        [33mdata-testid[39m=[32m"rotating-text-container"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text rotating-text-entering"[39m
+                          [33mdata-testid[39m=[32m"rotating-text"[39m
+                        [36m>[39m
+                          [0mApartments[0m
+                        [36m</span>[39m
+                      [36m</span>[39m
+                    [36m</h1>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-description"[39m
+                    [36m>[39m
+                      [0mTransform your workplace with comprehensive vending, coffee, and mini-market services. We serve businesses of 150-25,000 employees across California with premium solutions that keep teams energized and productive.[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-stats"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m200+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mLocations Served[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m50,000+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mHappy Employees[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m15+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mYears Experience[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-actions"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f btn btn-primary btn-lg btn-shimmer"[39m
+                      [36m>[39m
+                        [0mRequest a Demo[0m
+                      [36m</button>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-contact"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-text"[39m
+                        [36m>[39m
+                          [0mOr call us today[0m
+                        [36m</span>[39m
+                        [36m<a[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-phone"[39m
+                          [33mhref[39m=[32m"tel:909.258.9848"[39m
+                        [36m>[39m
+                          [0m909.258.9848[0m
+                        [36m</a>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-container"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Di...
+
+      369 |         
+      370 |         await waitFor(() => {
+    > 371 |           expect(rotatingText).toBeInTheDocument();
+          |                                ^
+      372 |         });
+      373 |         
+      374 |         // Continue cycling after re-render
+
+      at toBeInTheDocument (__tests__/animations/rotating-text-cycling.test.tsx:371:32)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
+  ● Homepage Rotating Text Cycling › Edge Case Handling › should handle rapid state changes gracefully
+
+    thrown: "Exceeded timeout of 30000 ms for a test.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      394 |
+      395 |   describe('Edge Case Handling', () => {
+    > 396 |     it('should handle rapid state changes gracefully', async () => {
+          |     ^
+      397 |       const { getByTestId } = render(<Home />);
+      398 |       const rotatingText = getByTestId('rotating-text');
+      399 |       
+
+      at it (__tests__/animations/rotating-text-cycling.test.tsx:396:5)
+      at describe (__tests__/animations/rotating-text-cycling.test.tsx:395:3)
+      at Object.describe (__tests__/animations/rotating-text-cycling.test.tsx:48:1)
+
+  ● Homepage Rotating Text Cycling › Edge Case Handling › should recover from stuck animation states
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "Workplaces"
+
+    Ignored nodes: comments, script, style
+    [36m<html>[39m
+      [36m<head>[39m
+        [36m<title[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+        [36m>[39m
+          [0mSMARTER VENDING[0m
+        [36m</title>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"Traditional & healthy vending, coffee, and mini-market services for workplaces. Request a demo today!"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+        [36m<meta[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mcontent[39m=[32m"width=device-width, initial-scale=1"[39m
+          [33mname[39m=[32m"viewport"[39m
+        [36m/>[39m
+        [36m<link[39m
+          [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+          [33mhref[39m=[32m"/favicon.ico"[39m
+          [33mrel[39m=[32m"icon"[39m
+        [36m/>[39m
+      [36m</head>[39m
+      [36m<body>[39m
+        [36m<div>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"layout"[39m
+          [36m>[39m
+            [36m<section[39m
+              [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-split-container"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-content-inner"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-badge"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                      [36m>[39m
+                        [0mCalifornia's #1 Choice[0m
+                      [36m</span>[39m
+                    [36m</div>[39m
+                    [36m<h1[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-title"[39m
+                    [36m>[39m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f"[39m
+                        [33mdata-testid[39m=[32m"static-text"[39m
+                      [36m>[39m
+                        [0mPremium Amenity for Modern[0m
+                      [36m</span>[39m
+                      [0m [0m
+                      [36m<span[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text-container"[39m
+                        [33mdata-testid[39m=[32m"rotating-text-container"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f rotating-text rotating-text-entering"[39m
+                          [33mdata-testid[39m=[32m"rotating-text"[39m
+                        [36m>[39m
+                          [0mGyms[0m
+                        [36m</span>[39m
+                      [36m</span>[39m
+                    [36m</h1>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-description"[39m
+                    [36m>[39m
+                      [0mTransform your workplace with comprehensive vending, coffee, and mini-market services. We serve businesses of 150-25,000 employees across California with premium solutions that keep teams energized and productive.[0m
+                    [36m</p>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-stats"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m200+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mLocations Served[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m50,000+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mHappy Employees[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-item"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-number"[39m
+                        [36m>[39m
+                          [0m15+[0m
+                        [36m</span>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f stat-label"[39m
+                        [36m>[39m
+                          [0mYears Experience[0m
+                        [36m</span>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-actions"[39m
+                    [36m>[39m
+                      [36m<button[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f btn btn-primary btn-lg btn-shimmer"[39m
+                      [36m>[39m
+                        [0mRequest a Demo[0m
+                      [36m</button>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-contact"[39m
+                      [36m>[39m
+                        [36m<span[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-text"[39m
+                        [36m>[39m
+                          [0mOr call us today[0m
+                        [36m</span>[39m
+                        [36m<a[39m
+                          [33mclass[39m=[32m"jsx-aaab183f6ae3640f contact-phone"[39m
+                          [33mhref[39m=[32m"tel:909.258.9848"[39m
+                        [36m>[39m
+                          [0m909.258.9848[0m
+                        [36m</a>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"jsx-aaab183f6ae3640f hero-image-container"[39m
+                  [36m>[39m
+                    [36m<img[39m
+                      [33malt[39m=[32m"Diverse ...
+
+      451 |           expect(expectedWords).toContain(word2);
+      452 |           // Should have progressed
+    > 453 |           expect(word2).not.toBe(word1);
+          |                             ^
+      454 |         });
+      455 |         
+      456 |         // Continue normal cycling
+
+      at toBe (__tests__/animations/rotating-text-cycling.test.tsx:453:29)
+      at runWithExpensiveErrorDiagnosticsDisabled (node_modules/@testing-library/dom/dist/config.js:47:12)
+      at checkCallback (node_modules/@testing-library/dom/dist/wait-for.js:124:77)
+      at node_modules/@testing-library/dom/dist/wait-for.js:82:9
+
