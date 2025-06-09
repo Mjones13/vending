@@ -159,6 +159,59 @@ Before writing ANY code:
 
 **Important**: Never use `git checkout branch-name` without `-b` when creating new branches - this attempts to switch to existing branch and will fail.
 
+#### **🔬 ATOMIC TASK REQUIREMENTS (CRITICAL)**
+
+**MANDATORY: Tasks must be 10-20 minute atomic units with file-specific actions.**
+
+##### **Atomic Task Format:**
+```markdown
+- [ ] **Task X.Y**: [Specific action on specific file/line]
+  - **File**: `path/to/file.ext`
+  - **Change**: [Exact modification - add/remove/replace specific text]
+  - **Verify**: [Command or check to confirm completion]
+```
+
+##### **Good vs Bad Examples:**
+```markdown
+✅ GOOD:
+- [ ] **Task 1.1**: Add `import { act }` to jest.setup.js line 2
+  - **File**: `jest.setup.js`
+  - **Change**: Insert `import { act } from '@testing-library/react'` after line 1
+  - **Verify**: `grep "import { act }" jest.setup.js` returns the import
+
+❌ BAD:
+- [ ] Fix animation issues (too vague, no file reference)
+- [ ] Update test utilities (no specific action, no verification)
+```
+
+##### **Task Criteria Checklist:**
+Every task MUST have:
+- [ ] **File path** - Exact location
+- [ ] **Line numbers** - Which lines to modify  
+- [ ] **Precise action** - Add/remove/replace specific code
+- [ ] **Verification** - Command to confirm completion
+- [ ] **15-minute scope** - Single, focused change
+
+##### **When to Split Further:**
+Split if task involves:
+- Multiple files (one task per file)
+- Both adding AND removing code  
+- More than 20 minutes to complete
+- Multiple verification steps
+
+##### **MANDATORY FINAL VERIFICATION PHASE:**
+
+**Every implementation plan MUST end with a comprehensive verification phase that validates all previous work.**
+
+This final phase should:
+- Systematically verify each completed task against its original objectives
+- Confirm all acceptance criteria have been met
+- Test the integration of all changes together
+- Validate the original problem has been solved
+- Document any deviations from the plan
+
+**No implementation plan is complete without this verification phase.**
+
 ### Step 2: Sequential Execution (REQUIRED)
 During implementation:
 1. **Pre-task sync**: Before EACH task: `git fetch --all --prune && git pull`

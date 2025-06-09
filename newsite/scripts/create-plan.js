@@ -84,62 +84,200 @@ function generatePlanTemplate(taskName, timestampId, branchName) {
 
 ## Background/Motivation
 
-[Describe the problem or requirement that this implementation plan addresses]
+[Describe the specific problem this plan addresses. Include file references where applicable:]
+- [Which files are affected and why]
+- [Current behavior vs desired behavior]
+- [Root cause analysis with specific evidence]
 
 ## Key Challenges
 
-1. **Challenge 1**: [Describe the first major challenge]
-2. **Challenge 2**: [Describe the second major challenge]
-3. **Challenge 3**: [Describe the third major challenge]
+1. **Technical Challenge**: [Specific implementation difficulty with affected files/functions]
+2. **Testing Challenge**: [Specific testing/verification obstacles] 
+3. **Integration Challenge**: [Dependencies or compatibility issues]
 
-## High-Level Task Breakdown
+## Atomic Task Breakdown
 
-### Phase 1: [Phase Name]
-- [ ] **Task 1.1**: [Task description]
-- [ ] **Task 1.2**: [Task description]
-- [ ] **Task 1.3**: [Task description]
+### Phase 1: [Specific Phase Name - e.g., "Fix RAF Polyfills in jest.setup.js"]
+- [ ] **Task 1.1**: [ATOMIC action on SPECIFIC file/line]
+  - **File**: \`path/to/specific/file.ext\`
+  - **Change**: [Exact modification - be specific about what to add/remove/replace]
+  - **Verify**: [Specific command: \`npm test __tests__/file.test.js\`, \`grep -n "text" file.js\`, etc.]
+  
+- [ ] **Task 1.2**: [Next atomic action with specific file reference]  
+  - **File**: \`path/to/file.ext\`
+  - **Change**: [Precise modification with line numbers if editing existing code]
+  - **Verify**: [Specific test or command that confirms this change works]
+  
+- [ ] **Task 1.3**: [Third atomic action - e.g., testing/verification focused]
+  - **File**: \`path/to/test/file.test.tsx\` (or verification command)
+  - **Change**: [Create test case or run verification command]
+  - **Verify**: [Expected test output or verification result]
 
-### Phase 2: [Phase Name]
-- [ ] **Task 2.1**: [Task description]
-- [ ] **Task 2.2**: [Task description]
-- [ ] **Task 2.3**: [Task description]
+### Phase 2: [Next Specific Phase Name - e.g., "Update Test Files to Use New Polyfills"]
+- [ ] **Task 2.1**: [File-specific atomic action]
+  - **File**: \`path/to/file.ext\`
+  - **Change**: [Exact modification with context]
+  - **Verify**: [How to confirm this specific change worked]
 
-### Phase 3: [Phase Name]
-- [ ] **Task 3.1**: [Task description]
-- [ ] **Task 3.2**: [Task description]
-- [ ] **Task 3.3**: [Task description]
+- [ ] **Task 2.2**: [Another atomic action]
+  - **File**: \`path/to/another/file.ext\`
+  - **Change**: [Specific code/text to modify]
+  - **Verify**: [Verification method]
+
+### Phase 3: [Implementation Phase Name]
+- [ ] **Task 3.1**: [Implementation task]
+  - **File**: \`path/to/file.ext\`
+  - **Change**: [Specific modification]
+  - **Verify**: [Verification method]
+
+### Phase [FINAL]: **MANDATORY COMPREHENSIVE VERIFICATION** 🔍
+> **CRITICAL**: This phase validates ALL previous work against original objectives.
+
+- [ ] **Task [FINAL].1**: Verify Phase 1 Objectives Met
+  - **Objective**: [Restate Phase 1 main goal]
+  - **Verification**: 
+    - [ ] Confirm Task 1.1 objective achieved: [Original Task 1.1 goal]
+    - [ ] Confirm Task 1.2 objective achieved: [Original Task 1.2 goal]
+    - [ ] Run comprehensive test: \`[command to verify Phase 1 goals]\`
+  - **Expected Result**: [Specific outcome that proves Phase 1 success]
+
+- [ ] **Task [FINAL].2**: Verify Phase 2 Objectives Met  
+  - **Objective**: [Restate Phase 2 main goal]
+  - **Verification**:
+    - [ ] Confirm Task 2.1 objective achieved: [Original Task 2.1 goal]
+    - [ ] Run verification: \`[command to verify Phase 2 goals]\`
+  - **Expected Result**: [Specific outcome that proves Phase 2 success]
+
+- [ ] **Task [FINAL].3**: Verify Phase 3 Objectives Met
+  - **Objective**: [Restate Phase 3 main goal]  
+  - **Verification**:
+    - [ ] Confirm Task 3.1 objective achieved: [Original Task 3.1 goal]
+    - [ ] Run verification: \`[command to verify Phase 3 goals]\`
+  - **Expected Result**: [Specific outcome that proves Phase 3 success]
+
+- [ ] **Task [FINAL].4**: Validate Original Problem Resolution
+  - **Original Problem**: [Restate the problem from Background/Motivation]
+  - **Verification**: 
+    - [ ] Run original failing scenario: \`[command that was failing before]\`
+    - [ ] Confirm problem symptoms are gone: [List specific symptoms to check]
+    - [ ] Test edge cases: [Any edge cases mentioned in Key Challenges]
+  - **Expected Result**: [Original problem should be completely resolved]
+
+- [ ] **Task [FINAL].5**: Integration Testing
+  - **Integration Points**: [List systems/components that interact with changes]
+  - **Verification**:
+    - [ ] Full test suite passes: \`npm test\`
+    - [ ] Build succeeds: \`npm run build\`
+    - [ ] Linting passes: \`npm run lint\`
+    - [ ] [Any additional integration commands]
+  - **Expected Result**: All systems work together without issues
+
+- [ ] **Task [FINAL].6**: Document Implementation Results
+  - **File**: \`docs/scratchpad.md\`
+  - **Change**: Add comprehensive entry documenting:
+    - [ ] Original problem and root cause
+    - [ ] Solution implemented (with file references)
+    - [ ] Verification results (all commands that now pass)
+    - [ ] Any deviations from original plan
+    - [ ] Lessons learned for future similar issues
+  - **Verify**: Entry exists with timestamp and complete information
+
+### Verification Failure Protocol:
+If any verification step fails:
+1. **Analyze the failure** - Determine root cause of verification failure
+2. **Document the issue** - Note what failed and why in implementation plan
+3. **Choose response**:
+   - **Simple fix**: Create additional task to address the issue
+   - **Complex issue**: STOP and notify user with:
+     - Specific failure details
+     - What was attempted
+     - Potential solutions identified
+     - Request for guidance on how to proceed
+4. **Do NOT mark plan complete** until all verifications pass
 
 ## Implementation Strategy
 
 ### Technical Approach:
-[Describe the overall technical approach and methodology]
+[Describe the specific methodology:]
+- [How files will be modified in sequence]
+- [Testing approach for each change]
+- [Rollback plan if issues arise]
 
-### Key Requirements:
-- [Requirement 1]
-- [Requirement 2]
-- [Requirement 3]
+### Atomic Task Guidelines:
+- **One File Rule**: Each task modifies exactly ONE file (or creates ONE new file)
+- **Line Specificity**: Include line numbers when modifying existing code
+- **Exact Changes**: Specify exact text/code to add, remove, or replace
+- **Clear Verification**: Each task has unambiguous completion criteria
+- **Sequential Order**: Tasks must be completed in the specified order
+- **Final Verification Required**: EVERY plan ends with comprehensive verification phase
+
+### File Organization:
+- [List all files that will be created/modified]
+- [Specify the order of file modifications]
+- [Note any file dependencies or prerequisites]
 
 ### Dependencies:
-- [Dependency 1]
-- [Dependency 2]
-- [Dependency 3]
+- [Specific external dependencies with version numbers]
+- [Internal file dependencies (Task X.Y must complete before Task Z.A)]
+- [Tool requirements: Node version, package versions, etc.]
 
 ## Acceptance Criteria
 
 ### Functional Requirements:
-- [ ] [Functional requirement 1]
-- [ ] [Functional requirement 2]
-- [ ] [Functional requirement 3]
+- [ ] [Specific functionality working - include test command to verify]
+  - **Verify with**: \`npm test specific-test-name\`
+- [ ] [Specific behavior achieved - include verification steps]
+  - **Verify with**: [Exact command or manual check]
+- [ ] [Integration requirement met]
+  - **Verify with**: [Specific verification method]
 
-### Quality Requirements:
-- [ ] [Quality requirement 1]
-- [ ] [Quality requirement 2]
-- [ ] [Quality requirement 3]
+### Quality Requirements:  
+- [ ] [Code quality standard - linting, formatting]
+  - **Verify with**: \`npm run lint\` passes without errors
+- [ ] [Test coverage requirement]
+  - **Verify with**: \`npm run test:coverage\` shows expected coverage
+- [ ] [Build requirement]
+  - **Verify with**: \`npm run build\` succeeds without warnings
 
-### Performance Requirements:
-- [ ] [Performance requirement 1]
-- [ ] [Performance requirement 2]
-- [ ] [Performance requirement 3]
+### Final Verification Requirements:
+- [ ] **ALL original objectives achieved** (verified in Final Phase)
+- [ ] **Original problem completely resolved** (tested and confirmed)  
+- [ ] **No regressions introduced** (full integration testing passed)
+- [ ] **Implementation documented** (scratchpad.md updated with complete solution)
+
+## Success Metrics
+
+### Immediate Verification:
+- [ ] All tasks marked complete with checkboxes
+- [ ] All verification commands pass
+- [ ] All acceptance criteria met
+
+### Final Verification Success:
+- [ ] **MANDATORY**: Final verification phase completed successfully
+- [ ] **MANDATORY**: Original problem no longer reproducible
+- [ ] **MANDATORY**: All integration points tested and working
+- [ ] **MANDATORY**: Solution documented for future reference
+
+## Risk Mitigation
+
+### Potential Issues:
+1. **[Specific Risk]**: [Mitigation strategy]
+2. **[Another Risk]**: [How to handle if it occurs]
+
+### Rollback Plan:
+- [Step-by-step rollback instructions if changes need to be reverted]
+- [Commands to restore previous state]
+
+## Notes
+
+### Implementation Notes:
+- [Any important considerations during implementation]
+- [Debugging tips for common issues]
+- [Performance considerations]
+
+### Follow-up Items:
+- [Any future improvements or optimizations to consider]
+- [Related issues that could be addressed in future plans]
 
 ## Project Status Board
 
