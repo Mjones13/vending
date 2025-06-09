@@ -39,13 +39,13 @@ React 18 introduced stricter enforcement of the act() boundary, requiring all st
 - [x] **Task 1.5**: Configure testing library with increased asyncUtilTimeout (5000ms)
 - [x] **Task 1.6**: Create documentation for timer utility usage patterns
 
-### Phase 2: Fix High-Impact Test Files
+### Phase 2: Fix High-Impact Test Files ✅ **COMPLETE**
 - [x] **Task 2.1**: Fix act() warnings in rotating-text.test.tsx (use real timers to prevent infinite loops)
 - [x] **Task 2.2**: Implement maxCycles pattern for rotating text tests to prevent hanging
-- [ ] **Task 2.3**: Fix act() warnings in HeroSection test files (multiple timer-based animations)
-- [ ] **Task 2.4**: Fix act() warnings in Layout.test.tsx (scroll-based state updates)
-- [ ] **Task 2.5**: Fix act() warnings in homepage index.test.tsx (integration of multiple components)
-- [ ] **Task 2.6**: Ensure all animation tests using setInterval switch to real timers or cycle limits
+- [x] **Task 2.3**: Fix act() warnings in HeroSection test files (multiple timer-based animations)
+- [x] **Task 2.4**: Fix act() warnings in Layout.test.tsx (scroll-based state updates)
+- [x] **Task 2.5**: Fix act() warnings in homepage index.test.tsx (integration of multiple components)
+- [x] **Task 2.6**: Ensure all animation tests using setInterval switch to real timers or cycle limits
 
 ### Phase 3: Systematic Test Suite Updates
 - [ ] **Task 3.1**: Create automated script to identify remaining files with act() warnings

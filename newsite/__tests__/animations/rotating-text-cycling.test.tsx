@@ -12,6 +12,7 @@ import {
   waitForCompleteCycle,
   validateAnimationStates
 } from '../../test-utils/rotation-testing';
+import { setupRealTimers, cleanupTimers } from '../../test-utils/timer-helpers';
 
 // Mock Next.js dependencies
 jest.mock('next/router', () => ({
@@ -49,13 +50,13 @@ describe('Homepage Rotating Text Cycling', () => {
   const expectedWords = ['Workplaces', 'Apartments', 'Gyms', 'Businesses'];
   
   beforeEach(() => {
-    jest.useFakeTimers();
+    // Use real timers for rotating text
+    setupRealTimers();
     document.body.innerHTML = '';
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+  afterEach(async () => {
+    await cleanupTimers();
     jest.restoreAllMocks();
   });
 

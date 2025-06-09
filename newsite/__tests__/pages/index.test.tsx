@@ -6,8 +6,18 @@ import { render, screen, waitFor } from '../../test-utils'
 import { RotatingTextTester, createAnimationTestSuite } from '../../test-utils/animation-testing'
 import { mockRotatingWords } from '../../test-utils/mock-data'
 import Home from '../../pages/index'
+import { setupRealTimers, cleanupTimers } from '../../test-utils/timer-helpers'
 
 describe('Home Page', () => {
+  beforeEach(() => {
+    // Use real timers for rotating text animations
+    setupRealTimers()
+  })
+
+  afterEach(async () => {
+    await cleanupTimers()
+  })
+
   describe('Basic Rendering', () => {
     it('should render the hero section', () => {
       render(<Home />)
