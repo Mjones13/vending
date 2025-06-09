@@ -49,6 +49,7 @@ export class KeyframeAnimationTester {
   private config: KeyframeAnimationConfig;
   private phaseListeners: Array<(phase: AnimationPhase, step: KeyframeStep) => void> = [];
   private timeoutId: NodeJS.Timeout | null = null;
+  private isDestroying: boolean = false;
 
   constructor(config: KeyframeAnimationConfig) {
     this.config = {
@@ -259,8 +260,13 @@ export class KeyframeAnimationTester {
    * Cleanup resources
    */
   destroy(): void {
+    if (this.isDestroying) {
+      return; // Prevent recursive calls
+    }
+    this.isDestroying = true;
     this.cancel();
     this.phaseListeners = [];
+    this.isDestroying = false;
   }
 }
 
@@ -456,7 +462,7 @@ export const commonAnimationConfigs = {
   rotateText: {
     name: 'rotateText',
     duration: 3000,
-    iterationCount: Infinity,
+    iterationCount: 1, // Changed from Infinity to prevent test hangs
     steps: 20
   },
   logoStagger: {

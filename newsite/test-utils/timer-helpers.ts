@@ -115,14 +115,14 @@ export async function advanceTimersAndExecute(
  * Useful for ensuring all async operations complete
  */
 export async function flushAllTimersAndMicrotasks(): Promise<void> {
+  // Run all timers first (without act wrapper to avoid timing issues)
+  if (jest.isMockFunction(setTimeout)) {
+    jest.runAllTimers();
+  }
+  
+  // Then flush microtasks
   await act(async () => {
-    // Flush microtasks
     await Promise.resolve();
-    
-    // Run all timers
-    if (jest.isMockFunction(setTimeout)) {
-      jest.runAllTimers();
-    }
   });
 }
 

@@ -45,8 +45,10 @@ jest.mock('next/head', () => {
 });
 
 jest.mock('next/image', () => {
-  return function Image({ src, alt, ...props }: any) {
-    return <img src={src} alt={alt} {...props} />;
+  return function Image({ src, alt, width, height, style, className, ...props }: any) {
+    // Filter out Next.js specific props that don't belong on HTML img elements
+    const { fill, priority, quality, sizes, placeholder, blurDataURL, ...htmlProps } = props;
+    return <img src={src} alt={alt} width={width} height={height} style={style} className={className} {...htmlProps} />;
   };
 });
 
@@ -157,8 +159,8 @@ describe('Rotating Text Cycling Behavior (Tier 2)', () => {
   const expectedWords = ['Workplaces', 'Apartments', 'Gyms', 'Businesses'];
   
   beforeEach(() => {
-    // Use real timers for component behavior testing
-    setupRealTimers();
+    // Use fake timers for component behavior testing with time advancement
+    jest.useFakeTimers();
     document.body.innerHTML = '';
     
     // Mock CSS properties for behavior tests
@@ -169,6 +171,7 @@ describe('Rotating Text Cycling Behavior (Tier 2)', () => {
   });
 
   afterEach(async () => {
+    jest.useRealTimers();
     await cleanupTimers();
     clearAnimationMocks();
     jest.restoreAllMocks();

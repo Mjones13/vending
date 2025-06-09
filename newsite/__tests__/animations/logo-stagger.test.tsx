@@ -188,7 +188,6 @@ describe('Logo Staggered Animation Behavior (Tier 2)', () => {
     it('should trigger animations in staggered sequence', async () => {
       render(<LogoStaggerComponent />)
       
-      const timingTester = new AnimationTimingTester()
       const animationTimes: number[] = []
       
       // Monitor when each logo gets the animation class

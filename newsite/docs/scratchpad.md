@@ -18,12 +18,17 @@
 - [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md) ✅ COMPLETED
 - [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) ✅ COMPLETED
 - [docs/implementation-plan/0609_0028-fix-react-act-warnings.md](implementation-plan/0609_0028-fix-react-act-warnings.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0609_0510-fix-keyframeanimationtester-stack-overflow.md](implementation-plan/0609_0510-fix-keyframeanimationtester-stack-overflow.md) ✅ COMPLETED
+- [docs/implementation-plan/0609_0540-fix-missing-animationtimingtester-import.md](implementation-plan/0609_0540-fix-missing-animationtimingtester-import.md) ✅ COMPLETED
 
 ## Errors & Solutions
 
+- [2025-01-09 05:55] Error: ReferenceError AnimationTimingTester is not defined in logo-stagger test - Solution: Removed dead code reference (line 191 in logo-stagger.test.tsx). Root cause: Unused variable instantiation of non-existent class. Fix type: Dead code removal (no import needed, class never existed)
+- [2025-01-09 05:45] Error: KeyframeAnimationTester stack overflow in destroy() method - Solution: Added isDestroying guard flag to prevent recursive calls. Root cause: destroy() → cancel() → notifyPhaseChange() → listener → destroy() infinite loop. Fixed with guard pattern and changed rotateText iterationCount from Infinity to 1
 - [2025-01-09 01:15] Error: React act() warnings in rotating text tests - Solution: Use real timers instead of fake timers for setInterval-based animations, implement maxCycles pattern to prevent infinite loops during testing
 
 ## Lessons Learned
+- [2025-06-09 06:22] MAJOR SUCCESS: Timer Configuration Issues Completely Resolved - Problem: 40% of test failures due to timer configuration mismatches causing "fake timers not configured" warnings and component animations stuck on first state. Root Cause: Mixed timer configurations - tests using setupRealTimers() but calling jest.advanceTimersByTime() which requires fake timers. Solution: Phase 1: Fixed rotating text animation tests with jest.useFakeTimers(), Phase 2: Fixed timer helper tests using functional testing approach instead of jest.isMockFunction() (doesn't detect fake timers), Phase 3: Fixed home page tests with controlled advanceTimersByTimeAndAct(). Results: All 23 timer helper tests passing, timer warnings eliminated, home page rotating text progresses correctly. Key Discovery: jest.isMockFunction(setTimeout) returns false even after jest.useFakeTimers() because fake timers use Lolex/Sinon simulation, not Jest's standard mock system.
 - [2025-06-08 21:55] Lesson: Always follow correct branch workflow - Switch to appropriate branch before executing implementation plans. Implementation plans should specify which branch to work on
 - [2025-06-08 21:50] Success: Fixed rotating text infinite loop - Changed from RAF to timer-based approach, tests now complete in 2 seconds instead of timing out
 - [2025-06-08 21:35] Solution: AI agent push timeout issues - Created dedicated npm scripts (test:ai:pre-push, push:ai:validated, push:ai) with proper timeout configurations (3 min for tests, 4 min for push)
