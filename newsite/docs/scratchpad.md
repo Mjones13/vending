@@ -15,6 +15,11 @@
 - [docs/implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md](implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md) ✅ COMPLETED
 
 ## Lessons Learned
+- [2025-06-08 20:45] Error: Migration script bug - References not updated during actual migration due to `dryRun = true` parameter on line 842 of migrate-to-timestamp-ids.js - Solution: Change to `dryRun = false` for actual updates. Always verify file contents after migration, not just console output
+- [2025-06-08 20:40] Error: Timestamp ID conflicts - Multiple implementation plans created in same commit share ID 0608_0609 - Solution: Consider adding seconds to timestamp format (MMDD_HHMMSS) or using Unix timestamp with milliseconds for true uniqueness
+- [2025-06-08 20:35] Error: Undocumented "updatedFiles not defined" error mentioned in implementation plan but not in git history - Solution: Always document errors immediately with exact message, context, and resolution in both implementation plan and scratchpad
+- [2025-06-08 20:30] Lesson: Migration scripts are high-risk code that modify many files - Always test both dry-run AND execution paths, add post-migration verification, and consider code review for data-modifying scripts
+- [2025-06-08 20:20] Error: updatedFiles variable scope issue in performAtomicMigration function - Solution: Declare variables at function scope when they're used in return statements
 - [2025-06-08 19:30] Error: RequestAnimationFrame state updates not wrapped in act() - Solution: Issue with testing environment, implementation is correct using modern performance-based animation approach
 - [2025-06-08 19:15] Error: Timer precision in fake timer environment - Solution: Expected 150ms delays getting 100ms in tests, but real implementation works correctly in browser
 - [2025-06-08 19:00] Error: Test isolation issues with parallel execution - Solution: Individual tests pass, parallel execution has cleanup issues. Added persistent animation frame polyfills and better style isolation

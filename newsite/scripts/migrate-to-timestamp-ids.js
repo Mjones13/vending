@@ -839,7 +839,7 @@ async function performAtomicMigration(migrationPlan, mapping) {
     
     if (totalReferenceFiles > 0) {
       startProgress('Updating references', totalReferenceFiles);
-      const updateResult = await updateAllReferences(migrationPlan, true);
+      const updateResult = await updateAllReferences(migrationPlan, false);
       updatedFiles = updateResult.updatedFiles;
       completeProgress();
       log(`   📝 Updated ${updateResult.totalChanges} references in ${updatedFiles.length} files`);
