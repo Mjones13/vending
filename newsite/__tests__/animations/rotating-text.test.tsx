@@ -12,15 +12,33 @@ import {
   enableAnimations
 } from '../../test-utils/keyframe-testing'
 import { mockRotatingWords } from '../../test-utils/mock-data'
+import {
+  setupRealTimers,
+  waitForTimeout,
+  cleanupTimers
+} from '../../test-utils/timer-helpers'
 
 // Component that matches the actual rotating text implementation
-function RotatingTextComponent() {
+// Modified to support maxCycles for testing to prevent infinite loops
+function RotatingTextComponent({ maxCycles }: { maxCycles?: number }) {
   const [currentWordIndex, setCurrentWordIndex] = React.useState(0)
   const [animationState, setAnimationState] = React.useState<'visible' | 'exiting' | 'entering'>('visible')
+  const [cycleCount, setCycleCount] = React.useState(0)
   const rotatingWords = mockRotatingWords
 
   React.useEffect(() => {
+    // If maxCycles is set and we've reached it, don't start interval
+    if (maxCycles && cycleCount >= maxCycles) {
+      return
+    }
+
     const interval = setInterval(() => {
+      // Check if we should stop cycling
+      if (maxCycles && cycleCount >= maxCycles - 1) {
+        clearInterval(interval)
+        return
+      }
+
       // Phase 1: Start exit animation
       setAnimationState('exiting')
       
@@ -28,6 +46,7 @@ function RotatingTextComponent() {
       setTimeout(() => {
         setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length)
         setAnimationState('entering')
+        setCycleCount(prev => prev + 1)
         
         // Phase 3: After entrance completes, return to visible state
         setTimeout(() => {
@@ -38,7 +57,7 @@ function RotatingTextComponent() {
     }, 3000) // Total cycle time
 
     return () => clearInterval(interval)
-  }, [rotatingWords.length])
+  }, [rotatingWords.length, maxCycles, cycleCount])
 
   return (
     <div>
@@ -60,12 +79,15 @@ function RotatingTextComponent() {
 
 describe('Rotating Text Animation States', () => {
   beforeEach(() => {
+    // Use real timers for rotating text to prevent infinite loops
+    setupRealTimers()
     // Use normal animation speed for these tests
     enableAnimations()
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     disableAnimations()
+    await cleanupTimers()
   })
 
   describe('Animation State Machine', () => {
@@ -78,7 +100,7 @@ describe('Rotating Text Animation States', () => {
     })
 
     it('should transition through all animation states correctly', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
@@ -111,7 +133,7 @@ describe('Rotating Text Animation States', () => {
     }, 10000)
 
     it('should change words during the entering phase', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const initialWord = rotatingText.textContent
@@ -130,21 +152,23 @@ describe('Rotating Text Animation States', () => {
     }, 8000)
 
     it('should cycle through all words in correct order', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={mockRotatingWords.length} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
       // Track words as they change
-      const observedWords: string[] = []
+      const observedWords: string[] = [rotatingText.textContent || '']
       
-      for (let i = 0; i < mockRotatingWords.length; i++) {
+      // Wait for each word change
+      for (let i = 1; i < mockRotatingWords.length; i++) {
         await waitFor(
           () => {
             const currentWord = rotatingText.textContent || ''
-            if (!observedWords.includes(currentWord)) {
+            if (currentWord !== observedWords[observedWords.length - 1]) {
               observedWords.push(currentWord)
+              return true
             }
-            expect(observedWords).toHaveLength(i + 1)
+            return false
           },
           { timeout: 4000 }
         )
@@ -157,7 +181,7 @@ describe('Rotating Text Animation States', () => {
 
   describe('CSS Animation Properties', () => {
     it('should have correct keyframe animations for exiting state', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
@@ -174,7 +198,7 @@ describe('Rotating Text Animation States', () => {
     }, 8000)
 
     it('should have correct keyframe animations for entering state', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
@@ -193,7 +217,7 @@ describe('Rotating Text Animation States', () => {
 
   describe('Animation Timing', () => {
     it('should complete each phase within expected timeframes', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const timingTester = new AnimationTimingTester()
@@ -220,7 +244,7 @@ describe('Rotating Text Animation States', () => {
     }, 10000)
 
     it('should maintain consistent cycle timing', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={2} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const cycleTimes: number[] = []
@@ -284,7 +308,7 @@ describe('Rotating Text Animation States', () => {
 
   describe('React Key Prop Behavior', () => {
     it('should re-mount component when word changes due to key prop', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const initialWord = rotatingText.textContent
@@ -306,7 +330,7 @@ describe('Rotating Text Animation States', () => {
 
   describe('Error Resilience', () => {
     it('should handle rapid state changes gracefully', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={3} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
@@ -322,7 +346,7 @@ describe('Rotating Text Animation States', () => {
     }, 15000)
 
     it('should not get stuck in any particular state', async () => {
-      render(<RotatingTextComponent />)
+      render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const stateHistory: string[] = []

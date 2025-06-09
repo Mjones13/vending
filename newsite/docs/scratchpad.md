@@ -17,6 +17,11 @@
 - [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-revised.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-revised.md) 🔄 CREATED (Revised after research)
 - [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md) ✅ COMPLETED
 - [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) ✅ COMPLETED
+- [docs/implementation-plan/0609_0028-fix-react-act-warnings.md](implementation-plan/0609_0028-fix-react-act-warnings.md) 🔄 IN PROGRESS
+
+## Errors & Solutions
+
+- [2025-01-09 01:15] Error: React act() warnings in rotating text tests - Solution: Use real timers instead of fake timers for setInterval-based animations, implement maxCycles pattern to prevent infinite loops during testing
 
 ## Lessons Learned
 - [2025-06-08 21:55] Lesson: Always follow correct branch workflow - Switch to appropriate branch before executing implementation plans. Implementation plans should specify which branch to work on
