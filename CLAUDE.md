@@ -4,15 +4,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+⚠️ **WARNING FOR AI AGENTS**: The commands below are for human developers. As an AI agent, skip to the "AI Agent Commands" section for your dedicated commands. NEVER use `npm run dev`.
+
 The main development server runs in the `newsite/` directory:
 
 ```bash
 cd newsite
-npm run dev    # Start development server with Turbopack
-npm run build  # Build for production
-npm run start  # Start production server  
-npm run lint   # Run ESLint
+npm run dev    # Start development server with Turbopack (HUMAN DEVELOPERS ONLY)
+npm run build  # Build for production (SAFE FOR AI AGENTS) 
+npm run start  # Start production server (HUMAN DEVELOPERS ONLY)
+npm run lint   # Run ESLint (SAFE FOR AI AGENTS)
 ```
+
+## 🤖 AI Agent Command Quick Reference
+
+**Testing the application in browser:**
+```bash
+npm run start:ai       # Start your server on port 3001
+# Then test at http://localhost:3001
+npm run stop:ai        # Stop when done
+```
+
+**Building and testing:**
+```bash
+npm run build          # Build production version (safe to use)
+npm test               # Run tests (safe to use)
+```
+
+**NEVER USE:** `npm run dev`, `npm start`, or anything on port 3000
 
 ### AI Agent Commands (Port 3001 + Build Isolation)
 **CRITICAL: AI agents (Claude, Claude Code, Kirshir) MUST use these commands to avoid conflicts:**
@@ -43,17 +62,38 @@ Always run these commands from the `newsite/` directory, not the root.
 ### Robust Server Management
 The project includes a comprehensive AI server management system that ensures reliable server lifecycle control, prevents orphaned processes, and enables concurrent development.
 
-### AI Server Commands
+### AI Server Commands (USE THESE EXCLUSIVELY)
+
+**🚨 IMPORTANT: As an AI agent, you MUST use these commands exclusively. Never use npm run dev or any command that runs on port 3000.**
 
 ```bash
 cd newsite
-npm run dev:ai          # Direct Next.js dev server on port 3001 (foreground)
-npm run start:ai        # Managed AI server with PID tracking (background)
-npm run stop:ai         # Gracefully stop AI server with cleanup
-npm run status:ai       # Check AI server status (JSON output)
-npm run test:ai         # Run complete server lifecycle test
+npm run dev:ai          # Your dedicated dev server on port 3001 (foreground)
+npm run start:ai        # Your managed server with PID tracking (background)
+npm run stop:ai         # Stop your AI server
+npm run status:ai       # Check your server status
+npm run build          # Safe to use - doesn't start a server
+npm test               # Safe to use - doesn't start a server
 npm run cleanup:ai      # Emergency cleanup of orphaned processes
 ```
+
+### ❌ FORBIDDEN COMMANDS FOR AI AGENTS
+
+**NEVER use these commands - they are reserved for human developers only:**
+- `npm run dev` - This is the user's development server on port 3000
+- `npm start` - This is the user's production server  
+- `next dev` - Direct Next.js commands interfere with user's work
+- Any command that starts a server on port 3000
+
+**Why this matters:**
+- Using `npm run dev` will conflict with the user's development server
+- It interrupts the user's workflow and can cause port conflicts
+- AI agents have dedicated commands specifically designed to avoid these conflicts
+
+**What to use instead:**
+- Use `npm run dev:ai` for development server on port 3001
+- Use `npm run start:ai` for managed AI server
+- Use `npm run build` for production builds (this is safe to use)
 
 ### Testing Commands
 ```bash
@@ -73,6 +113,8 @@ npm run test:ai:cleanup    # Cleanup procedure validation tests
 2. **Check status before starting**: Run `status:ai` to verify clean state
 3. **Clean shutdown**: Use `stop:ai` rather than killing processes manually
 4. **Emergency cleanup**: Use `cleanup:ai` if processes become orphaned
+5. **NEVER use npm run dev**: This will interfere with the user's development server
+6. **Always use port 3001**: Your dedicated port is 3001, never use 3000
 
 ## AI Server Troubleshooting Guide
 
@@ -199,18 +241,44 @@ Examples:
 - `0609_0915-database-migration-script.md` (June 9th at 9:15 AM)
 
 ### Creating New Implementation Plans
-Use the automated script to ensure proper formatting:
 
+**CRITICAL: Branch Management Before Creating Plans**
+1. **ALWAYS switch to the appropriate branch BEFORE creating an implementation plan**
+2. **The branch name should match the task-name portion of the implementation plan**
+3. **All work specified in an implementation plan MUST be done on the branch specified in that plan**
+
+Steps to create a new implementation plan:
 ```bash
+# 1. First, create and switch to the appropriate branch
+git checkout -b task-name-here
+
+# 2. Then create the implementation plan (which will include current branch info)
 npm run create-plan "Task Name Here"
-# Creates: MMDD_HHMM-task-name-here.md with template
+# Creates: MMDD_HHMM-task-name-here.md with template and branch info
+
+# 3. All subsequent work MUST be done on this branch
 ```
+
+**Important**: The implementation plan will capture and display the current branch name. Never work on a different branch than what's specified in the implementation plan.
 
 ### Referencing Implementation Plans
 Reference plans using their timestamp ID:
 - In documentation: "See implementation plan 0608_1030 for details"
 - In commit messages: "Implementing plan 0608_1423"
 - In branch names: Use kebab-case task name without timestamp
+
+### Executing Implementation Plans
+
+**MANDATORY: Work on the Correct Branch**
+When executing any implementation plan:
+1. **Check the branch specified in the implementation plan header**
+2. **Switch to that branch before starting any work**: `git checkout branch-name`
+3. **Verify you're on the correct branch**: `git branch --show-current`
+4. **Never execute implementation plan tasks on a different branch**
+
+If the implementation plan's branch doesn't exist:
+- This likely means the plan was created incorrectly
+- Create the branch and notify that the plan should have been created after switching branches
 
 ## Branch Management Protocol
 
@@ -815,6 +883,28 @@ Logo is implemented as Next.js Image component with specific dimensions:
 - Exact content sourced from reference sites
 - HTML entities used for quotes/apostrophes to avoid ESLint errors
 - Break content updates into logical page-by-page chunks
+
+## Migration Script Best Practices
+
+When creating scripts that modify multiple files (like migration scripts):
+
+### Testing Requirements
+1. **Dry-run mode**: Always implement and test dry-run functionality first
+2. **Execution mode**: Test actual execution separately from dry-run
+3. **Verification**: Add post-migration verification that reads files to confirm changes
+4. **Error handling**: Document all errors immediately with exact messages and resolutions
+
+### Common Pitfalls
+- **Bug Example**: Passing `dryRun = true` during actual execution (see migrate-to-timestamp-ids.js line 842)
+- **Solution**: Always verify file contents after migration, not just console output
+- **Prevention**: Code review for any script that modifies multiple files
+
+### Timestamp Uniqueness
+- Current format `MMDD_HHMM` can have conflicts if files created in same minute
+- Consider enhanced formats:
+  - `MMDD_HHMMSS` - adds seconds
+  - Unix timestamp with milliseconds - guaranteed unique
+  - Add sequence number if multiple files created programmatically
 
 ## Lessons Learned Reference
 Check `docs/scratchpad.md` for project-specific lessons learned with timestamps.
