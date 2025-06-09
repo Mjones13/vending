@@ -415,3 +415,172 @@ Tests run automatically on:
 - Review error messages and stack traces
 - Use test debugging tools (screen.debug, page.pause)
 - Consult team documentation in `/docs` directory
+
+## React act() Best Practices
+
+### Understanding act() Warnings
+
+React 18 introduced stricter enforcement of the act() boundary. All state updates that occur during testing must be wrapped in `act()` to prevent warnings like:
+
+```
+Warning: An update inside a test was not wrapped in act(...)
+```
+
+### When act() Warnings Occur
+
+1. **Timer-based state updates** (setTimeout, setInterval)
+2. **Animation frame callbacks** (requestAnimationFrame)  
+3. **Async operations** that update component state
+4. **Event handlers** that trigger state changes
+5. **Cleanup functions** that modify state
+
+### Timer Utilities for act() Compliance
+
+Use our custom timer utilities that automatically wrap operations in act():
+
+```typescript
+import { 
+  setupRealTimers, 
+  setupFakeTimers,
+  advanceTimersByTimeAndAct,
+  cleanupTimers 
+} from '../test-utils/timer-helpers';
+
+describe('Component with Timers', () => {
+  beforeEach(() => {
+    // Use real timers for components with setInterval/setTimeout
+    setupRealTimers();
+  });
+
+  afterEach(async () => {
+    await cleanupTimers();
+  });
+
+  it('should handle timer-based state updates', async () => {
+    render(<TimerComponent />);
+    
+    // For fake timers - advance time with act() wrapping
+    await advanceTimersByTimeAndAct(1000);
+    
+    expect(screen.getByText('Updated')).toBeInTheDocument();
+  });
+});
+```
+
+### Real vs Fake Timers Strategy
+
+**Use Real Timers When:**
+- Components use `setInterval` (prevents infinite loops)
+- Complex animation sequences
+- RAF-based animations
+- Real-time user interactions
+
+```typescript
+beforeEach(() => {
+  setupRealTimers(); // Prevents act() warnings in setInterval components
+});
+```
+
+**Use Fake Timers When:**
+- You need precise control over timing
+- Testing timeout behaviors
+- Simple timer-based logic
+
+```typescript
+beforeEach(() => {
+  setupFakeTimers();
+});
+
+it('should timeout after delay', async () => {
+  render(<TimeoutComponent />);
+  
+  await advanceTimersByTimeAndAct(5000);
+  
+  expect(screen.getByText('Timeout')).toBeInTheDocument();
+});
+```
+
+### Global act() Utility
+
+For simple async operations, use the global `withAct` utility:
+
+```typescript
+it('should handle async state updates', async () => {
+  render(<AsyncComponent />);
+  
+  await global.withAct(async () => {
+    fireEvent.click(screen.getByText('Load Data'));
+    await waitFor(() => screen.getByText('Loaded'));
+  });
+});
+```
+
+### Preventing act() Warnings in Animation Tests
+
+```typescript
+describe('Animation Component', () => {
+  beforeEach(() => {
+    // Real timers prevent infinite loops in animations
+    setupRealTimers();
+  });
+
+  it('should animate without act() warnings', async () => {
+    render(<AnimatedComponent />);
+    
+    // Trigger animation
+    fireEvent.click(screen.getByText('Animate'));
+    
+    // Wait for animation with act() compliant timing
+    await waitFor(() => {
+      expect(screen.getByTestId('animated')).toHaveClass('active');
+    });
+  });
+});
+```
+
+### Scroll Event Testing
+
+```typescript
+it('should handle scroll events', async () => {
+  render(<ScrollComponent />);
+  
+  // Wrap scroll events in act() to prevent warnings
+  await act(async () => {
+    Object.defineProperty(window, 'scrollY', { value: 100 });
+    window.dispatchEvent(new Event('scroll'));
+  });
+  
+  expect(screen.getByTestId('header')).toHaveClass('scrolled');
+});
+```
+
+### Automated Detection
+
+Use our detection script to verify no act() warnings:
+
+```bash
+# Run act() warning detection
+node scripts/detect-act-warnings.js
+
+# Results show 100% clean files
+Coverage: 100% of files are act() warning-free
+```
+
+### Migration Checklist
+
+When fixing act() warnings in existing tests:
+
+1. ✅ Import timer utilities: `setupRealTimers`, `cleanupTimers`
+2. ✅ Add setup in `beforeEach()` and cleanup in `afterEach()`  
+3. ✅ Replace direct timer calls with act()-wrapped versions
+4. ✅ Use real timers for setInterval components
+5. ✅ Wrap scroll events and async operations in act()
+6. ✅ Run detection script to verify no warnings
+
+### Rules of Thumb
+
+- **Always use `setupRealTimers()`** for rotating text and interval-based animations
+- **Always use `cleanupTimers()`** in afterEach for proper cleanup
+- **Wrap all state-updating operations** in act() or use our utilities
+- **Run the detection script** before committing changes
+- **Prefer real timers** over fake timers for complex timing scenarios

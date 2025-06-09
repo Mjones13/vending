@@ -1,0 +1,21 @@
+{
+  "filesWithWarnings": [],
+  "totalWarnings": 0,
+  "testFiles": [
+    "__tests__/animations/hover-transitions.test.tsx",
+    "__tests__/animations/logo-stagger.test.tsx",
+    "__tests__/animations/rotating-text-alignment.test.tsx",
+    "__tests__/animations/rotating-text-cycling.test.tsx",
+    "__tests__/animations/rotating-text-timing.test.tsx",
+    "__tests__/animations/rotating-text.test.tsx",
+    "__tests__/components/Layout.test.tsx",
+    "__tests__/e2e/homepage.test.ts",
+    "__tests__/e2e/interactions.test.ts",
+    "__tests__/e2e/navigation.test.ts",
+    "__tests__/e2e/phase4-verification.test.ts",
+    "__tests__/e2e/responsive.test.ts",
+    "__tests__/pages/index.test.tsx",
+    "__tests__/utils/timer-helpers.test.tsx"
+  ],
+  "summary": "\n📊 ACT() WARNING DETECTION RESULTS:\n=====================================\nTotal test files: 14\nFiles with act() warnings: 0\nClean files: 14\nTotal act() warnings: 0\n\nCoverage: 100% of files are act() warning-free\n"
+}

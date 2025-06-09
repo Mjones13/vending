@@ -15,11 +15,15 @@ import {
   advanceTimersByTimeAndAct,
   runAllTimersAndAct,
   runOnlyPendingTimersAndAct,
+  runTimersToTimeAndAct,
   clearAllTimersAndAct,
 } from '../test-utils/timer-helpers';
 
 // Advance timers by specific time
 await advanceTimersByTimeAndAct(1000); // Advance by 1 second
+
+// Alternative method for advancing timers (same as above)
+await runTimersToTimeAndAct(1000);
 
 // Run all timers (careful with intervals - may cause infinite loops)
 await runAllTimersAndAct();
@@ -58,6 +62,7 @@ import {
   waitForCondition,
   runTimerCycles,
   advanceTimersAndExecute,
+  flushAllTimersAndMicrotasks,
 } from '../test-utils/timer-helpers';
 
 // Wait for real timeout (useful with real timers)
@@ -76,6 +81,9 @@ await runTimerCycles(5, 1000); // 5 cycles of 1 second each
 await advanceTimersAndExecute(1000, () => {
   fireEvent.click(button);
 });
+
+// Flush all timers and microtasks (ensures all async operations complete)
+await flushAllTimersAndMicrotasks();
 ```
 
 ### Timer Setup Helpers
