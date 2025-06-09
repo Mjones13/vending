@@ -44,7 +44,10 @@ This implementation plan addresses these issues by creating AI-specific testing 
 1. Create AI-specific npm scripts that run a subset of tests optimized for speed
 2. Use `--bail` flag to fail fast on first error
 3. Use `run-p` for parallel execution of lint, type-check, and tests
-4. Document explicit timeout values for AI agents to use with Bash tool
+4. Document explicit timeout values for AI agents to use with Bash tool:
+   - Test runs: 3 minutes (180000ms)
+   - Push operations: 4 minutes (240000ms)
+   - Combined operations: 4 minutes (240000ms)
 5. Provide both separate and combined commands for flexibility
 6. Consider creating a custom script that provides real-time feedback during long operations
 
@@ -75,7 +78,7 @@ This implementation plan addresses these issues by creating AI-specific testing 
 
 ### Performance Requirements:
 - [ ] AI pre-push tests complete in under 30 seconds
-- [ ] Combined push workflow completes in under 5 minutes
+- [ ] Combined push workflow completes in under 4 minutes
 - [ ] Fast failure on first error (--bail flag working)
 
 ## Project Status Board
