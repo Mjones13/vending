@@ -13,8 +13,14 @@
 - [docs/implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md](implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md)
 - [docs/implementation-plan/0608_1716-robust-ai-server-management.md](implementation-plan/0608_1716-robust-ai-server-management.md)
 - [docs/implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md](implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop.md) 🔄 CREATED (Initial)
+- [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-revised.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-revised.md) 🔄 CREATED (Revised after research)
+- [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md) ✅ READY (Final after code analysis)
 
 ## Lessons Learned
+- [2025-06-08 21:00] Lesson: RAF with React state - Using animationState in RAF without including it in useEffect dependencies creates stale closures. However, adding it to dependencies would cause infinite re-renders. Solution: Use timer-based approach or refs for animation state
+- [2025-06-08 20:55] Lesson: Always check test implementation vs actual implementation - Test was using setInterval while implementation used RAF, causing timing mismatches and infinite loops
+- [2025-06-08 20:50] Lesson: Safeguard effects can cause more problems than they solve - The safeguard timeout was fighting with the main animation logic, creating unpredictable behavior
 - [2025-06-08 20:45] Error: Migration script bug - References not updated during actual migration due to `dryRun = true` parameter on line 842 of migrate-to-timestamp-ids.js - Solution: Change to `dryRun = false` for actual updates. Always verify file contents after migration, not just console output
 - [2025-06-08 20:40] Error: Timestamp ID conflicts - Multiple implementation plans created in same commit share ID 0608_0609 - Solution: Consider adding seconds to timestamp format (MMDD_HHMMSS) or using Unix timestamp with milliseconds for true uniqueness
 - [2025-06-08 20:35] Error: Undocumented "updatedFiles not defined" error mentioned in implementation plan but not in git history - Solution: Always document errors immediately with exact message, context, and resolution in both implementation plan and scratchpad

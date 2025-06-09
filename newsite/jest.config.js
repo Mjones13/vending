@@ -38,7 +38,7 @@ const customJestConfig = {
   
   // Dynamic parallel execution optimization
   ...workerConfig,
-  testTimeout: 30000, // Increased timeout for parallel execution overhead
+  testTimeout: 20000, // 20 second timeout to prevent tests running indefinitely
   
   // Enhanced test isolation for parallel execution  
   // Note: isolateModules is not a valid Jest option, using resetModules instead
