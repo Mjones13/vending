@@ -1,6 +1,31 @@
 import '@testing-library/jest-dom'
 import { act } from '@testing-library/react'
 
+// RAF polyfill validation function to ensure they're never undefined
+function ensureRAFPolyfills() {
+  if (!global.requestAnimationFrame || typeof global.requestAnimationFrame !== 'function') {
+    global.requestAnimationFrame = (callback) => {
+      return setTimeout(callback, 16); // 16ms for ~60fps
+    };
+  }
+  
+  if (!global.cancelAnimationFrame || typeof global.cancelAnimationFrame !== 'function') {
+    global.cancelAnimationFrame = (id) => {
+      clearTimeout(id);
+    };
+  }
+  
+  // Also ensure they're available on window
+  if (typeof window !== 'undefined') {
+    if (!window.requestAnimationFrame || typeof window.requestAnimationFrame !== 'function') {
+      window.requestAnimationFrame = global.requestAnimationFrame;
+    }
+    if (!window.cancelAnimationFrame || typeof window.cancelAnimationFrame !== 'function') {
+      window.cancelAnimationFrame = global.cancelAnimationFrame;
+    }
+  }
+}
+
 // Global browser API polyfills - must be available before any tests run
 // These are defined at the top level to ensure they exist even before beforeEach runs
 global.requestAnimationFrame = global.requestAnimationFrame || ((callback) => {
@@ -201,17 +226,7 @@ beforeEach(() => {
   
   // Ensure animation frame polyfills are always available
   // Re-apply in every test to handle cases where they might be cleared
-  global.requestAnimationFrame = (callback) => {
-    return setTimeout(callback, 16); // 16ms for ~60fps
-  };
-  
-  global.cancelAnimationFrame = (id) => {
-    clearTimeout(id);
-  };
-  
-  // Also ensure they're available on window
-  window.requestAnimationFrame = global.requestAnimationFrame;
-  window.cancelAnimationFrame = global.cancelAnimationFrame;
+  ensureRAFPolyfills()
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
@@ -282,5 +297,7 @@ afterEach(() => {
   // Clear all mocks for next test
   jest.clearAllMocks()
   
-  // Note: Keep animation frame polyfills persistent to prevent "not defined" errors
+  // CRITICAL: Validate and restore RAF polyfills after cleanup
+  // Some test utilities may clear these, causing "not defined" errors
+  ensureRAFPolyfills()
 })
