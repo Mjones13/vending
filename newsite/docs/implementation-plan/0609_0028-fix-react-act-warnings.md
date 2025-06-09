@@ -34,20 +34,25 @@ React 18 introduced stricter enforcement of the act() boundary, requiring all st
 ### Phase 1: Create Timer Utility Infrastructure
 - [ ] **Task 1.1**: Create test-utils/timer-helpers.ts with act()-wrapped timer utilities
 - [ ] **Task 1.2**: Write comprehensive tests for timer utilities to ensure they properly wrap operations
-- [ ] **Task 1.3**: Update jest.setup.js to provide global act() utilities and improved RAF polyfills
-- [ ] **Task 1.4**: Create documentation for timer utility usage patterns
+- [ ] **Task 1.3**: Update jest.setup.js to provide global act() utilities and improved RAF polyfills with persistence through test cleanup
+- [ ] **Task 1.4**: Add global withAct utility to jest.setup.js for easy act() wrapping
+- [ ] **Task 1.5**: Configure testing library with increased asyncUtilTimeout (5000ms)
+- [ ] **Task 1.6**: Create documentation for timer utility usage patterns
 
 ### Phase 2: Fix High-Impact Test Files
-- [ ] **Task 2.1**: Fix act() warnings in rotating-text.test.tsx (highest impact - animation loops)
-- [ ] **Task 2.2**: Fix act() warnings in HeroSection test files (multiple timer-based animations)
-- [ ] **Task 2.3**: Fix act() warnings in Layout.test.tsx (scroll-based state updates)
-- [ ] **Task 2.4**: Fix act() warnings in homepage index.test.tsx (integration of multiple components)
+- [ ] **Task 2.1**: Fix act() warnings in rotating-text.test.tsx (use real timers to prevent infinite loops)
+- [ ] **Task 2.2**: Implement maxCycles pattern for rotating text tests to prevent hanging
+- [ ] **Task 2.3**: Fix act() warnings in HeroSection test files (multiple timer-based animations)
+- [ ] **Task 2.4**: Fix act() warnings in Layout.test.tsx (scroll-based state updates)
+- [ ] **Task 2.5**: Fix act() warnings in homepage index.test.tsx (integration of multiple components)
+- [ ] **Task 2.6**: Ensure all animation tests using setInterval switch to real timers or cycle limits
 
 ### Phase 3: Systematic Test Suite Updates
 - [ ] **Task 3.1**: Create automated script to identify remaining files with act() warnings
 - [ ] **Task 3.2**: Update remaining component tests to use new timer utilities
 - [ ] **Task 3.3**: Update animation-specific tests to use appropriate timer strategies
-- [ ] **Task 3.4**: Add ESLint rule or test lint to catch future act() violations
+- [ ] **Task 3.4**: Add comprehensive afterEach cleanup to prevent test isolation issues
+- [ ] **Task 3.5**: Add ESLint rule or test lint to catch future act() violations
 
 ### Phase 4: Verification and Documentation
 - [ ] **Task 4.1**: Run full test suite to verify all act() warnings are resolved
@@ -90,7 +95,21 @@ await waitForAnimationFrame();
 
 // Execute callback after delay with act()
 await waitForTimeout(500);
+
+// Advance to next frame (for Jest 27+)
+await advanceTimersToNextFrame();
+
+// Global utility available in all tests
+await global.withAct(async () => {
+  // Any async operation that updates state
+});
 ```
+
+**Critical Implementation Details**:
+- RAF polyfills must persist through test cleanup (use beforeEach checks)
+- Animation tests with setInterval should default to real timers or use maxCycles pattern
+- All async state updates must be wrapped in act(), including those in cleanup functions
+- Test isolation requires comprehensive cleanup in afterEach
 
 ## Acceptance Criteria
 
@@ -139,6 +158,14 @@ This implementation plan addresses the React act() warnings affecting 90% of our
 - The solution avoids external dependencies by leveraging existing @testing-library/react capabilities
 - Timer utilities will support both fake and real timer modes to accommodate different testing needs
 - The approach is compatible with our parallel testing architecture on M2 MacBook
+
+### Key Patterns from Reference Analysis:
+
+1. **Persistent RAF Polyfills**: Must check and re-apply in beforeEach to survive test cleanup
+2. **Real Timers for Animations**: Animation tests with setInterval should use real timers by default
+3. **MaxCycles Pattern**: When using fake timers with animations, limit cycles to prevent infinite loops
+4. **Global Utilities**: Provide withAct globally for easy wrapping of async operations
+5. **Comprehensive Cleanup**: Clear timers, mocks, DOM, and global state in afterEach
 
 ---
 
