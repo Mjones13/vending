@@ -14,7 +14,7 @@ Our test suite is experiencing a 45% failure rate due to issues with browser API
 **Current State**: The jest.setup.js file already includes RAF/cAF polyfills (lines 186-191), but they are:
 1. Using `setTimeout(cb, 0)` instead of proper 16ms timing for 60fps
 2. Wrapped in `jest.fn()` which may interfere with their functionality
-3. Only set up once in beforeEach, not re-applied after cleanup
+3. Only checked if they don't exist (`if (!global.requestAnimationFrame)`), which may not work after afterEach cleanup
 
 This implementation fixes the existing polyfills to work correctly and persist through test cleanup cycles.
 
@@ -22,14 +22,15 @@ This implementation fixes the existing polyfills to work correctly and persist t
 
 1. **Incorrect Implementation**: Current polyfills use 0ms timeout instead of 16ms for proper frame timing
 2. **Jest Mock Wrapper**: The `jest.fn()` wrapper may be interfering with proper execution
-3. **Persistence in beforeEach**: Need to ensure polyfills are reapplied in beforeEach to handle cleanup
+3. **Test Utils Override**: `AnimationTestIsolation` class in `parallel-isolation.ts` is restoring original (undefined) RAF/cAF values during cleanup
+4. **Conditional Check**: The `if (!global.requestAnimationFrame)` check prevents re-application after cleanup
 
 ## High-Level Task Breakdown
 
 ### Phase 1: Fix Existing Polyfills
 - [ ] **Task 1.1**: Write a test that demonstrates the current polyfill failure
-- [ ] **Task 1.2**: Fix the RAF/cAF polyfills in jest.setup.js (remove jest.fn wrapper, use 16ms timing)
-- [ ] **Task 1.3**: Add polyfill reapplication in beforeEach hook
+- [ ] **Task 1.2**: Fix the RAF/cAF polyfills in jest.setup.js (remove jest.fn wrapper, use 16ms timing, remove conditional check)
+- [ ] **Task 1.3**: Fix AnimationTestIsolation in parallel-isolation.ts to preserve polyfills during cleanup
 - [ ] **Task 1.4**: Verify homepage tests no longer fail due to missing APIs
 
 ### Phase 2: Verify and Document
@@ -41,20 +42,24 @@ This implementation fixes the existing polyfills to work correctly and persist t
 ## Implementation Strategy
 
 ### Technical Approach:
-1. Remove `jest.fn()` wrapper from RAF/cAF polyfills - use direct function assignment
-2. Change timing from 0ms to 16ms for proper 60fps frame timing
-3. Move polyfill setup to both global scope AND beforeEach for persistence
-4. Follow TDD approach - write failing test first, then fix
+1. Add global polyfills at the top of jest.setup.js (outside beforeEach) for initial availability
+2. Remove `jest.fn()` wrapper from RAF/cAF polyfills - use direct function assignment
+3. Change timing from 0ms to 16ms for proper 60fps frame timing
+4. Remove conditional checks in beforeEach so polyfills are always reapplied
+5. Update AnimationTestIsolation to preserve polyfills instead of restoring undefined values
+6. Follow TDD approach - write failing test first, then fix
 
 ### Key Requirements:
 - Polyfills must work with both real and fake timers
 - Must not interfere with existing test isolation
 - Should fix the 22 failing homepage tests
 - Must be compatible with parallel test execution
+- Test utils must not remove polyfills during cleanup
 
 ### Dependencies:
 - Jest setup file (jest.setup.js) - lines 186-191 need modification
-- No new npm packages needed for basic fix
+- Test utils file (test-utils/parallel-isolation.ts) - lines 156-157, 199-200 need modification
+- No new npm packages needed
 
 ## Acceptance Criteria
 
