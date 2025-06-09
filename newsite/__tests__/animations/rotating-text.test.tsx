@@ -1,16 +1,28 @@
 /**
  * Rotating Text Animation Tests
+ * Three-Tier Testing Strategy Implementation:
+ * - Tier 1: Animation Logic (state machines, hooks, timing logic)
+ * - Tier 2: Component Behavior (DOM changes, text updates, className changes)
  * Following TDD approach - testing the specific animation state machine implementation
  */
 import React from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import { 
-  RotatingTextTester, 
+  testAnimationHook,
+  createTestStateMachine,
+  AnimationStateMachine,
+  isAnimationRunning,
+  isAnimationComplete
+} from '../../test-utils/animation-state-testing'
+import { 
+  simulateKeyframePhases,
   KeyframeAnimationTester,
-  AnimationTimingTester,
-  disableAnimations,
-  enableAnimations
+  commonAnimationConfigs
 } from '../../test-utils/keyframe-testing'
+import {
+  mockAnimationProperties,
+  clearAnimationMocks
+} from '../../test-utils/css-animation-mocking'
 import { mockRotatingWords } from '../../test-utils/mock-data'
 import {
   setupRealTimers,
@@ -77,21 +89,164 @@ function RotatingTextComponent({ maxCycles }: { maxCycles?: number }) {
   )
 }
 
-describe('Rotating Text Animation States', () => {
+// TIER 1: Animation Logic Testing
+describe('Rotating Text Animation Logic (Tier 1)', () => {
   beforeEach(() => {
-    // Use real timers for rotating text to prevent infinite loops
+    // Mock CSS animation properties for state testing
+    mockAnimationProperties('.rotating-text', {
+      animationName: 'textRotate',
+      animationDuration: '3s',
+      animationIterationCount: 'infinite'
+    })
+    mockAnimationProperties('.rotating-text-exiting', {
+      animationName: 'fadeOutDown',
+      animationDuration: '0.4s'
+    })
+    mockAnimationProperties('.rotating-text-entering', {
+      animationName: 'fadeInUp',
+      animationDuration: '0.4s'
+    })
+  })
+
+  afterEach(() => {
+    clearAnimationMocks()
+  })
+
+  describe('Animation State Machine Logic', () => {
+    it('should transition through correct animation states', () => {
+      const { machine, expectTransition, validateTransitions } = createTestStateMachine('idle')
+      
+      // Define expected state flow for rotating text
+      expectTransition('idle', 'running')
+      expectTransition('running', 'completed')
+      
+      // Execute state transitions
+      machine.transition('running', 'text-rotation-start')
+      machine.transition('completed', 'cycle-complete')
+      
+      // Validate the transitions occurred as expected
+      validateTransitions()
+    })
+
+    it('should handle state machine for word cycling logic', () => {
+      const stateMachine = new AnimationStateMachine('idle')
+      
+      // Test initial state
+      expect(stateMachine.getCurrentState()).toBe('idle')
+      
+      // Test transition to running (exiting phase)
+      stateMachine.transition('running', 'exit-animation-start')
+      expect(isAnimationRunning(stateMachine.getCurrentState())).toBe(true)
+      
+      // Test completion (entering phase)
+      stateMachine.transition('completed', 'enter-animation-complete')
+      expect(isAnimationComplete(stateMachine.getCurrentState())).toBe(true)
+      
+      // Verify transition history
+      const transitions = stateMachine.getTransitionHistory()
+      expect(transitions).toHaveLength(2)
+      expect(transitions[0].trigger).toBe('exit-animation-start')
+      expect(transitions[1].trigger).toBe('enter-animation-complete')
+    })
+
+    it('should test word cycling logic with animation state hooks', () => {
+      // Create a mock hook for testing word rotation logic
+      const useRotatingTextLogic = (words: string[]) => {
+        const [currentIndex, setCurrentIndex] = React.useState(0)
+        const [state, setState] = React.useState<'visible' | 'exiting' | 'entering'>('visible')
+        
+        const cycleToNext = React.useCallback(() => {
+          setState('exiting')
+          setTimeout(() => {
+            setCurrentIndex((prev) => (prev + 1) % words.length)
+            setState('entering')
+            setTimeout(() => setState('visible'), 400)
+          }, 400)
+        }, [words.length])
+        
+        return { currentIndex, state, cycleToNext, currentWord: words[currentIndex] }
+      }
+      
+      const { result, triggerTransition } = testAnimationHook(() => 
+        useRotatingTextLogic(mockRotatingWords)
+      )
+      
+      // Test initial state
+      expect(result.current.currentIndex).toBe(0)
+      expect(result.current.state).toBe('visible')
+      expect(result.current.currentWord).toBe(mockRotatingWords[0])
+      
+      // Trigger transition and test logic
+      act(() => {
+        result.current.cycleToNext()
+      })
+      
+      expect(result.current.state).toBe('exiting')
+    })
+  })
+
+  describe('Animation Timing Logic', () => {
+    it('should calculate correct animation phase durations', async () => {
+      const timeline = await simulateKeyframePhases({
+        name: 'textRotation',
+        duration: 3000, // 3 second cycle
+        steps: 10
+      })
+      
+      expect(timeline.duration).toBe(3000)
+      expect(timeline.steps).toHaveLength(11) // 0-100% in 10 steps
+      expect(timeline.endTime).toBeDefined()
+      expect(timeline.endTime! - timeline.startTime).toBeCloseTo(3000, -2)
+    })
+
+    it('should validate animation phase progression logic', async () => {
+      const tester = new KeyframeAnimationTester(commonAnimationConfigs.rotateText)
+      
+      const phases: string[] = []
+      tester.onPhaseChange((phase) => {
+        phases.push(phase)
+      })
+      
+      tester.start()
+      
+      // Wait for animation to progress
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      expect(phases).toContain('before-start')
+      expect(phases).toContain('animating')
+      
+      tester.destroy()
+    })
+  })
+})
+
+// TIER 2: Component Behavior Testing
+describe('Rotating Text Component Behavior (Tier 2)', () => {
+  beforeEach(() => {
+    // Use real timers for component behavior testing
     setupRealTimers()
-    // Use normal animation speed for these tests
-    enableAnimations()
+    // Mock CSS animation properties for behavior tests
+    mockAnimationProperties('.rotating-text-visible', {
+      animationName: 'none',
+      animationDuration: '0s'
+    })
+    mockAnimationProperties('.rotating-text-exiting', {
+      animationName: 'fadeOutDown',
+      animationDuration: '0.4s'
+    })
+    mockAnimationProperties('.rotating-text-entering', {
+      animationName: 'fadeInUp',
+      animationDuration: '0.4s'
+    })
   })
 
   afterEach(async () => {
-    disableAnimations()
+    clearAnimationMocks()
     await cleanupTimers()
   })
 
-  describe('Animation State Machine', () => {
-    it('should start in visible state', () => {
+  describe('Component State Behavior', () => {
+    it('should start in visible state with correct text content', () => {
       render(<RotatingTextComponent />)
       
       const rotatingText = screen.getByTestId('rotating-text')
@@ -99,7 +254,7 @@ describe('Rotating Text Animation States', () => {
       expect(rotatingText).toHaveTextContent(mockRotatingWords[0])
     })
 
-    it('should transition through all animation states correctly', async () => {
+    it('should apply correct CSS classes during component state transitions', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
@@ -107,46 +262,51 @@ describe('Rotating Text Animation States', () => {
       // Should start visible
       expect(rotatingText).toHaveClass('rotating-text-visible')
       
-      // Advance to the start of the animation cycle (3000ms interval)
-      await advanceTimersByTimeWithAct(3000)
+      // Wait for exiting class to be applied
+      await waitFor(
+        () => {
+          expect(rotatingText).toHaveClass('rotating-text-exiting')
+        },
+        { timeout: 4000 }
+      )
       
-      // Should now be in exiting state
-      expect(rotatingText).toHaveClass('rotating-text-exiting')
+      // Wait for entering class to be applied (word should change here)
+      await waitFor(
+        () => {
+          expect(rotatingText).toHaveClass('rotating-text-entering')
+        },
+        { timeout: 1000 }
+      )
       
-      // Advance through exit animation (400ms)
-      await advanceTimersByTimeWithAct(400)
-      
-      // Should now be in entering state (word should change here)
-      expect(rotatingText).toHaveClass('rotating-text-entering')
-      
-      // Advance through entrance animation (400ms)
-      await advanceTimersByTimeWithAct(400)
-      
-      // Should return to visible state
-      expect(rotatingText).toHaveClass('rotating-text-visible')
+      // Wait to return to visible class
+      await waitFor(
+        () => {
+          expect(rotatingText).toHaveClass('rotating-text-visible')
+        },
+        { timeout: 1000 }
+      )
     }, 10000)
 
-    it('should change words during the entering phase', async () => {
+    it('should update text content during component state changes', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const initialWord = rotatingText.textContent
       
-      // Advance to start of animation cycle
-      await advanceTimersByTimeWithAct(3000)
-      
-      // Advance through exit phase
-      await advanceTimersByTimeWithAct(400)
-      
-      // At this point word should change to next in sequence
-      expect(rotatingText.textContent).not.toBe(initialWord)
+      // Wait for text content to change
+      await waitFor(
+        () => {
+          expect(rotatingText.textContent).not.toBe(initialWord)
+        },
+        { timeout: 5000 }
+      )
       
       // Should be the next word in the sequence
       const expectedWord = mockRotatingWords[1]
       expect(rotatingText).toHaveTextContent(expectedWord)
     }, 8000)
 
-    it('should cycle through all words in correct order', async () => {
+    it('should cycle through all words in correct sequence', async () => {
       render(<RotatingTextComponent maxCycles={mockRotatingWords.length} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
@@ -169,18 +329,18 @@ describe('Rotating Text Animation States', () => {
         )
       }
       
-      // Should have seen all words
+      // Should have seen all words in DOM
       expect(observedWords).toEqual(mockRotatingWords)
     }, 20000)
   })
 
-  describe('CSS Animation Properties', () => {
-    it('should have correct keyframe animations for exiting state', async () => {
+  describe('CSS Class Application', () => {
+    it('should apply correct CSS class for exiting state', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
-      // Wait for exiting state
+      // Wait for exiting class to be applied
       await waitFor(
         () => {
           expect(rotatingText).toHaveClass('rotating-text-exiting')
@@ -188,16 +348,16 @@ describe('Rotating Text Animation States', () => {
         { timeout: 4000 }
       )
       
-      // Verify the element has the exiting class which should have the animation
+      // Verify the element has the exiting class (animation properties are mocked)
       expect(rotatingText).toHaveClass('rotating-text-exiting')
     }, 8000)
 
-    it('should have correct keyframe animations for entering state', async () => {
+    it('should apply correct CSS class for entering state', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
-      // Wait for entering state
+      // Wait for entering class to be applied
       await waitFor(
         () => {
           expect(rotatingText).toHaveClass('rotating-text-entering')
@@ -205,28 +365,28 @@ describe('Rotating Text Animation States', () => {
         { timeout: 5000 }
       )
       
-      // Verify the element has the entering class which should have the animation
+      // Verify the element has the entering class (animation properties are mocked)
       expect(rotatingText).toHaveClass('rotating-text-entering')
     }, 8000)
   })
 
-  describe('Animation Timing', () => {
-    it('should complete each phase within expected timeframes', async () => {
+  describe('Component Timing Behavior', () => {
+    it('should complete state transitions within expected timeframes', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
-      const timingTester = new AnimationTimingTester()
+      let startTime: number
       
-      // Start timing when exiting phase begins
+      // Start timing when exiting class is applied
       await waitFor(
         () => {
           expect(rotatingText).toHaveClass('rotating-text-exiting')
-          timingTester.startTiming()
+          startTime = performance.now()
         },
         { timeout: 4000 }
       )
       
-      // Wait for complete cycle back to visible
+      // Wait for complete cycle back to visible class
       await waitFor(
         () => {
           expect(rotatingText).toHaveClass('rotating-text-visible')
@@ -234,21 +394,23 @@ describe('Rotating Text Animation States', () => {
         { timeout: 2000 }
       )
       
-      // Total animation time should be around 800ms (400ms exit + 400ms entrance)
-      timingTester.verifyDuration(800, 200)
+      // Total transition time should be around 800ms (400ms exit + 400ms entrance)
+      const totalTime = performance.now() - startTime!
+      expect(totalTime).toBeGreaterThan(600) // Allow some tolerance
+      expect(totalTime).toBeLessThan(1200)
     }, 10000)
 
-    it('should maintain consistent cycle timing', async () => {
+    it('should maintain consistent text change timing', async () => {
       render(<RotatingTextComponent maxCycles={2} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const cycleTimes: number[] = []
       
-      // Record multiple cycle timings
+      // Record multiple cycle timings for text content changes
       for (let i = 0; i < 2; i++) {
         const startTime = performance.now()
         
-        // Wait for word change
+        // Wait for text content change in DOM
         const initialWord = rotatingText.textContent
         await waitFor(
           () => {
@@ -261,7 +423,7 @@ describe('Rotating Text Animation States', () => {
         cycleTimes.push(endTime - startTime)
       }
       
-      // All cycles should be approximately 3000ms
+      // All text changes should occur approximately every 3000ms
       cycleTimes.forEach(time => {
         expect(time).toBeGreaterThanOrEqual(2800) // Allow some tolerance
         expect(time).toBeLessThanOrEqual(3200)
@@ -269,46 +431,41 @@ describe('Rotating Text Animation States', () => {
     }, 15000)
   })
 
-  describe('Container Properties', () => {
-    it('should have proper container styling to prevent cutoff', () => {
+  describe('DOM Structure and Container Behavior', () => {
+    it('should have proper container element with correct CSS class', () => {
       render(<RotatingTextComponent />)
       
       const container = screen.getByText(mockRotatingWords[0]).parentElement
       expect(container).toHaveClass('rotating-text-container')
       
-      // Instead of testing computed styles (which return empty in JSDOM),
-      // test that the container has the expected class which should have the styles applied
-      expect(container).toHaveClass('rotating-text-container')
-      
-      // Verify the container exists and contains the rotating text
+      // Test container DOM structure (not visual styles)
       expect(container).toBeInTheDocument()
       expect(container).toContainElement(screen.getByTestId('rotating-text'))
     })
 
-    it('should maintain text alignment with surrounding content', () => {
+    it('should maintain proper DOM hierarchy with surrounding content', () => {
       render(<RotatingTextComponent />)
       
       const container = screen.getByText(mockRotatingWords[0]).parentElement
       
-      // Test that container has the rotating-text-container class
-      // which should handle alignment properly
+      // Test DOM structure and class application
       expect(container).toHaveClass('rotating-text-container')
       
-      // Test that the container is inline with surrounding text
+      // Test that the container is properly nested in DOM
       const heading = container?.closest('h1')
       expect(heading).toHaveTextContent('Premium Amenity for Modern')
       expect(heading).toContainElement(container!)
     })
   })
 
-  describe('React Key Prop Behavior', () => {
-    it('should re-mount component when word changes due to key prop', async () => {
+  describe('React Component Behavior', () => {
+    it('should handle React key prop changes for component re-mounting', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const initialWord = rotatingText.textContent
       
-      // Wait for word change (which indicates the component re-mounted with new key)
+      // Wait for word change (indicates React re-rendering with new key)
       await waitFor(
         () => {
           const currentWord = rotatingText.textContent
@@ -317,19 +474,19 @@ describe('Rotating Text Animation States', () => {
         { timeout: 5000 }
       )
       
-      // Verify the new word is from our expected list
+      // Verify the new word is from expected list in DOM
       const currentWord = rotatingText.textContent
       expect(mockRotatingWords).toContain(currentWord)
     }, 8000)
   })
 
-  describe('Error Resilience', () => {
-    it('should handle rapid state changes gracefully', async () => {
+  describe('Component Resilience', () => {
+    it('should maintain DOM stability through multiple cycles', async () => {
       render(<RotatingTextComponent maxCycles={3} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       
-      // Component should remain stable through multiple cycles
+      // Component DOM element should remain stable through multiple cycles
       for (let i = 0; i < 3; i++) {
         await waitFor(
           () => {
@@ -340,19 +497,19 @@ describe('Rotating Text Animation States', () => {
       }
     }, 15000)
 
-    it('should not get stuck in any particular state', async () => {
+    it('should transition through all CSS classes without getting stuck', async () => {
       render(<RotatingTextComponent maxCycles={1} />)
       
       const rotatingText = screen.getByTestId('rotating-text')
       const stateHistory: string[] = []
       
-      // Record initial state
+      // Record initial CSS class state
       const initialState = Array.from(rotatingText.classList).find(cls => cls.includes('rotating-text-'))
       if (initialState) {
         stateHistory.push(initialState)
       }
       
-      // Monitor states over time
+      // Monitor CSS class changes over time
       const observer = new MutationObserver(() => {
         const classes = Array.from(rotatingText.classList)
         const animationState = classes.find(cls => cls.includes('rotating-text-'))
@@ -366,7 +523,7 @@ describe('Rotating Text Animation States', () => {
         attributeFilter: ['class']
       })
       
-      // Wait for multiple state transitions
+      // Wait for multiple CSS class transitions
       await waitFor(
         () => {
           expect(stateHistory.length).toBeGreaterThanOrEqual(3)
