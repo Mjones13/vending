@@ -1,0 +1,178 @@
+{
+  "version": "1.0.0",
+  "format": "simplified-timestamp",
+  "migrationDate": "2025-06-09T00:27:42.349Z",
+  "description": "Mapping of old numbered implementation plans to new timestamp-based IDs",
+  "plans": {
+    "1": {
+      "oldNumber": 1,
+      "oldFileName": "1-replicate-smarter-vending.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-replicate-smarter-vending.md",
+      "title": "Replicate Smarter Vending",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "2": {
+      "oldNumber": 2,
+      "oldFileName": "2-replace-logo-golden-coast.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-replace-logo-golden-coast.md",
+      "title": "Replace Logo Golden Coast",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "3": {
+      "oldNumber": 3,
+      "oldFileName": "3-comprehensive-website-design-overhaul.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-comprehensive-website-design-overhaul.md",
+      "title": "Comprehensive Website Design Overhaul",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "4": {
+      "oldNumber": 4,
+      "oldFileName": "4-automated-testing-framework-setup.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-automated-testing-framework-setup.md",
+      "title": "Automated Testing Framework Setup",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "5": {
+      "oldNumber": 5,
+      "oldFileName": "5-test-failure-analysis-and-fixes.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-test-failure-analysis-and-fixes.md",
+      "title": "Test Failure Analysis And Fixes",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "6": {
+      "oldNumber": 6,
+      "oldFileName": "6-parallel-testing-architecture.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-parallel-testing-architecture.md",
+      "title": "Parallel Testing Architecture",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "7": {
+      "oldNumber": 7,
+      "oldFileName": "7-homepage-rotating-text-fixes.md",
+      "newId": "0608_0609",
+      "newFileName": "0608_0609-homepage-rotating-text-fixes.md",
+      "title": "Homepage Rotating Text Fixes",
+      "created": "2025-06-08T10:09:55.000Z",
+      "readableDate": "June 8, 2025 at 06:09 AM"
+    },
+    "8": {
+      "oldNumber": 9,
+      "oldFileName": "9-ai-agent-separate-build-directories.md",
+      "newId": "0608_1538",
+      "newFileName": "0608_1538-ai-agent-separate-build-directories.md",
+      "title": "Ai Agent Separate Build Directories",
+      "created": "2025-06-08T19:38:42.000Z",
+      "readableDate": "June 8, 2025 at 03:38 PM"
+    },
+    "9": {
+      "oldNumber": 8,
+      "oldFileName": "8-layout-navigation-menu-test-fixes.md",
+      "newId": "0608_1602",
+      "newFileName": "0608_1602-layout-navigation-menu-test-fixes.md",
+      "title": "Layout Navigation Menu Test Fixes",
+      "created": "2025-06-08T20:02:44.000Z",
+      "readableDate": "June 8, 2025 at 04:02 PM"
+    },
+    "10": {
+      "oldNumber": 9,
+      "oldFileName": "9-layout-scroll-effects-test-fixes.md",
+      "newId": "0608_1645",
+      "newFileName": "0608_1645-layout-scroll-effects-test-fixes.md",
+      "title": "Layout Scroll Effects Test Fixes",
+      "created": "2025-06-08T20:45:29.000Z",
+      "readableDate": "June 8, 2025 at 04:45 PM"
+    },
+    "11": {
+      "oldNumber": 10,
+      "oldFileName": "10-robust-ai-server-management.md",
+      "newId": "0608_1716",
+      "newFileName": "0608_1716-robust-ai-server-management.md",
+      "title": "Robust Ai Server Management",
+      "created": "2025-06-08T21:16:05.000Z",
+      "readableDate": "June 8, 2025 at 05:16 PM"
+    },
+    "12": {
+      "oldNumber": 10,
+      "oldFileName": "10-implementation-plan-numbering-conflict-resolution.md",
+      "newId": "0608_1803",
+      "newFileName": "0608_1803-implementation-plan-numbering-conflict-resolution.md",
+      "title": "Implementation Plan Numbering Conflict Resolution",
+      "created": "2025-06-08T22:03:50.000Z",
+      "readableDate": "June 8, 2025 at 06:03 PM"
+    }
+  },
+  "quickReference": [
+    {
+      "old": "#1",
+      "new": "0608_0609",
+      "title": "Replicate Smarter Vending"
+    },
+    {
+      "old": "#2",
+      "new": "0608_0609",
+      "title": "Replace Logo Golden Coast"
+    },
+    {
+      "old": "#3",
+      "new": "0608_0609",
+      "title": "Comprehensive Website Design Overhaul"
+    },
+    {
+      "old": "#4",
+      "new": "0608_0609",
+      "title": "Automated Testing Framework Setup"
+    },
+    {
+      "old": "#5",
+      "new": "0608_0609",
+      "title": "Test Failure Analysis And Fixes"
+    },
+    {
+      "old": "#6",
+      "new": "0608_0609",
+      "title": "Parallel Testing Architecture"
+    },
+    {
+      "old": "#7",
+      "new": "0608_0609",
+      "title": "Homepage Rotating Text Fixes"
+    },
+    {
+      "old": "#9",
+      "new": "0608_1538",
+      "title": "Ai Agent Separate Build Directories"
+    },
+    {
+      "old": "#8",
+      "new": "0608_1602",
+      "title": "Layout Navigation Menu Test Fixes"
+    },
+    {
+      "old": "#9",
+      "new": "0608_1645",
+      "title": "Layout Scroll Effects Test Fixes"
+    },
+    {
+      "old": "#10",
+      "new": "0608_1716",
+      "title": "Robust Ai Server Management"
+    },
+    {
+      "old": "#10",
+      "new": "0608_1803",
+      "title": "Implementation Plan Numbering Conflict Resolution"
+    }
+  ]
+}

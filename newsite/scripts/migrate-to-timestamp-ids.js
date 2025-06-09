@@ -811,6 +811,7 @@ async function findAvailableBackups() {
 async function performAtomicMigration(migrationPlan, mapping) {
   const operations = [];
   const completedOperations = [];
+  let updatedFiles = [];
   
   try {
     // Phase 1: Rename all implementation plan files
@@ -838,9 +839,10 @@ async function performAtomicMigration(migrationPlan, mapping) {
     
     if (totalReferenceFiles > 0) {
       startProgress('Updating references', totalReferenceFiles);
-      const { updatedFiles, totalChanges } = await updateAllReferences(migrationPlan, true);
+      const updateResult = await updateAllReferences(migrationPlan, true);
+      updatedFiles = updateResult.updatedFiles;
       completeProgress();
-      log(`   📝 Updated ${totalChanges} references in ${updatedFiles.length} files`);
+      log(`   📝 Updated ${updateResult.totalChanges} references in ${updatedFiles.length} files`);
     } else {
       log('\n📝 No references to update');
     }

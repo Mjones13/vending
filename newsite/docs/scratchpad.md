@@ -1,13 +1,18 @@
 # Scratchpad: Smarter Vending Replica Website
 
 ## References to Implementation Plans
-- [docs/implementation-plan/1-replicate-smarter-vending.md](implementation-plan/1-replicate-smarter-vending.md)
-- [docs/implementation-plan/2-replace-logo-golden-coast.md](implementation-plan/2-replace-logo-golden-coast.md) ✅ COMPLETED
-- [docs/implementation-plan/3-comprehensive-website-design-overhaul.md](implementation-plan/3-comprehensive-website-design-overhaul.md) 🔄 IN PROGRESS
-- [docs/implementation-plan/4-automated-testing-framework-setup.md](implementation-plan/4-automated-testing-framework-setup.md) ✅ COMPLETED
-- [docs/implementation-plan/5-test-failure-analysis-and-fixes.md](implementation-plan/5-test-failure-analysis-and-fixes.md) ✅ **COMPLETED** - All phases successful, production ready
-- [docs/implementation-plan/6-parallel-testing-architecture.md](implementation-plan/6-parallel-testing-architecture.md) ✅ COMPLETED
-- [docs/implementation-plan/7-homepage-rotating-text-fixes.md](implementation-plan/7-homepage-rotating-text-fixes.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0608_0609-replicate-smarter-vending.md](implementation-plan/0608_0609-replicate-smarter-vending.md)
+- [docs/implementation-plan/0608_0609-replace-logo-golden-coast.md](implementation-plan/0608_0609-replace-logo-golden-coast.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_0609-comprehensive-website-design-overhaul.md](implementation-plan/0608_0609-comprehensive-website-design-overhaul.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0608_0609-automated-testing-framework-setup.md](implementation-plan/0608_0609-automated-testing-framework-setup.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_0609-test-failure-analysis-and-fixes.md](implementation-plan/0608_0609-test-failure-analysis-and-fixes.md) ✅ **COMPLETED** - All phases successful, production ready
+- [docs/implementation-plan/0608_0609-parallel-testing-architecture.md](implementation-plan/0608_0609-parallel-testing-architecture.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_0609-homepage-rotating-text-fixes.md](implementation-plan/0608_0609-homepage-rotating-text-fixes.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0608_1538-ai-agent-separate-build-directories.md](implementation-plan/0608_1538-ai-agent-separate-build-directories.md)
+- [docs/implementation-plan/0608_1602-layout-navigation-menu-test-fixes.md](implementation-plan/0608_1602-layout-navigation-menu-test-fixes.md)
+- [docs/implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md](implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md)
+- [docs/implementation-plan/0608_1716-robust-ai-server-management.md](implementation-plan/0608_1716-robust-ai-server-management.md)
+- [docs/implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md](implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md) ✅ COMPLETED
 
 ## Lessons Learned
 - [2025-06-08 19:30] Error: RequestAnimationFrame state updates not wrapped in act() - Solution: Issue with testing environment, implementation is correct using modern performance-based animation approach
