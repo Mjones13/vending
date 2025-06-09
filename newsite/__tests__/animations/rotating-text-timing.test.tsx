@@ -10,6 +10,7 @@ import {
   WordSequenceObserver,
   monitorRotationPerformance 
 } from '../../test-utils/rotation-testing';
+import { setupRealTimers, cleanupTimers } from '../../test-utils/timer-helpers';
 
 // Mock Next.js dependencies
 jest.mock('next/router', () => ({
@@ -49,13 +50,13 @@ describe('Homepage Rotating Text Timing', () => {
   const TIMING_TOLERANCE = 200; // ±200ms tolerance
   
   beforeEach(() => {
-    jest.useFakeTimers();
+    // Use real timers for rotating text
+    setupRealTimers();
     document.body.innerHTML = '';
   });
 
-  afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+  afterEach(async () => {
+    await cleanupTimers();
     jest.restoreAllMocks();
   });
 

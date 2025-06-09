@@ -5,6 +5,7 @@
 import { render, screen, simulateScreenSize, SCREEN_SIZES, expectNavigation, hoverElement, unhoverElement, clickElement, act, waitFor } from '../../test-utils'
 import userEvent from '@testing-library/user-event'
 import Layout from '../../components/Layout'
+import { setupRealTimers, cleanupTimers } from '../../test-utils/timer-helpers'
 
 // Mock child component for testing
 const MockChild = () => <div data-testid="child-content">Test Content</div>
@@ -12,6 +13,8 @@ const MockChild = () => <div data-testid="child-content">Test Content</div>
 describe('Layout Component', () => {
   // Enhanced cleanup to prevent test isolation issues
   beforeEach(() => {
+    // Use real timers for scroll/animation events
+    setupRealTimers()
     // Clear any lingering DOM state
     document.body.innerHTML = ''
     
@@ -19,9 +22,10 @@ describe('Layout Component', () => {
     jest.clearAllMocks()
   })
 
-  afterEach(() => {
+  afterEach(async () => {
     // Additional cleanup after each test
     document.body.innerHTML = ''
+    await cleanupTimers()
   })
 
   describe('Basic Rendering', () => {
