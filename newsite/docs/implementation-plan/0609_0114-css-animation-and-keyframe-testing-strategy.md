@@ -71,11 +71,11 @@ This implementation addresses the CSS animation testing limitations by implement
    - Use waitFor with appropriate timeouts
    - Focus on: user-visible changes, component integration
 
-3. **Tier 3 - E2E Tests (Visual Validation)**
-   - Use Playwright for actual CSS animation testing
-   - Verify computed styles and animation properties
-   - Test visual smoothness and timing
-   - Focus on: visual correctness, performance, cross-browser
+3. **Tier 3 - E2E Tests (Visual Validation - Future)**
+   - Currently out of scope for this implementation
+   - Would use Playwright or similar for actual CSS animation testing
+   - Would verify computed styles and animation properties
+   - Focus would be on: visual correctness, performance, cross-browser
 
 ### Key Requirements:
 - Animation tests must be categorized into appropriate tiers
@@ -97,10 +97,10 @@ This implementation addresses the CSS animation testing limitations by implement
 ## Acceptance Criteria
 
 ### Functional Requirements:
-- [ ] All animation tests are categorized into appropriate tiers (1, 2, or 3)
+- [ ] All animation tests are categorized into appropriate tiers (1 or 2)
 - [ ] Animation state logic can be tested without CSS rendering
-- [ ] Component behavior changes are testable with real timers
-- [ ] Visual animations are validated through E2E tests
+- [ ] Component behavior changes are testable with controlled real timers
+- [ ] No more infinite loops or timeouts in animation tests
 
 ### Quality Requirements:
 - [ ] No more test failures due to missing CSS animation support
@@ -111,8 +111,8 @@ This implementation addresses the CSS animation testing limitations by implement
 ### Performance Requirements:
 - [ ] Tier 1 tests execute in < 1 second each
 - [ ] Tier 2 tests complete within 5 seconds each
-- [ ] E2E animation tests run in < 30 seconds per test
-- [ ] Overall test suite execution time doesn't increase by more than 20%
+- [ ] No more 120+ second timeouts in animation tests
+- [ ] Overall test suite execution time improves after removing infinite loops
 
 ## Project Status Board
 
