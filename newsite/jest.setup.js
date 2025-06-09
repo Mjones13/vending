@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import { act } from '@testing-library/react'
 
 // Global browser API polyfills - must be available before any tests run
 // These are defined at the top level to ensure they exist even before beforeEach runs

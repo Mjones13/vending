@@ -12,6 +12,7 @@ import {
   enableAnimations
 } from '../../test-utils/keyframe-testing'
 import { mockRotatingWords } from '../../test-utils/mock-data'
+import { advanceTimersByTimeWithAct, fastForwardAnimationTime } from '../../test-utils/act-timer-helpers'
 
 // Component that matches the actual rotating text implementation
 function RotatingTextComponent() {
@@ -85,29 +86,23 @@ describe('Rotating Text Animation States', () => {
       // Should start visible
       expect(rotatingText).toHaveClass('rotating-text-visible')
       
-      // Wait for exiting state
-      await waitFor(
-        () => {
-          expect(rotatingText).toHaveClass('rotating-text-exiting')
-        },
-        { timeout: 4000 }
-      )
+      // Advance to the start of the animation cycle (3000ms interval)
+      await advanceTimersByTimeWithAct(3000)
       
-      // Wait for entering state (word should change here)
-      await waitFor(
-        () => {
-          expect(rotatingText).toHaveClass('rotating-text-entering')
-        },
-        { timeout: 1000 }
-      )
+      // Should now be in exiting state
+      expect(rotatingText).toHaveClass('rotating-text-exiting')
       
-      // Wait to return to visible state
-      await waitFor(
-        () => {
-          expect(rotatingText).toHaveClass('rotating-text-visible')
-        },
-        { timeout: 1000 }
-      )
+      // Advance through exit animation (400ms)
+      await advanceTimersByTimeWithAct(400)
+      
+      // Should now be in entering state (word should change here)
+      expect(rotatingText).toHaveClass('rotating-text-entering')
+      
+      // Advance through entrance animation (400ms)
+      await advanceTimersByTimeWithAct(400)
+      
+      // Should return to visible state
+      expect(rotatingText).toHaveClass('rotating-text-visible')
     }, 10000)
 
     it('should change words during the entering phase', async () => {
@@ -116,13 +111,14 @@ describe('Rotating Text Animation States', () => {
       const rotatingText = screen.getByTestId('rotating-text')
       const initialWord = rotatingText.textContent
       
-      // Wait for word to change
-      await waitFor(
-        () => {
-          expect(rotatingText.textContent).not.toBe(initialWord)
-        },
-        { timeout: 5000 }
-      )
+      // Advance to start of animation cycle
+      await advanceTimersByTimeWithAct(3000)
+      
+      // Advance through exit phase
+      await advanceTimersByTimeWithAct(400)
+      
+      // At this point word should change to next in sequence
+      expect(rotatingText.textContent).not.toBe(initialWord)
       
       // Should be the next word in the sequence
       const expectedWord = mockRotatingWords[1]
@@ -137,17 +133,16 @@ describe('Rotating Text Animation States', () => {
       // Track words as they change
       const observedWords: string[] = []
       
-      for (let i = 0; i < mockRotatingWords.length; i++) {
-        await waitFor(
-          () => {
-            const currentWord = rotatingText.textContent || ''
-            if (!observedWords.includes(currentWord)) {
-              observedWords.push(currentWord)
-            }
-            expect(observedWords).toHaveLength(i + 1)
-          },
-          { timeout: 4000 }
-        )
+      // Add initial word
+      observedWords.push(rotatingText.textContent || '')
+      
+      // Cycle through all words
+      for (let i = 1; i < mockRotatingWords.length; i++) {
+        // Advance to next cycle (3000ms interval + 400ms exit)
+        await advanceTimersByTimeWithAct(3400)
+        
+        const currentWord = rotatingText.textContent || ''
+        observedWords.push(currentWord)
       }
       
       // Should have seen all words
