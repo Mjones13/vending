@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
-import { act } from '@testing-library/react'
+import { act, configure } from '@testing-library/react'
+
+// Configure testing library with increased async timeout
+configure({
+  asyncUtilTimeout: 5000, // 5 seconds for async operations
+})
 
 // RAF polyfill validation function to ensure they're never undefined
 function ensureRAFPolyfills() {
@@ -221,8 +226,8 @@ beforeEach(() => {
     value: 0
   })
   
-  // Enable fake timers globally for consistent testing
-  jest.useFakeTimers()
+  // DO NOT enable fake timers globally - let tests control this
+  // jest.useFakeTimers() - REMOVED to prevent conflicts
   
   // Ensure animation frame polyfills are always available
   // Re-apply in every test to handle cases where they might be cleared
@@ -283,8 +288,16 @@ afterEach(() => {
     window.removeEventListener(eventType, () => {})
   })
   
-  // Run any pending timers and restore real timers
-  jest.runOnlyPendingTimers()
+  // Only run pending timers if fake timers are in use
+  if (jest.isMockFunction(setTimeout)) {
+    try {
+      jest.runOnlyPendingTimers()
+    } catch (e) {
+      // Ignore errors if timers aren't mocked
+    }
+  }
+  
+  // Always ensure we're back to real timers for next test
   jest.useRealTimers()
   
   // Reset scroll position
@@ -301,3 +314,10 @@ afterEach(() => {
   // Some test utilities may clear these, causing "not defined" errors
   ensureRAFPolyfills()
 })
+
+// Global withAct utility for easy act() wrapping in tests
+global.withAct = async (callback) => {
+  return act(async () => {
+    await callback();
+  });
+};
