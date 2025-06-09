@@ -506,7 +506,7 @@ When all tasks in a phase are complete and verified:
 ```bash
 npm run test:ai:pre-push    # Fast parallel tests with --bail (stops on first failure)
 npm run push:ai:validated   # Runs tests then pushes if successful
-npm run push:ai            # Direct git push (use when tests already passed)
+npm run push:ai            # Direct git push to origin main (use when tests already passed)
 ```
 
 #### Required Timeout Configuration:
@@ -548,7 +548,7 @@ AI agents MUST specify appropriate timeouts when using the Bash tool:
 #### When to Use Each Command:
 - **test:ai:pre-push**: When you want to verify code before pushing
 - **push:ai:validated**: When you want automatic test+push workflow
-- **push:ai**: When tests have already passed and you just need to push
+- **push:ai**: When tests have already passed and you just need to push to origin main
 
 #### Troubleshooting Push Issues:
 

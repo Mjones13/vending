@@ -13,8 +13,11 @@
 - [docs/implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md](implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md)
 - [docs/implementation-plan/0608_1716-robust-ai-server-management.md](implementation-plan/0608_1716-robust-ai-server-management.md)
 - [docs/implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md](implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) 🔄 IN PROGRESS
 
 ## Lessons Learned
+- [2025-06-08 21:35] Solution: AI agent push timeout issues - Created dedicated npm scripts (test:ai:pre-push, push:ai:validated, push:ai) with proper timeout configurations (3 min for tests, 4 min for push)
+- [2025-06-08 21:30] Error: git push operations timing out for AI agents due to pre-push hooks running comprehensive tests - Solution: Document explicit timeout values and create AI-specific test commands with --bail flag
 - [2025-06-08 19:30] Error: RequestAnimationFrame state updates not wrapped in act() - Solution: Issue with testing environment, implementation is correct using modern performance-based animation approach
 - [2025-06-08 19:15] Error: Timer precision in fake timer environment - Solution: Expected 150ms delays getting 100ms in tests, but real implementation works correctly in browser
 - [2025-06-08 19:00] Error: Test isolation issues with parallel execution - Solution: Individual tests pass, parallel execution has cleanup issues. Added persistent animation frame polyfills and better style isolation
