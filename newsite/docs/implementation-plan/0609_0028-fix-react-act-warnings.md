@@ -33,7 +33,7 @@ React 18 introduced stricter enforcement of the act() boundary, requiring all st
 
 ### Phase 1: Create Timer Utility Infrastructure
 - [x] **Task 1.1**: Create test-utils/timer-helpers.ts with act()-wrapped timer utilities
-- [ ] **Task 1.2**: Write comprehensive tests for timer utilities to ensure they properly wrap operations
+- [x] **Task 1.2**: Write comprehensive tests for timer utilities to ensure they properly wrap operations
 - [ ] **Task 1.3**: Update jest.setup.js to provide global act() utilities and improved RAF polyfills with persistence through test cleanup
 - [ ] **Task 1.4**: Add global withAct utility to jest.setup.js for easy act() wrapping
 - [ ] **Task 1.5**: Configure testing library with increased asyncUtilTimeout (5000ms)

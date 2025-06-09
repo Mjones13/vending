@@ -39,7 +39,7 @@ export async function runOnlyPendingTimersAndAct(): Promise<void> {
  */
 export async function runTimersToTimeAndAct(ms: number): Promise<void> {
   await act(async () => {
-    jest.runTimersToTime(ms);
+    jest.advanceTimersByTime(ms);
   });
 }
 
