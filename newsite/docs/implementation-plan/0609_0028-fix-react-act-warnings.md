@@ -51,14 +51,12 @@ React 18 introduced stricter enforcement of the act() boundary, requiring all st
 - [ ] **Task 3.1**: Create automated script to identify remaining files with act() warnings
 - [ ] **Task 3.2**: Update remaining component tests to use new timer utilities
 - [ ] **Task 3.3**: Update animation-specific tests to use appropriate timer strategies
-- [ ] **Task 3.4**: Add comprehensive afterEach cleanup to prevent test isolation issues
-- [ ] **Task 3.5**: Add ESLint rule or test lint to catch future act() violations
+- [ ] **Task 3.4**: Add comprehensive afterEach cleanup to prevent act() warnings from cleanup functions
 
 ### Phase 4: Verification and Documentation
 - [ ] **Task 4.1**: Run full test suite to verify all act() warnings are resolved
 - [ ] **Task 4.2**: Update testing guide with act() best practices and examples
-- [ ] **Task 4.3**: Create migration guide for future tests requiring timer operations
-- [ ] **Task 4.4**: Measure test execution time improvements and document results
+- [ ] **Task 4.3**: Document the new timer utilities API and usage patterns
 
 ## Implementation Strategy
 
@@ -128,10 +126,9 @@ await global.withAct(async () => {
 - [ ] ESLint rule or guidance prevents future act() violations
 
 ### Performance Requirements:
-- [ ] Test execution time increase less than 5% overall
-- [ ] No individual test timeout increases beyond 10%
-- [ ] Memory usage remains stable (no leaks from wrapped timers)
-- [ ] Parallel test execution remains efficient on M2 MacBook (75% CPU utilization)
+- [ ] No significant test execution time regression
+- [ ] No test timeouts due to improper timer handling
+- [ ] Tests remain stable in parallel execution
 
 ## Project Status Board
 
