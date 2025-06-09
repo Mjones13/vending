@@ -175,27 +175,42 @@ This is a Next.js Pages Router application for Golden Coast Amenities (formerly 
 
 ### Documentation Structure
 - `docs/scratchpad.md` - Main reference file with links to implementation plans and lessons learned
-- `docs/implementation-plan/{version}-{task-name}.md` - Detailed task breakdowns with status boards
+- `docs/implementation-plan/{timestamp-id}-{task-name}.md` - Detailed task breakdowns with status boards
 - Branch names match task slugs from implementation plans
 
-### Implementation Plan Versioning
-Each Implementation Plan must begin with a clearly visible Version Number in the filename, formatted as:
+### Implementation Plan Naming Convention
+Each Implementation Plan must use a timestamp-based ID in the filename, formatted as:
 
-`{version}-{task-name}.md`
+`{timestamp-id}-{task-name}.md`
 
 Where:
-- `{version}` is an incrementing integer (1, 2, 3, etc.)
-- `{task-name}` is the descriptive name of the implementation plan
+- `{timestamp-id}` is in format MMDD_HHMM (Month-Day_Hour-Minute)
+- `{task-name}` is the descriptive name of the implementation plan in kebab-case
 
-The Version Number must:
-- Increment sequentially over time with each new Implementation Plan added
-- Be placed at the very beginning of the filename, followed by a dash
-- Make it easier to track when Implementation Plans were created and differentiate between versions over time
+The Timestamp ID provides:
+- **Conflict-free naming**: Naturally unique timestamps eliminate numbering conflicts
+- **Chronological ordering**: Files automatically sort by creation time
+- **Human readability**: Easy to understand "June 8th at 2:23 PM"
+- **Future-proof**: No renumbering ever needed
 
 Examples:
-- `1-replicate-smarter-vending.md`
-- `2-replace-logo-golden-coast.md`
-- `3-comprehensive-website-design-overhaul.md`
+- `0608_1030-layout-navigation-menu-test-fixes.md` (June 8th at 10:30 AM)
+- `0608_1423-homepage-rotating-text-fixes.md` (June 8th at 2:23 PM)
+- `0609_0915-database-migration-script.md` (June 9th at 9:15 AM)
+
+### Creating New Implementation Plans
+Use the automated script to ensure proper formatting:
+
+```bash
+npm run create-plan "Task Name Here"
+# Creates: MMDD_HHMM-task-name-here.md with template
+```
+
+### Referencing Implementation Plans
+Reference plans using their timestamp ID:
+- In documentation: "See implementation plan 0608_1030 for details"
+- In commit messages: "Implementing plan 0608_1423"
+- In branch names: Use kebab-case task name without timestamp
 
 ## Branch Management Protocol
 

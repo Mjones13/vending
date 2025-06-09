@@ -39,8 +39,8 @@ Migrate to timestamp-based implementation plan IDs using the format `MMDD_HHMM-t
 - [x] **Task 3.4**: Add backup mechanism before migration
 
 ### Phase 4: Future Workflow Integration
-- [ ] **Task 4.1**: Create `npm run create-plan` command for new timestamp-based plans
-- [ ] **Task 4.2**: Update CLAUDE.md with new naming convention
+- [x] **Task 4.1**: Create `npm run create-plan` command for new timestamp-based plans
+- [x] **Task 4.2**: Update CLAUDE.md with new naming convention
 - [ ] **Task 4.3**: Test migration on actual repository with all branches
 - [ ] **Task 4.4**: Create migration rollback script (just in case)
 
