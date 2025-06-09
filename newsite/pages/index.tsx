@@ -2,7 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Layout from "../components/Layout";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
@@ -21,66 +21,38 @@ export default function Home() {
   }, [triggerLogoAnimations]);
 
   // Robust word cycling utility
-  const getNextWordIndex = (currentIndex: number, wordsArray: string[]): number => {
+  const getNextWordIndex = useCallback((currentIndex: number, wordsArray: string[]): number => {
     if (!wordsArray || wordsArray.length === 0) return 0;
     if (wordsArray.length === 1) return 0;
     
     const nextIndex = currentIndex + 1;
     // Explicit bounds checking instead of relying solely on modulo
     return nextIndex >= wordsArray.length ? 0 : nextIndex;
-  };
+  }, []);
 
   useEffect(() => {
-    let animationId: number;
-    const startTime = performance.now();
-    
-    const CYCLE_DURATION = 3000;
-    
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const cycleProgress = (elapsed % CYCLE_DURATION) / CYCLE_DURATION;
+    const interval = setInterval(() => {
+      // Phase 1: Start exit animation
+      setAnimationState('exiting');
       
-      // Determine animation state based on cycle progress
-      if (cycleProgress < 0.8) {
-        // Visible state (80% of cycle)
-        if (animationState !== 'visible') {
+      // Phase 2: After exit completes, change word and start entrance
+      setTimeout(() => {
+        setCurrentWordIndex((prevIndex) => {
+          const nextIndex = getNextWordIndex(prevIndex, rotatingWords);
+          return nextIndex;
+        });
+        setAnimationState('entering');
+        
+        // Phase 3: After entrance completes, return to visible state
+        setTimeout(() => {
           setAnimationState('visible');
-        }
-      } else if (cycleProgress < 0.9) {
-        // Exit state (10% of cycle)
-        if (animationState !== 'exiting') {
-          setAnimationState('exiting');
-        }
-      } else {
-        // Enter state (10% of cycle)
-        if (animationState !== 'entering') {
-          // Robust word cycling with safety checks
-          setCurrentWordIndex((prevIndex) => {
-            const nextIndex = getNextWordIndex(prevIndex, rotatingWords);
-            return nextIndex;
-          });
-          setAnimationState('entering');
-        }
-      }
+        }, 400); // Entrance animation duration
+      }, 400); // Exit animation duration
       
-      animationId = requestAnimationFrame(animate);
-    };
-    
-    animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
-  }, [rotatingWords.length]);
+    }, 3000); // Total cycle time
 
-  // Add safeguard effect for stuck states
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      // If animation gets stuck, reset to visible state
-      if (animationState !== 'visible') {
-        setAnimationState('visible');
-      }
-    }, 2000); // Reset if stuck for more than 2 seconds
-    
-    return () => clearTimeout(timeoutId);
-  }, [animationState]);
+    return () => clearInterval(interval);
+  }, [rotatingWords.length, getNextWordIndex]);
 
   const handleRequestDemo = () => {
     router.push('/request-a-demo');
