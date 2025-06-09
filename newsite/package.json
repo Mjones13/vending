@@ -55,7 +55,10 @@
     "clean:ai": "rm -rf .next-ai",
     "clean:all": "rm -rf .next .next-ai node_modules/.cache",
     "test:ai:lifecycle": "node scripts/test-ai-server-lifecycle.js",
-    "test:ai:cleanup": "node scripts/test-ai-cleanup-validation.js"
+    "test:ai:cleanup": "node scripts/test-ai-cleanup-validation.js",
+    "test:ai:pre-push": "run-p lint type-check \"test:unit -- --bail\" \"test:integration -- --bail\"",
+    "push:ai:validated": "npm run test:ai:pre-push && git push origin main",
+    "push:ai": "git push origin main"
   },
   "dependencies": {
     "next": "^15.3.2",

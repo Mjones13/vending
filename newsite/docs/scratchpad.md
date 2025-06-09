@@ -13,8 +13,11 @@
 - [docs/implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md](implementation-plan/0608_1645-layout-scroll-effects-test-fixes.md)
 - [docs/implementation-plan/0608_1716-robust-ai-server-management.md](implementation-plan/0608_1716-robust-ai-server-management.md)
 - [docs/implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md](implementation-plan/0608_1803-implementation-plan-numbering-conflict-resolution.md) ✅ COMPLETED
+- [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) ✅ COMPLETED
 
 ## Lessons Learned
+- [2025-06-08 21:35] Solution: AI agent push timeout issues - Created dedicated npm scripts (test:ai:pre-push, push:ai:validated, push:ai) with proper timeout configurations (3 min for tests, 4 min for push)
+- [2025-06-08 21:30] Error: git push operations timing out for AI agents due to pre-push hooks running comprehensive tests - Solution: Document explicit timeout values and create AI-specific test commands with --bail flag
 - [2025-06-08 20:45] Error: Migration script bug - References not updated during actual migration due to `dryRun = true` parameter on line 842 of migrate-to-timestamp-ids.js - Solution: Change to `dryRun = false` for actual updates. Always verify file contents after migration, not just console output
 - [2025-06-08 20:40] Error: Timestamp ID conflicts - Multiple implementation plans created in same commit share ID 0608_0609 - Solution: Consider adding seconds to timestamp format (MMDD_HHMMSS) or using Unix timestamp with milliseconds for true uniqueness
 - [2025-06-08 20:35] Error: Undocumented "updatedFiles not defined" error mentioned in implementation plan but not in git history - Solution: Always document errors immediately with exact message, context, and resolution in both implementation plan and scratchpad

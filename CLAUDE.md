@@ -498,6 +498,77 @@ When all tasks in a phase are complete and verified:
 4. **Regular sync checks**: Run `git fetch --all --prune` periodically to stay aware of remote changes
 5. **If working directory shows many uncommitted files**: STOP and commit pending work before proceeding
 
+### AI Agent Push Workflow
+
+**CRITICAL: AI agents must use specific commands and timeouts to avoid push failures**
+
+#### Available Commands:
+```bash
+npm run test:ai:pre-push    # Fast parallel tests with --bail (stops on first failure)
+npm run push:ai:validated   # Runs tests then pushes if successful
+npm run push:ai            # Direct git push to origin main (use when tests already passed)
+```
+
+#### Required Timeout Configuration:
+AI agents MUST specify appropriate timeouts when using the Bash tool:
+
+```xml
+<!-- Running tests (3 minute timeout) -->
+<invoke name="Bash">
+<parameter name="command">npm run test:ai:pre-push</parameter>
+<parameter name="timeout">180000</parameter>
+</invoke>
+
+<!-- Pushing changes (4 minute timeout) -->
+<invoke name="Bash">
+<parameter name="command">npm run push:ai</parameter>
+<parameter name="timeout">240000</parameter>
+</invoke>
+
+<!-- Combined test and push (4 minute timeout) -->
+<invoke name="Bash">
+<parameter name="command">npm run push:ai:validated</parameter>
+<parameter name="timeout">240000</parameter>
+</invoke>
+```
+
+#### Recommended Push Process:
+1. **Option A - Separate commands (more control):**
+   ```bash
+   npm run test:ai:pre-push  # Run tests first (3 min timeout)
+   # If tests pass:
+   npm run push:ai          # Push changes (4 min timeout)
+   ```
+
+2. **Option B - Combined command (simpler):**
+   ```bash
+   npm run push:ai:validated  # Test and push (4 min timeout)
+   ```
+
+#### When to Use Each Command:
+- **test:ai:pre-push**: When you want to verify code before pushing
+- **push:ai:validated**: When you want automatic test+push workflow
+- **push:ai**: When tests have already passed and you just need to push to origin main
+
+#### Troubleshooting Push Issues:
+
+**1. Tests timing out:**
+- The `--bail` flag ensures tests fail fast on first error
+- If tests still timeout, investigate hanging tests
+- Consider running individual test suites
+
+**2. Push rejected (remote has new commits):**
+```bash
+git pull origin main       # Pull latest changes
+npm run test:ai:pre-push   # Re-run tests after merge
+npm run push:ai           # Push merged changes
+```
+
+**3. Pre-push hook failures:**
+- AI test commands run a subset of tests for speed
+- If pre-push hook still fails, fix the specific failing tests
+- Never use --no-verify unless explicitly instructed
+
 ### Final Integration and Cleanup
 **After all phases complete:**
 1. **Sync with remote**: `git fetch --all --prune && git checkout main && git pull`
