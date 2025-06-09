@@ -18,6 +18,12 @@ JSDOM, the DOM implementation used by Jest, doesn't support CSS animations or pr
 
 This implementation addresses the CSS animation testing limitations by implementing a three-tier testing strategy that separates logic testing, behavior testing, and visual validation.
 
+**Specific Problems This Will Solve:**
+- Rotating text tests timing out (120+ seconds) due to infinite loops
+- Tests failing because they expect CSS keyframe animations to execute
+- Logo stagger animation tests failing due to timer compression issues
+- Tests attempting to verify visual CSS properties that don't exist in JSDOM
+
 ## Key Challenges
 
 1. **JSDOM Limitations**: No CSS engine means no animation execution, no computed styles for animations, and no keyframe support
@@ -28,22 +34,24 @@ This implementation addresses the CSS animation testing limitations by implement
 ## High-Level Task Breakdown
 
 ### Phase 1: Create Animation Testing Utilities
-- [ ] **Task 1.1**: Create animation state testing utilities for logic-only tests
-- [ ] **Task 1.2**: Create behavior testing utilities that work with real timers
-- [ ] **Task 1.3**: Create mock CSS animation properties for getComputedStyle
-- [ ] **Task 1.4**: Document the three-tier testing approach for the team
+- [ ] **Task 1.1**: Create animation state testing utilities for logic-only tests (hooks, state machines)
+- [ ] **Task 1.2**: Create timer control utilities to prevent infinite loops in animation tests
+- [ ] **Task 1.3**: Create behavior testing utilities that safely use real timers with proper cleanup
+- [ ] **Task 1.4**: Create mock CSS animation properties helper for tests that check styles
+- [ ] **Task 1.5**: Document the three-tier testing approach with clear examples
 
 ### Phase 2: Refactor Existing Animation Tests
-- [ ] **Task 2.1**: Identify and categorize existing animation tests by tier
-- [ ] **Task 2.2**: Refactor rotating text tests to use new utilities
-- [ ] **Task 2.3**: Refactor logo stagger animation tests
-- [ ] **Task 2.4**: Fix tests that rely on visual animation properties
+- [ ] **Task 2.1**: Fix infinite loop issues in rotating-text-cycling.test.tsx and rotating-text-timing.test.tsx
+- [ ] **Task 2.2**: Refactor rotating text tests to separate logic (Tier 1) from behavior (Tier 2)
+- [ ] **Task 2.3**: Fix "should apply correct CSS keyframe animations" test to not rely on CSS execution
+- [ ] **Task 2.4**: Refactor logo stagger animation tests to use proper timer controls
+- [ ] **Task 2.5**: Remove dependencies on getComputedStyle for animation properties
 
-### Phase 3: Create E2E Animation Tests
-- [ ] **Task 3.1**: Set up Playwright tests for visual animation validation
-- [ ] **Task 3.2**: Create E2E tests for critical animations (rotating text, logo stagger)
-- [ ] **Task 3.3**: Document which animation aspects require E2E testing
-- [ ] **Task 3.4**: Update CI/CD to run E2E animation tests separately
+### Phase 3: Document and Optimize
+- [ ] **Task 3.1**: Create clear documentation on which animation aspects belong in each tier
+- [ ] **Task 3.2**: Create example tests demonstrating proper usage of each tier
+- [ ] **Task 3.3**: Measure test execution time improvements after refactoring
+- [ ] **Task 3.4**: Update test guidelines to prevent future animation test issues
 
 ## Implementation Strategy
 
@@ -77,8 +85,14 @@ This implementation addresses the CSS animation testing limitations by implement
 
 ### Dependencies:
 - Jest and React Testing Library (existing)
-- Playwright for E2E tests (may need to add/configure)
-- No new runtime dependencies for the application
+- No new testing frameworks or major dependencies
+- No changes to production code
+
+### Out of Scope:
+- Setting up Playwright or other E2E frameworks (deferred to future if needed)
+- Modifying production animation code
+- Creating complex animation mocking libraries
+- Changing from Jest to another test runner
 
 ## Acceptance Criteria
 
