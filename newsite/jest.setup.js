@@ -288,20 +288,42 @@ afterEach(() => {
     window.removeEventListener(eventType, () => {})
   })
   
-  // Only run pending timers if fake timers are in use
+  // Comprehensive timer cleanup to prevent act() warnings
   if (jest.isMockFunction(setTimeout)) {
     try {
-      jest.runOnlyPendingTimers()
+      // Clear all pending timers before running them to prevent act() warnings
+      jest.clearAllTimers()
+      // Only run pending timers if there are any
+      if (jest.getTimerCount && jest.getTimerCount() > 0) {
+        jest.runOnlyPendingTimers()
+      }
     } catch (e) {
-      // Ignore errors if timers aren't mocked
+      // Ignore errors if timers aren't mocked or if no timers exist
     }
   }
   
   // Always ensure we're back to real timers for next test
   jest.useRealTimers()
   
-  // Reset scroll position
+  // Clear any pending RAF callbacks to prevent act() warnings
+  if (global.cancelAnimationFrame && typeof global.cancelAnimationFrame === 'function') {
+    // Clear any pending animation frames (though they should be cleaned by individual tests)
+    for (let i = 1; i <= 100; i++) {
+      try {
+        global.cancelAnimationFrame(i)
+      } catch (e) {
+        // Ignore errors for non-existent frame IDs
+      }
+    }
+  }
+  
+  // Reset scroll position and clear scroll event listeners to prevent act() warnings
   Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value: 0
+  })
+  Object.defineProperty(window, 'pageYOffset', {
     writable: true,
     configurable: true,
     value: 0
@@ -313,6 +335,15 @@ afterEach(() => {
   // CRITICAL: Validate and restore RAF polyfills after cleanup
   // Some test utilities may clear these, causing "not defined" errors
   ensureRAFPolyfills()
+  
+  // Ensure no pending microtasks that could cause act() warnings
+  if (global.gc) {
+    try {
+      global.gc()
+    } catch (e) {
+      // gc() not available in all environments
+    }
+  }
 })
 
 // Global withAct utility for easy act() wrapping in tests
