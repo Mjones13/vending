@@ -35,10 +35,76 @@ if (!isDryRun && !isExecute && !isRollback) {
   process.exit(1);
 }
 
+// Progress tracking state
+const progressState = {
+  currentPhase: '',
+  totalSteps: 0,
+  completedSteps: 0,
+  startTime: null,
+  phaseStartTime: null
+};
+
 // Helper functions
 function log(message, level = 'info') {
   if (level === 'verbose' && !isVerbose) return;
   console.log(message);
+}
+
+// Enhanced progress reporting functions
+function startProgress(phase, totalSteps) {
+  progressState.currentPhase = phase;
+  progressState.totalSteps = totalSteps;
+  progressState.completedSteps = 0;
+  progressState.phaseStartTime = Date.now();
+  
+  if (!progressState.startTime) {
+    progressState.startTime = Date.now();
+  }
+  
+  log(`\n📊 ${phase} (0/${totalSteps})`);
+}
+
+function updateProgress(step, message) {
+  progressState.completedSteps++;
+  const percentage = Math.round((progressState.completedSteps / progressState.totalSteps) * 100);
+  const progressBar = createProgressBar(percentage);
+  
+  if (isVerbose) {
+    log(`   ${progressBar} ${percentage}% - ${message}`);
+  } else {
+    // In non-verbose mode, show condensed progress
+    if (progressState.completedSteps % 5 === 0 || progressState.completedSteps === progressState.totalSteps) {
+      log(`   ${progressBar} ${percentage}% (${progressState.completedSteps}/${progressState.totalSteps})`);
+    }
+  }
+}
+
+function completeProgress() {
+  const duration = Date.now() - progressState.phaseStartTime;
+  const durationStr = formatDuration(duration);
+  log(`   ✅ ${progressState.currentPhase} completed in ${durationStr}`);
+}
+
+function createProgressBar(percentage) {
+  const width = 20;
+  const filled = Math.round(width * (percentage / 100));
+  const empty = width - filled;
+  return `[${'█'.repeat(filled)}${'-'.repeat(empty)}]`;
+}
+
+function formatDuration(ms) {
+  if (ms < 1000) return `${ms}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  return `${minutes}m ${seconds}s`;
+}
+
+function logSummary() {
+  if (!progressState.startTime) return;
+  
+  const totalDuration = Date.now() - progressState.startTime;
+  log(`\n⏱️  Total execution time: ${formatDuration(totalDuration)}`);
 }
 
 function execGitCommand(command) {
@@ -178,13 +244,154 @@ async function performDryRun() {
 }
 
 async function performMigration() {
-  // Will be implemented after dry run is complete
-  log('Migration functionality will be implemented after dry run');
+  log('🚀 Starting migration...\n');
+  
+  // Step 1: Scan existing plans
+  const plans = await scanExistingPlans();
+  if (plans.length === 0) {
+    log('No numbered implementation plans found to migrate.');
+    return;
+  }
+  
+  log(`Found ${plans.length} implementation plans to migrate\n`);
+  
+  // Step 2: Generate migration plan
+  const migrationPlan = [];
+  for (const plan of plans) {
+    const timestamp = await getFileCreationTimestamp(plan.filePath);
+    const newId = generateSimplifiedTimestampId(timestamp);
+    const newFileName = `${newId}-${plan.taskName}.md`;
+    const newPath = path.join(IMPLEMENTATION_PLAN_DIR, newFileName);
+    
+    migrationPlan.push({
+      oldPath: plan.filePath,
+      oldFileName: plan.fileName,
+      newPath: newPath,
+      newFileName: newFileName,
+      oldNumber: plan.number,
+      newId: newId,
+      taskName: plan.taskName,
+      creationTime: timestamp
+    });
+  }
+  
+  // Sort by creation time
+  migrationPlan.sort((a, b) => a.creationTime - b.creationTime);
+  
+  // Step 3: Create backup
+  log('💾 Creating backup...');
+  const { backupDir, backupInfo } = await createBackup(migrationPlan);
+  log(`   ✅ Backup created at: ${path.relative(process.cwd(), backupDir)}\n`);
+  
+  // Step 4: Create mapping
+  const mapping = await createReadableMapping(migrationPlan);
+  
+  // Step 5: Perform atomic migration
+  try {
+    const result = await performAtomicMigration(migrationPlan, mapping);
+    
+    log('\n✅ Migration completed successfully!');
+    log(`\n📊 Summary:`);
+    log(`   - ${migrationPlan.length} implementation plans migrated`);
+    log(`   - ${result.updatedFiles.length} files had references updated`);
+    log(`   - Mapping saved to: ${path.basename(result.mappingPath)}`);
+    log(`   - Backup available at: ${path.relative(process.cwd(), backupDir)}`);
+    
+    log('\n📚 Next steps:');
+    log('   - Use "npm run create-plan" for new timestamp-based plans');
+    log('   - Reference plans using timestamp IDs (e.g., 0608_1030)');
+    log('   - See .timestamp-mapping.json for ID reference');
+    
+  } catch (error) {
+    log(`\n❌ Migration failed: ${error.message}`);
+    log(`\n💾 Backup preserved at: ${path.relative(process.cwd(), backupDir)}`);
+    log('   Use --rollback with this backup directory to restore files');
+    throw error;
+  }
 }
 
 async function performRollback() {
-  // Will be implemented as part of backup mechanism
-  log('Rollback functionality will be implemented with backup mechanism');
+  log('🔄 Starting rollback process...\n');
+  
+  // Step 1: Find available backups
+  const backups = await findAvailableBackups();
+  
+  if (backups.length === 0) {
+    log('❌ No backups found to rollback');
+    log('   Run migration with --execute to create a backup first');
+    return;
+  }
+  
+  // Step 2: Select backup (most recent by default)
+  let selectedBackup;
+  if (backups.length === 1) {
+    selectedBackup = backups[0];
+    log(`📁 Found 1 backup: ${selectedBackup.name}`);
+  } else {
+    log('📁 Available backups:');
+    backups.forEach((backup, index) => {
+      const date = new Date(backup.info.timestamp);
+      log(`   ${index + 1}. ${backup.name} - ${date.toLocaleString()} (${backup.info.originalPlans} plans)`);
+    });
+    
+    // For now, automatically select the most recent backup
+    selectedBackup = backups[0];
+    log(`\n   Automatically selecting most recent: ${selectedBackup.name}`);
+  }
+  
+  // Step 3: Confirm rollback
+  log(`\n⚠️  This will restore ${selectedBackup.info.originalPlans} implementation plans`);
+  log('   from their timestamp-based names back to numbered names.\n');
+  
+  // Step 4: Execute rollback
+  try {
+    // Restore implementation plan files
+    let restoredCount = 0;
+    for (const file of selectedBackup.info.files) {
+      const backupPath = file.backup;
+      const originalPath = file.original;
+      
+      try {
+        // Check if the backup file exists
+        await fs.access(backupPath);
+        
+        // Copy backup file back to original location
+        await fs.copyFile(backupPath, originalPath);
+        restoredCount++;
+        
+        log(`   ✓ Restored ${path.basename(originalPath)}`, 'verbose');
+      } catch (error) {
+        log(`   ⚠️  Failed to restore ${path.basename(originalPath)}: ${error.message}`, 'error');
+      }
+    }
+    
+    log(`\n✅ Rollback completed: ${restoredCount} files restored`);
+    
+    // Step 5: Clean up mapping file if it exists
+    try {
+      await fs.unlink(MAPPING_FILE);
+      log('   ✓ Removed timestamp mapping file');
+    } catch (error) {
+      // Mapping file might not exist, which is fine
+      if (error.code !== 'ENOENT') {
+        log(`   ⚠️  Could not remove mapping file: ${error.message}`, 'verbose');
+      }
+    }
+    
+    // Step 6: Optionally clean up backup
+    log(`\n💾 Backup preserved at: ${path.relative(process.cwd(), selectedBackup.path)}`);
+    log('   You can manually delete it when no longer needed.');
+    
+    log('\n📝 Next steps:');
+    log('   - Review restored files to ensure correctness');
+    log('   - Consider why rollback was needed before re-attempting migration');
+    log('   - Use --dry-run to preview changes before next migration attempt');
+    
+  } catch (error) {
+    log(`\n❌ Rollback failed: ${error.message}`);
+    log('   Manual intervention may be required');
+    throw error;
+  }
 }
 
 // Utility function to scan for existing plans
@@ -522,6 +729,149 @@ async function saveMappingFile(mapping) {
   return mappingPath;
 }
 
+// Function to create backup
+async function createBackup(migrationPlan) {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+  const backupDir = path.join(__dirname, '..', `${BACKUP_DIR_PREFIX}${timestamp}`);
+  
+  // Create backup directory
+  await fs.mkdir(backupDir, { recursive: true });
+  
+  // Create backup info file
+  const backupInfo = {
+    timestamp: new Date().toISOString(),
+    originalPlans: migrationPlan.length,
+    backupDir: backupDir,
+    files: []
+  };
+  
+  // Backup implementation plan files
+  const implBackupDir = path.join(backupDir, 'docs', 'implementation-plan');
+  await fs.mkdir(implBackupDir, { recursive: true });
+  
+  for (const plan of migrationPlan) {
+    const backupPath = path.join(implBackupDir, plan.oldFileName);
+    await fs.copyFile(plan.oldPath, backupPath);
+    backupInfo.files.push({
+      original: plan.oldPath,
+      backup: backupPath
+    });
+  }
+  
+  // Save backup info
+  const backupInfoPath = path.join(backupDir, 'backup-info.json');
+  await fs.writeFile(backupInfoPath, JSON.stringify(backupInfo, null, 2));
+  
+  return { backupDir, backupInfo };
+}
+
+// Function to find available backup directories
+async function findAvailableBackups() {
+  const backups = [];
+  
+  try {
+    // Get parent directory of the script
+    const parentDir = path.join(__dirname, '..');
+    const entries = await fs.readdir(parentDir, { withFileTypes: true });
+    
+    // Find directories matching backup pattern
+    for (const entry of entries) {
+      if (entry.isDirectory() && entry.name.startsWith(BACKUP_DIR_PREFIX)) {
+        const backupPath = path.join(parentDir, entry.name);
+        const backupInfoPath = path.join(backupPath, 'backup-info.json');
+        
+        try {
+          // Read backup info
+          const infoContent = await fs.readFile(backupInfoPath, 'utf8');
+          const info = JSON.parse(infoContent);
+          
+          backups.push({
+            name: entry.name,
+            path: backupPath,
+            info: info,
+            timestamp: new Date(info.timestamp).getTime()
+          });
+        } catch (error) {
+          log(`   ⚠️  Skipping invalid backup: ${entry.name}`, 'verbose');
+        }
+      }
+    }
+    
+    // Sort by timestamp descending (most recent first)
+    backups.sort((a, b) => b.timestamp - a.timestamp);
+    
+  } catch (error) {
+    log(`Error scanning for backups: ${error.message}`, 'verbose');
+  }
+  
+  return backups;
+}
+
+// Function to perform atomic migration with rollback capability
+async function performAtomicMigration(migrationPlan, mapping) {
+  const operations = [];
+  const completedOperations = [];
+  
+  try {
+    // Phase 1: Rename all implementation plan files
+    startProgress('Renaming implementation plan files', migrationPlan.length);
+    
+    for (const plan of migrationPlan) {
+      try {
+        await fs.rename(plan.oldPath, plan.newPath);
+        completedOperations.push({
+          type: 'rename',
+          oldPath: plan.oldPath,
+          newPath: plan.newPath
+        });
+        updateProgress(plan.oldFileName, `${plan.oldFileName} → ${plan.newFileName}`);
+      } catch (error) {
+        throw new Error(`Failed to rename ${plan.oldFileName}: ${error.message}`);
+      }
+    }
+    
+    completeProgress();
+    
+    // Phase 2: Update all references
+    const referencesInfo = await scanForReferences(migrationPlan);
+    const totalReferenceFiles = referencesInfo.size;
+    
+    if (totalReferenceFiles > 0) {
+      startProgress('Updating references', totalReferenceFiles);
+      const { updatedFiles, totalChanges } = await updateAllReferences(migrationPlan, true);
+      completeProgress();
+      log(`   📝 Updated ${totalChanges} references in ${updatedFiles.length} files`);
+    } else {
+      log('\n📝 No references to update');
+    }
+    
+    // Phase 3: Save mapping file
+    log('\n💾 Saving mapping file...');
+    const mappingPath = await saveMappingFile(mapping);
+    log(`   ✅ Mapping saved to ${path.basename(mappingPath)}`);
+    
+    return { success: true, completedOperations, updatedFiles, mappingPath };
+    
+  } catch (error) {
+    // Rollback on error
+    log('\n❌ Error during migration, rolling back changes...', 'error');
+    
+    // Rollback file renames
+    for (const op of completedOperations.reverse()) {
+      if (op.type === 'rename') {
+        try {
+          await fs.rename(op.newPath, op.oldPath);
+          log(`   ↩️  Rolled back: ${path.basename(op.newPath)} → ${path.basename(op.oldPath)}`, 'verbose');
+        } catch (rollbackError) {
+          log(`   ⚠️  Failed to rollback ${op.newPath}: ${rollbackError.message}`, 'error');
+        }
+      }
+    }
+    
+    throw error;
+  }
+}
+
 // Export functions for testing
 module.exports = {
   scanExistingPlans,
@@ -531,7 +881,10 @@ module.exports = {
   updateReferencesInFile,
   updateAllReferences,
   createReadableMapping,
-  saveMappingFile
+  saveMappingFile,
+  createBackup,
+  findAvailableBackups,
+  performAtomicMigration
 };
 
 // Run the script if called directly

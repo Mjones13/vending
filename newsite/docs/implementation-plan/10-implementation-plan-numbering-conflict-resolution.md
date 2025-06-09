@@ -33,10 +33,10 @@ Migrate to timestamp-based implementation plan IDs using the format `MMDD_HHMM-t
 - [x] **Task 2.4**: Create human-readable mapping file for reference
 
 ### Phase 3: Migration Execution Engine  
-- [ ] **Task 3.1**: Implement dry-run mode to preview all changes
-- [ ] **Task 3.2**: Build atomic file renaming with rollback capability
-- [ ] **Task 3.3**: Create progress reporting and logging system
-- [ ] **Task 3.4**: Add backup mechanism before migration
+- [x] **Task 3.1**: Implement dry-run mode to preview all changes
+- [x] **Task 3.2**: Build atomic file renaming with rollback capability
+- [x] **Task 3.3**: Create progress reporting and logging system
+- [x] **Task 3.4**: Add backup mechanism before migration
 
 ### Phase 4: Future Workflow Integration
 - [ ] **Task 4.1**: Create `npm run create-plan` command for new timestamp-based plans
