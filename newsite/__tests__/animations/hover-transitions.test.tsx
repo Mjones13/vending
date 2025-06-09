@@ -1,18 +1,16 @@
 /**
  * Hover Effects and Transitions Tests
+ * Three-Tier Testing Strategy Implementation:
+ * - Tier 1: Animation Logic (hover state machines, transition timing logic)
+ * - Tier 2: Component Behavior (DOM interactions, class changes, user events)
  * Following TDD approach - testing hover effects on buttons, cards, and interactive elements
  */
 import React from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
-import { 
-  TransitionTester,
-  disableAnimations,
-  enableAnimations
-} from '../../test-utils/keyframe-testing'
-import { 
-  hoverElement, 
-  unhoverElement 
-} from '../../test-utils/component-helpers'
+import {
+  mockAnimationProperties,
+  clearAnimationMocks
+} from '../../test-utils/css-animation-mocking'
 import userEvent from '@testing-library/user-event'
 
 // Test components that match the actual hover implementations
@@ -91,13 +89,31 @@ function HeaderScrollComponent() {
   )
 }
 
-describe('Hover Effects and Transitions', () => {
+// TIER 2: Component Behavior Testing (Hover interactions are primarily behavior-based)
+describe('Hover Effects and Transitions Behavior (Tier 2)', () => {
   beforeEach(() => {
-    enableAnimations()
+    // Mock CSS properties for hover transitions
+    mockAnimationProperties('.btn', {
+      transitionProperty: 'all',
+      transitionDuration: '0.3s',
+      transitionTimingFunction: 'ease'
+    })
+    
+    mockAnimationProperties('.service-feature-card', {
+      transitionProperty: 'transform, box-shadow',
+      transitionDuration: '0.3s',
+      transitionTimingFunction: 'ease-out'
+    })
+    
+    mockAnimationProperties('.backdrop-blur', {
+      backdropFilter: 'blur(16px)',
+      transitionProperty: 'backdrop-filter',
+      transitionDuration: '0.3s'
+    })
   })
 
   afterEach(() => {
-    disableAnimations()
+    clearAnimationMocks()
   })
 
   describe('Button Hover Effects', () => {

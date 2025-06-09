@@ -1,5 +1,10 @@
 /**
  * @jest-environment jsdom
+ * 
+ * Rotating Text Alignment Tests
+ * Three-Tier Testing Strategy Implementation:
+ * - Tier 2: Component Behavior (DOM structure, baseline alignment, font rendering)
+ * Note: This is primarily Tier 2 testing as it focuses on layout behavior and DOM structure
  */
 
 import React from 'react';
