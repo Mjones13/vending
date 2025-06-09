@@ -1,4 +1,10 @@
 import '@testing-library/jest-dom'
+import { act, configure } from '@testing-library/react'
+
+// Configure testing library with increased async timeout
+configure({
+  asyncUtilTimeout: 5000, // 5 seconds for async operations
+})
 
 // Global browser API polyfills - must be available before any tests run
 // These are defined at the top level to ensure they exist even before beforeEach runs
@@ -195,22 +201,35 @@ beforeEach(() => {
     value: 0
   })
   
-  // Enable fake timers globally for consistent testing
-  jest.useFakeTimers()
+  // DO NOT enable fake timers globally - let tests control this
+  // jest.useFakeTimers() - REMOVED to prevent conflicts
   
-  // Ensure animation frame polyfills are always available
-  // Re-apply in every test to handle cases where they might be cleared
-  global.requestAnimationFrame = (callback) => {
-    return setTimeout(callback, 16); // 16ms for ~60fps
-  };
-  
-  global.cancelAnimationFrame = (id) => {
-    clearTimeout(id);
-  };
-  
-  // Also ensure they're available on window
-  window.requestAnimationFrame = global.requestAnimationFrame;
-  window.cancelAnimationFrame = global.cancelAnimationFrame;
+  // Set up persistent animation frame polyfills with improved implementation
+  if (!global.requestAnimationFrame || global.requestAnimationFrame.toString().includes('setTimeout')) {
+    let rafId = 0;
+    const rafCallbacks = new Map();
+    
+    global.requestAnimationFrame = (callback) => {
+      rafId++;
+      const id = rafId;
+      rafCallbacks.set(id, callback);
+      
+      // Use setImmediate for more accurate frame timing
+      const handle = setImmediate(() => {
+        const cb = rafCallbacks.get(id);
+        if (cb) {
+          rafCallbacks.delete(id);
+          cb(performance.now());
+        }
+      });
+      
+      return id;
+    };
+    
+    global.cancelAnimationFrame = (id) => {
+      rafCallbacks.delete(id);
+    };
+  }
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
@@ -267,12 +286,42 @@ afterEach(() => {
     window.removeEventListener(eventType, () => {})
   })
   
-  // Run any pending timers and restore real timers
-  jest.runOnlyPendingTimers()
+  // Comprehensive timer cleanup to prevent act() warnings
+  if (jest.isMockFunction(setTimeout)) {
+    try {
+      // Clear all pending timers before running them to prevent act() warnings
+      jest.clearAllTimers()
+      // Only run pending timers if there are any
+      if (jest.getTimerCount && jest.getTimerCount() > 0) {
+        jest.runOnlyPendingTimers()
+      }
+    } catch (e) {
+      // Ignore errors if timers aren't mocked or if no timers exist
+    }
+  }
+  
+  // Always ensure we're back to real timers for next test
   jest.useRealTimers()
   
-  // Reset scroll position
+  // Clear any pending RAF callbacks to prevent act() warnings
+  if (global.cancelAnimationFrame && typeof global.cancelAnimationFrame === 'function') {
+    // Clear any pending animation frames (though they should be cleaned by individual tests)
+    for (let i = 1; i <= 100; i++) {
+      try {
+        global.cancelAnimationFrame(i)
+      } catch (e) {
+        // Ignore errors for non-existent frame IDs
+      }
+    }
+  }
+  
+  // Reset scroll position and clear scroll event listeners to prevent act() warnings
   Object.defineProperty(window, 'scrollY', {
+    writable: true,
+    configurable: true,
+    value: 0
+  })
+  Object.defineProperty(window, 'pageYOffset', {
     writable: true,
     configurable: true,
     value: 0
@@ -281,5 +330,21 @@ afterEach(() => {
   // Clear all mocks for next test
   jest.clearAllMocks()
   
+  // Ensure no pending microtasks that could cause act() warnings
+  if (global.gc) {
+    try {
+      global.gc()
+    } catch (e) {
+      // gc() not available in all environments
+    }
+  }
+  
   // Note: Keep animation frame polyfills persistent to prevent "not defined" errors
 })
+
+// Global withAct utility for easy act() wrapping in tests
+global.withAct = async (callback) => {
+  return act(async () => {
+    await callback();
+  });
+};

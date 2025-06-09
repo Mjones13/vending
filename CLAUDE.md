@@ -163,21 +163,27 @@ Before writing ANY code:
 During implementation:
 1. **Pre-task sync**: Before EACH task: `git fetch --all --prune && git pull`
 2. **Follow plan step-by-step**: Execute tasks in EXACT order specified
-3. **MANDATORY FILE TRACKING**: Track ALL files created/modified for current task
-4. **MANDATORY REAL-TIME UPDATES**: After completing each task, IMMEDIATELY:
+3. **MANDATORY SCOPE CONTROL**: Make ONLY changes required for the current task
+   - Every file edit must directly accomplish the task objective
+   - DO NOT refactor unrelated code you encounter
+   - DO NOT add helpful comments to existing code
+   - DO NOT fix unrelated issues (document them instead)
+   - If you identify critical bugs/security issues: STOP and ask user
+4. **MANDATORY FILE TRACKING**: Track ALL files created/modified for current task
+5. **MANDATORY REAL-TIME UPDATES**: After completing each task, IMMEDIATELY:
    - Mark checkbox as complete: `- [ ]` → `- [x]`
    - Update status board with completion details
    - Document any files created/modified
    - Add completion timestamp and notes
-5. **Test each change**: After implementing, test thoroughly
-6. **COMMIT AND PUSH AFTER EACH TASK**: 
+6. **Test each change**: After implementing, test thoroughly
+7. **COMMIT AND PUSH AFTER EACH TASK**: 
    ```bash
    git add <specific-files-only>
    git commit -m "Complete [Task X.Y]: [descriptive summary]"
    git push  # IMMEDIATELY - NO EXCEPTIONS
    ```
-7. **Verify push succeeded**: Confirm before proceeding to next task
-8. **Update progress**: Keep implementation plan current in real-time
+8. **Verify push succeeded**: Confirm before proceeding to next task
+9. **Update progress**: Keep implementation plan current in real-time
 
 ### Step 3: Mandatory Error Documentation (REQUIRED)
 
