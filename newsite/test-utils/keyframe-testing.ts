@@ -1,538 +1,513 @@
 /**
- * Specialized utilities for testing CSS keyframe animations
+ * Keyframe Animation Testing Utilities
+ * 
+ * These utilities enable testing keyframe animation logic and progression without
+ * relying on actual CSS keyframe execution. Designed to work around JSDOM's
+ * lack of CSS animation support.
  */
-import { waitFor } from '@testing-library/react'
+
+import { act } from '@testing-library/react';
+
+// Animation phase types
+export type AnimationPhase = 'before-start' | 'animating' | 'paused' | 'completed' | 'cancelled';
+
+// Keyframe step interface
+export interface KeyframeStep {
+  percentage: number; // 0-100
+  phase: AnimationPhase;
+  timestamp: number;
+  properties?: Record<string, string>;
+}
+
+// Animation timeline interface
+export interface AnimationTimeline {
+  duration: number; // in milliseconds
+  steps: KeyframeStep[];
+  currentStep: number;
+  startTime: number;
+  endTime?: number;
+  iterationCount: number;
+  currentIteration: number;
+}
+
+// Animation configuration
+export interface KeyframeAnimationConfig {
+  name: string;
+  duration: number; // in milliseconds
+  iterationCount?: number;
+  direction?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse';
+  fillMode?: 'none' | 'forwards' | 'backwards' | 'both';
+  playState?: 'running' | 'paused';
+  steps?: number; // Number of steps to simulate (default: 10)
+}
 
 /**
- * Test specific keyframe animations used in the project
+ * KeyframeAnimationTester class for testing animation phases without CSS
  */
 export class KeyframeAnimationTester {
-  private element: Element
+  private timeline: AnimationTimeline;
+  private config: KeyframeAnimationConfig;
+  private phaseListeners: Array<(phase: AnimationPhase, step: KeyframeStep) => void> = [];
+  private timeoutId: NodeJS.Timeout | null = null;
 
-  constructor(element: Element) {
-    this.element = element
+  constructor(config: KeyframeAnimationConfig) {
+    this.config = {
+      iterationCount: 1,
+      direction: 'normal',
+      fillMode: 'none',
+      playState: 'running',
+      steps: 10,
+      ...config
+    };
+
+    this.timeline = {
+      duration: this.config.duration,
+      steps: [],
+      currentStep: 0,
+      startTime: 0,
+      iterationCount: this.config.iterationCount || 1,
+      currentIteration: 0
+    };
+
+    this.initializeSteps();
   }
 
   /**
-   * Test the slideUpFromBottom keyframe animation used in rotating text
+   * Initialize animation steps based on configuration
    */
-  async testSlideUpFromBottom(timeout = 2000): Promise<void> {
-    // Check that animation is applied
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    await waitFor(
-      () => {
-        // Should have the animation name
-        expect(computedStyle.animationName).toMatch(/slideUpFromBottom|slideInFromBottom/)
-      },
-      { timeout }
-    )
+  private initializeSteps(): void {
+    const stepCount = this.config.steps || 10;
+    const stepPercentage = 100 / stepCount;
 
-    // Verify animation properties
-    expect(computedStyle.animationDuration).toMatch(/0\.4s|400ms/)
-    expect(computedStyle.animationTimingFunction).toContain('cubic-bezier')
-    expect(computedStyle.animationFillMode).toMatch(/forwards|both/)
-  }
-
-  /**
-   * Test the slideUpAndOut keyframe animation used in rotating text
-   */
-  async testSlideUpAndOut(timeout = 2000): Promise<void> {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    await waitFor(
-      () => {
-        expect(computedStyle.animationName).toMatch(/slideUpAndOut|slideUpAndOut/)
-      },
-      { timeout }
-    )
-
-    // Verify exit animation properties
-    expect(computedStyle.animationDuration).toMatch(/0\.4s|400ms/)
-    expect(computedStyle.animationFillMode).toMatch(/forwards|both/)
-  }
-
-  /**
-   * Test fade-in animation used for logo staggered animations
-   */
-  async testFadeIn(timeout = 2000): Promise<void> {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    await waitFor(
-      () => {
-        expect(computedStyle.animationName).toMatch(/fadeIn|animate-fade-in/)
-      },
-      { timeout }
-    )
-  }
-
-  /**
-   * Test floating animation used for coffee products
-   */
-  async testFloatAnimation(timeout = 2000): Promise<void> {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    await waitFor(
-      () => {
-        expect(computedStyle.animationName).toMatch(/float|animate-float/)
-      },
-      { timeout }
-    )
-
-    // Float animation should be infinite
-    expect(computedStyle.animationIterationCount).toBe('infinite')
-  }
-
-  /**
-   * Test shimmer effect animation used on buttons
-   */
-  async testShimmerEffect(timeout = 2000): Promise<void> {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    await waitFor(
-      () => {
-        // Check for shimmer-related properties
-        const hasShimmer = computedStyle.animationName.includes('shimmer') ||
-                          this.element.classList.contains('btn-shimmer')
-        expect(hasShimmer).toBe(true)
-      },
-      { timeout }
-    )
-  }
-
-  /**
-   * Verify transform properties during animation
-   */
-  verifyTransformStates(expectedStates: {
-    initial?: string
-    midpoint?: string
-    final?: string
-  }): void {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    if (expectedStates.initial) {
-      // This would need to be tested at animation start
-      expect(computedStyle.transform).toBeDefined()
+    for (let i = 0; i <= stepCount; i++) {
+      const percentage = Math.min(i * stepPercentage, 100);
+      this.timeline.steps.push({
+        percentage,
+        phase: i === 0 ? 'before-start' : i === stepCount ? 'completed' : 'animating',
+        timestamp: 0,
+        properties: this.calculatePropertiesAtPercentage(percentage)
+      });
     }
+  }
+
+  /**
+   * Calculate CSS properties at a specific percentage (mock implementation)
+   */
+  private calculatePropertiesAtPercentage(percentage: number): Record<string, string> {
+    // This is a simplified mock - in real scenarios, you'd calculate actual values
+    const progress = percentage / 100;
     
-    if (expectedStates.final) {
-      // This would be tested after animation completion
-      expect(computedStyle.transform).toBeDefined()
+    return {
+      opacity: this.interpolateValue(0, 1, progress).toString(),
+      transform: `translateY(${this.interpolateValue(20, 0, progress)}px)`,
+      scale: this.interpolateValue(0.8, 1, progress).toString()
+    };
+  }
+
+  /**
+   * Simple linear interpolation between two values
+   */
+  private interpolateValue(start: number, end: number, progress: number): number {
+    return start + (end - start) * progress;
+  }
+
+  /**
+   * Start the animation simulation
+   */
+  start(): void {
+    if (this.config.playState === 'paused') {
+      return;
     }
+
+    this.timeline.startTime = Date.now();
+    this.timeline.currentStep = 0;
+    this.timeline.currentIteration = 0;
+
+    this.simulateProgression();
+  }
+
+  /**
+   * Pause the animation
+   */
+  pause(): void {
+    this.config.playState = 'paused';
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+    this.notifyPhaseChange('paused');
+  }
+
+  /**
+   * Resume the animation
+   */
+  resume(): void {
+    this.config.playState = 'running';
+    this.simulateProgression();
+  }
+
+  /**
+   * Cancel the animation
+   */
+  cancel(): void {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+    this.notifyPhaseChange('cancelled');
+  }
+
+  /**
+   * Simulate animation progression through steps
+   */
+  private simulateProgression(): void {
+    if (this.config.playState !== 'running') {
+      return;
+    }
+
+    const currentStep = this.timeline.steps[this.timeline.currentStep];
+    if (!currentStep) {
+      this.handleAnimationComplete();
+      return;
+    }
+
+    // Update timestamp
+    currentStep.timestamp = Date.now();
+
+    // Notify listeners of phase change
+    this.notifyPhaseChange(currentStep.phase, currentStep);
+
+    // Schedule next step
+    const stepDuration = this.timeline.duration / (this.timeline.steps.length - 1);
+    this.timeoutId = setTimeout(() => {
+      this.timeline.currentStep++;
+      this.simulateProgression();
+    }, stepDuration);
+  }
+
+  /**
+   * Handle animation completion
+   */
+  private handleAnimationComplete(): void {
+    this.timeline.currentIteration++;
+
+    // Check if we need to repeat
+    if (this.timeline.currentIteration < this.timeline.iterationCount) {
+      this.timeline.currentStep = 0;
+      this.simulateProgression();
+      return;
+    }
+
+    // Animation fully complete
+    this.timeline.endTime = Date.now();
+    this.notifyPhaseChange('completed');
+  }
+
+  /**
+   * Notify phase change listeners
+   */
+  private notifyPhaseChange(phase: AnimationPhase, step?: KeyframeStep): void {
+    this.phaseListeners.forEach(listener => {
+      listener(phase, step || this.getCurrentStep());
+    });
+  }
+
+  /**
+   * Get current animation step
+   */
+  getCurrentStep(): KeyframeStep {
+    return this.timeline.steps[this.timeline.currentStep] || this.timeline.steps[0];
+  }
+
+  /**
+   * Get current animation phase
+   */
+  getCurrentPhase(): AnimationPhase {
+    return this.getCurrentStep().phase;
+  }
+
+  /**
+   * Get animation progress (0-1)
+   */
+  getProgress(): number {
+    const currentStep = this.timeline.currentStep;
+    const totalSteps = this.timeline.steps.length - 1;
+    return Math.min(currentStep / totalSteps, 1);
+  }
+
+  /**
+   * Get timeline information
+   */
+  getTimeline(): AnimationTimeline {
+    return { ...this.timeline };
+  }
+
+  /**
+   * Add phase change listener
+   */
+  onPhaseChange(callback: (phase: AnimationPhase, step: KeyframeStep) => void): () => void {
+    this.phaseListeners.push(callback);
+    return () => {
+      const index = this.phaseListeners.indexOf(callback);
+      if (index > -1) {
+        this.phaseListeners.splice(index, 1);
+      }
+    };
+  }
+
+  /**
+   * Cleanup resources
+   */
+  destroy(): void {
+    this.cancel();
+    this.phaseListeners = [];
   }
 }
 
 /**
- * Test CSS transitions used throughout the site
+ * Mock Keyframe Timeline for testing animation timing without actual CSS
  */
-export class TransitionTester {
-  private element: Element
+export class MockKeyframeTimeline {
+  private animations: Map<string, KeyframeAnimationTester> = new Map();
 
-  constructor(element: Element) {
-    this.element = element
+  /**
+   * Register an animation
+   */
+  registerAnimation(name: string, config: KeyframeAnimationConfig): KeyframeAnimationTester {
+    const tester = new KeyframeAnimationTester({ ...config, name });
+    this.animations.set(name, tester);
+    return tester;
   }
 
   /**
-   * Test hover scale transitions on cards and buttons
+   * Start animation by name
    */
-  async testHoverScale(expectedScale = '1.05', timeout = 1000): Promise<void> {
-    // Simulate hover state
-    this.element.classList.add('hover')
-    
-    await waitFor(
-      () => {
-        const computedStyle = window.getComputedStyle(this.element)
-        expect(computedStyle.transform).toContain('scale')
-      },
-      { timeout }
-    )
-    
-    // Remove hover state
-    this.element.classList.remove('hover')
+  startAnimation(name: string): void {
+    const animation = this.animations.get(name);
+    if (animation) {
+      animation.start();
+    }
   }
 
   /**
-   * Test color transitions on hover
+   * Pause animation by name
    */
-  async testColorTransition(property: 'color' | 'background-color' | 'border-color', timeout = 1000): Promise<void> {
-    const initialStyle = window.getComputedStyle(this.element)
-    const initialValue = initialStyle.getPropertyValue(property)
-    
-    // Trigger hover
-    this.element.classList.add('hover')
-    
-    await waitFor(
-      () => {
-        const hoverStyle = window.getComputedStyle(this.element)
-        const hoverValue = hoverStyle.getPropertyValue(property)
-        
-        // Value should change on hover
-        expect(hoverValue).not.toBe(initialValue)
-      },
-      { timeout }
-    )
-    
-    this.element.classList.remove('hover')
+  pauseAnimation(name: string): void {
+    const animation = this.animations.get(name);
+    if (animation) {
+      animation.pause();
+    }
   }
 
   /**
-   * Test backdrop blur transition on header scroll
+   * Get animation by name
    */
-  async testBackdropBlur(timeout = 1000): Promise<void> {
-    // Add scrolled class
-    this.element.classList.add('scrolled')
-    
-    await waitFor(
-      () => {
-        const computedStyle = window.getComputedStyle(this.element)
-        expect(computedStyle.backdropFilter || computedStyle.webkitBackdropFilter).toContain('blur')
-      },
-      { timeout }
-    )
+  getAnimation(name: string): KeyframeAnimationTester | undefined {
+    return this.animations.get(name);
   }
 
   /**
-   * Verify transition properties are set correctly
+   * Get all animations
    */
-  verifyTransitionProperties(expectedProperties: {
-    property?: string
-    duration?: string
-    timingFunction?: string
-    delay?: string
-  }): void {
-    const computedStyle = window.getComputedStyle(this.element)
-    
-    if (expectedProperties.property) {
-      const transitionProperty = computedStyle.transitionProperty
-      if (transitionProperty && transitionProperty !== 'all' && transitionProperty !== 'none') {
-        expect(transitionProperty).toContain(expectedProperties.property)
+  getAllAnimations(): Record<string, KeyframeAnimationTester> {
+    const result: Record<string, KeyframeAnimationTester> = {};
+    this.animations.forEach((animation, name) => {
+      result[name] = animation;
+    });
+    return result;
+  }
+
+  /**
+   * Clear all animations
+   */
+  clear(): void {
+    this.animations.forEach(animation => animation.destroy());
+    this.animations.clear();
+  }
+}
+
+/**
+ * Animation Phase Validator for verifying animation phase transitions
+ */
+export class AnimationPhaseValidator {
+  private expectedPhases: AnimationPhase[] = [];
+  private actualPhases: Array<{ phase: AnimationPhase; timestamp: number }> = [];
+
+  /**
+   * Expect a specific phase in sequence
+   */
+  expectPhase(phase: AnimationPhase): AnimationPhaseValidator {
+    this.expectedPhases.push(phase);
+    return this;
+  }
+
+  /**
+   * Record an actual phase occurrence
+   */
+  recordPhase(phase: AnimationPhase): void {
+    this.actualPhases.push({
+      phase,
+      timestamp: Date.now()
+    });
+  }
+
+  /**
+   * Validate that actual phases match expected phases
+   */
+  validate(): {
+    isValid: boolean;
+    errors: string[];
+    expectedPhases: AnimationPhase[];
+    actualPhases: AnimationPhase[];
+  } {
+    const errors: string[] = [];
+    const actualPhaseList = this.actualPhases.map(p => p.phase);
+
+    if (actualPhaseList.length !== this.expectedPhases.length) {
+      errors.push(
+        `Expected ${this.expectedPhases.length} phases, got ${actualPhaseList.length}`
+      );
+    }
+
+    for (let i = 0; i < Math.min(actualPhaseList.length, this.expectedPhases.length); i++) {
+      if (actualPhaseList[i] !== this.expectedPhases[i]) {
+        errors.push(
+          `Phase ${i}: expected ${this.expectedPhases[i]}, got ${actualPhaseList[i]}`
+        );
       }
     }
-    
-    if (expectedProperties.duration) {
-      expect(computedStyle.transitionDuration).toBe(expectedProperties.duration)
-    }
-    
-    if (expectedProperties.timingFunction) {
-      expect(computedStyle.transitionTimingFunction).toBe(expectedProperties.timingFunction)
-    }
-    
-    if (expectedProperties.delay) {
-      expect(computedStyle.transitionDelay).toBe(expectedProperties.delay)
-    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      expectedPhases: [...this.expectedPhases],
+      actualPhases: actualPhaseList
+    };
+  }
+
+  /**
+   * Reset validator state
+   */
+  reset(): void {
+    this.expectedPhases = [];
+    this.actualPhases = [];
   }
 }
 
 /**
- * Utility for testing animation timing and synchronization
+ * Utility function to simulate keyframe phases for testing
  */
-export class AnimationTimingTester {
-  private startTime: number = 0
-  private endTime: number = 0
+export const simulateKeyframePhases = async (
+  config: KeyframeAnimationConfig,
+  phaseCallback?: (phase: AnimationPhase, step: KeyframeStep) => void
+): Promise<AnimationTimeline> => {
+  return new Promise((resolve) => {
+    const tester = new KeyframeAnimationTester(config);
 
-  /**
-   * Start timing an animation
-   */
-  startTiming(): void {
-    this.startTime = performance.now()
-  }
-
-  /**
-   * End timing and return duration
-   */
-  endTiming(): number {
-    this.endTime = performance.now()
-    return this.endTime - this.startTime
-  }
-
-  /**
-   * Verify animation duration is within expected range
-   */
-  verifyDuration(expectedDuration: number, tolerance = 100): void {
-    const actualDuration = this.endTiming()
-    expect(actualDuration).toBeGreaterThanOrEqual(expectedDuration - tolerance)
-    expect(actualDuration).toBeLessThanOrEqual(expectedDuration + tolerance)
-  }
-
-  /**
-   * Test staggered animation timing
-   */
-  async testStaggeredTiming(
-    elements: NodeListOf<Element>, 
-    expectedDelay: number,
-    tolerance = 50
-  ): Promise<void> {
-    const timings: number[] = []
-    
-    elements.forEach((element, index) => {
-      const observer = new MutationObserver(() => {
-        timings[index] = performance.now()
-      })
-      
-      observer.observe(element, {
-        attributes: true,
-        attributeFilter: ['class']
-      })
-    })
-
-    // Wait for all animations to start
-    await waitFor(
-      () => {
-        expect(timings).toHaveLength(elements.length)
-      },
-      { timeout: 5000 }
-    )
-
-    // Verify stagger delays
-    for (let i = 1; i < timings.length; i++) {
-      const actualDelay = timings[i] - timings[i - 1]
-      expect(actualDelay).toBeGreaterThanOrEqual(expectedDelay - tolerance)
-      expect(actualDelay).toBeLessThanOrEqual(expectedDelay + tolerance)
-    }
-  }
-}
-
-/**
- * Factory function to create animation testers for common site elements
- */
-export function createAnimationTestSuite(container: Element) {
-  return {
-    /**
-     * Test rotating text animations
-     */
-    rotatingText: (selector: string) => {
-      const element = container.querySelector(selector)
-      if (!element) throw new Error(`Rotating text element not found: ${selector}`)
-      return new KeyframeAnimationTester(element)
-    },
-
-    /**
-     * Test logo fade-in animations
-     */
-    logoFadeIn: (selector: string) => {
-      const element = container.querySelector(selector)
-      if (!element) throw new Error(`Logo element not found: ${selector}`)
-      return new KeyframeAnimationTester(element)
-    },
-
-    /**
-     * Test button hover transitions
-     */
-    buttonHover: (selector: string) => {
-      const element = container.querySelector(selector)
-      if (!element) throw new Error(`Button element not found: ${selector}`)
-      return new TransitionTester(element)
-    },
-
-    /**
-     * Test card hover effects
-     */
-    cardHover: (selector: string) => {
-      const element = container.querySelector(selector)
-      if (!element) throw new Error(`Card element not found: ${selector}`)
-      return new TransitionTester(element)
-    },
-
-    /**
-     * Test header scroll effects
-     */
-    headerScroll: (selector: string) => {
-      const element = container.querySelector(selector)
-      if (!element) throw new Error(`Header element not found: ${selector}`)
-      return new TransitionTester(element)
-    },
-
-    /**
-     * Create timing tester
-     */
-    timing: () => new AnimationTimingTester()
-  }
-}
-
-/**
- * Test staggered animations like logo fade-ins
- */
-export class StaggeredAnimationTester {
-  private selector: string
-  private expectedDelay: number
-
-  constructor(selector: string, expectedDelay: number) {
-    this.selector = selector
-    this.expectedDelay = expectedDelay
-  }
-
-  /**
-   * Get the number of elements that match the selector
-   */
-  getElementCount(): number {
-    return document.querySelectorAll(this.selector).length
-  }
-
-  /**
-   * Verify that animations are triggered in staggered sequence
-   */
-  async verifyStaggeredAnimation(animationClass: string, timeout = 5000): Promise<void> {
-    const elements = document.querySelectorAll(this.selector)
-    const animationTimes: number[] = []
-
-    // Monitor when each element gets the animation class
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i]
-      
-      await waitFor(
-        () => {
-          expect(element).toHaveClass(animationClass)
-          animationTimes.push(performance.now())
-        },
-        { timeout }
-      )
+    if (phaseCallback) {
+      tester.onPhaseChange(phaseCallback);
     }
 
-    // Verify stagger timing
-    for (let i = 1; i < animationTimes.length; i++) {
-      const delay = animationTimes[i] - animationTimes[i - 1]
-      expect(delay).toBeGreaterThanOrEqual(this.expectedDelay - 20) // Allow tolerance
-      expect(delay).toBeLessThanOrEqual(this.expectedDelay + 20)
-    }
-  }
-}
-
-/**
- * Specialized tester for rotating text state machine
- */
-export class RotatingTextTester {
-  private element: Element
-
-  constructor(element: Element) {
-    this.element = element
-  }
-
-  /**
-   * Test the complete rotation cycle
-   */
-  async testFullRotationCycle(timeout = 10000): Promise<void> {
-    const states: string[] = []
-    
-    // Monitor state changes
-    const observer = new MutationObserver(() => {
-      const classes = Array.from(this.element.classList)
-      const animationState = classes.find(cls => cls.includes('rotating-text-'))
-      if (animationState && !states.includes(animationState)) {
-        states.push(animationState)
+    tester.onPhaseChange((phase) => {
+      if (phase === 'completed' || phase === 'cancelled') {
+        const timeline = tester.getTimeline();
+        tester.destroy();
+        resolve(timeline);
       }
-    })
-    
-    observer.observe(this.element, {
-      attributes: true,
-      attributeFilter: ['class']
-    })
+    });
 
-    // Wait for complete cycle
-    await waitFor(
-      () => {
-        expect(states).toContain('rotating-text-visible')
-        expect(states).toContain('rotating-text-exiting')
-        expect(states).toContain('rotating-text-entering')
-      },
-      { timeout }
-    )
-
-    observer.disconnect()
-  }
-
-  /**
-   * Test word cycling behavior
-   */
-  async testWordCycling(expectedWords: string[], timeout = 15000): Promise<void> {
-    const observedWords: string[] = []
-    
-    for (let i = 0; i < expectedWords.length; i++) {
-      await waitFor(
-        () => {
-          const currentWord = this.element.textContent || ''
-          if (!observedWords.includes(currentWord)) {
-            observedWords.push(currentWord)
-          }
-          expect(observedWords).toHaveLength(i + 1)
-        },
-        { timeout: 4000 }
-      )
-    }
-    
-    expect(observedWords).toEqual(expectedWords)
-  }
-}
+    act(() => {
+      tester.start();
+    });
+  });
+};
 
 /**
- * Global animation testing utilities
+ * Utility function to validate animation phase progression
  */
+export const validateAnimationPhase = (
+  actualPhase: AnimationPhase,
+  expectedPhase: AnimationPhase
+): boolean => {
+  return actualPhase === expectedPhase;
+};
 
 /**
- * Disable all animations for faster testing with test-scoped isolation
+ * Utility to create a mock timeline for testing
  */
-export function disableAnimations(): void {
-  // Generate unique test identifier to prevent parallel test interference
-  const testId = `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+export const createMockTimeline = (): MockKeyframeTimeline => {
+  return new MockKeyframeTimeline();
+};
+
+/**
+ * Predefined animation configurations for common scenarios
+ */
+export const commonAnimationConfigs = {
+  fadeIn: {
+    name: 'fadeIn',
+    duration: 300,
+    steps: 5
+  },
+  slideUp: {
+    name: 'slideUp',
+    duration: 400,
+    steps: 8
+  },
+  rotateText: {
+    name: 'rotateText',
+    duration: 3000,
+    iterationCount: Infinity,
+    steps: 20
+  },
+  logoStagger: {
+    name: 'logoStagger',
+    duration: 600,
+    steps: 10
+  },
+  buttonHover: {
+    name: 'buttonHover',
+    duration: 200,
+    steps: 4
+  }
+};
+
+/**
+ * Test helper for waiting for animation phase
+ */
+export const waitForAnimationPhase = async (
+  tester: KeyframeAnimationTester,
+  targetPhase: AnimationPhase,
+  timeout: number = 5000
+): Promise<KeyframeStep> => {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      cleanup();
+      reject(new Error(`Timeout waiting for animation phase: ${targetPhase}`));
+    }, timeout);
+
+    const cleanup = tester.onPhaseChange((phase, step) => {
+      if (phase === targetPhase) {
+        clearTimeout(timeoutId);
+        cleanup();
+        resolve(step);
+      }
+    });
+  });
+};
+
+/**
+ * Test helper for verifying animation duration
+ */
+export const verifyAnimationDuration = async (
+  config: KeyframeAnimationConfig,
+  tolerance: number = 50 // milliseconds
+): Promise<boolean> => {
+  const startTime = Date.now();
+  await simulateKeyframePhases(config);
+  const actualDuration = Date.now() - startTime;
   
-  const style = document.createElement('style')
-  style.innerHTML = `
-    *, *::before, *::after {
-      animation-duration: 0s !important;
-      animation-delay: 0s !important;
-      transition-duration: 0s !important;
-      transition-delay: 0s !important;
-    }
-  `
-  style.setAttribute('data-test-disable-animations', testId)
-  style.setAttribute('data-test-scoped-animations', 'true')
-  document.head.appendChild(style)
-  
-  // Store test ID for cleanup
-  if (typeof globalThis !== 'undefined') {
-    globalThis.__currentTestAnimationId = testId
-  }
-}
+  return Math.abs(actualDuration - config.duration) <= tolerance;
+};
 
-/**
- * Re-enable animations with test-scoped cleanup
- */
-export function enableAnimations(): void {
-  // Only remove styles created by current test
-  const currentTestId = globalThis.__currentTestAnimationId
-  
-  if (currentTestId) {
-    // Remove only this test's animation disable styles
-    const testSpecificStyles = document.querySelectorAll(`[data-test-disable-animations="${currentTestId}"]`)
-    testSpecificStyles.forEach(style => style.remove())
-    
-    // Clear the test ID
-    delete globalThis.__currentTestAnimationId
-  } else {
-    // Fallback: remove all disable styles (less safe for parallel execution)
-    const disableStyles = document.querySelectorAll('[data-test-scoped-animations]')
-    disableStyles.forEach(style => style.remove())
-  }
-}
-
-/**
- * Wait for all animations to complete
- */
-export async function waitForAnimationsToComplete(timeout = 5000): Promise<void> {
-  await waitFor(
-    () => {
-      // Check if any elements have running animations
-      const allElements = document.querySelectorAll('*')
-      let hasRunningAnimations = false
-      
-      allElements.forEach(element => {
-        const computedStyle = window.getComputedStyle(element)
-        if (computedStyle.animationPlayState === 'running') {
-          hasRunningAnimations = true
-        }
-      })
-      
-      expect(hasRunningAnimations).toBe(false)
-    },
-    { timeout }
-  )
-}
+// Export types for external use
+export type { AnimationPhase, KeyframeStep, AnimationTimeline, KeyframeAnimationConfig };
