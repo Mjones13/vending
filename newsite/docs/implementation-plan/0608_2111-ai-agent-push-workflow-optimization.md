@@ -15,31 +15,38 @@ This implementation plan addresses these issues by creating AI-specific testing 
 1. **Timeout Management**: The default 2-minute timeout for Bash commands is insufficient for comprehensive test suites
 2. **Test Execution Time**: Full pre-push validation can take 60-90 seconds when passing, longer when failing
 3. **Workflow Clarity**: AI agents need clear instructions on proper push procedures with timeout specifications
+4. **Error Recovery**: When tests fail, AI agents need actionable guidance on fixing issues
 
 ## High-Level Task Breakdown
 
 ### Phase 1: Add AI-Specific Test Commands
 - [ ] **Task 1.1**: Add `test:ai:pre-push` command to package.json
 - [ ] **Task 1.2**: Add `push:ai:validated` command to package.json
-- [ ] **Task 1.3**: Test the new commands to ensure they work correctly
+- [ ] **Task 1.3**: Add `push:ai` as an alias for git push with proper timeout
+- [ ] **Task 1.4**: Test the new commands to ensure they work correctly
 
 ### Phase 2: Update Documentation
 - [ ] **Task 2.1**: Update CLAUDE.md with AI Agent Push Workflow section
 - [ ] **Task 2.2**: Document timeout requirements for each command
-- [ ] **Task 2.3**: Add troubleshooting section for common push issues
+- [ ] **Task 2.3**: Add example Bash tool usage with proper timeout values
+- [ ] **Task 2.4**: Add troubleshooting section for common push issues
 
 ### Phase 3: Validation and Testing
 - [ ] **Task 3.1**: Test the complete workflow with actual push operations
 - [ ] **Task 3.2**: Verify timeout handling works as expected
-- [ ] **Task 3.3**: Document any edge cases or additional considerations
+- [ ] **Task 3.3**: Test error scenarios (failing tests, network issues)
+- [ ] **Task 3.4**: Document any edge cases or additional considerations
+- [ ] **Task 3.5**: Update scratchpad.md with lessons learned
 
 ## Implementation Strategy
 
 ### Technical Approach:
 1. Create AI-specific npm scripts that run a subset of tests optimized for speed
 2. Use `--bail` flag to fail fast on first error
-3. Document explicit timeout values for AI agents to use with Bash tool
-4. Provide both separate and combined commands for flexibility
+3. Use `run-p` for parallel execution of lint, type-check, and tests
+4. Document explicit timeout values for AI agents to use with Bash tool
+5. Provide both separate and combined commands for flexibility
+6. Consider creating a custom script that provides real-time feedback during long operations
 
 ### Key Requirements:
 - AI agents must never need to use `--no-verify`
@@ -55,9 +62,11 @@ This implementation plan addresses these issues by creating AI-specific testing 
 ## Acceptance Criteria
 
 ### Functional Requirements:
-- [ ] `test:ai:pre-push` runs lint, type-check, unit, and integration tests with --bail
+- [ ] `test:ai:pre-push` runs lint, type-check, unit, and integration tests in parallel with --bail
 - [ ] `push:ai:validated` runs tests then pushes if successful
+- [ ] `push:ai` provides a simple alias for git push with appropriate timeout
 - [ ] Commands complete within specified timeout windows
+- [ ] Clear error messages when tests fail to guide fixes
 
 ### Quality Requirements:
 - [ ] Documentation is clear and comprehensive
