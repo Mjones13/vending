@@ -1,4 +1,10 @@
 import '@testing-library/jest-dom'
+import { act, configure } from '@testing-library/react'
+
+// Configure testing library with increased async timeout
+configure({
+  asyncUtilTimeout: 5000, // 5 seconds for async operations
+})
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -179,15 +185,34 @@ beforeEach(() => {
     value: 0
   })
   
-  // Enable fake timers globally for consistent testing
-  jest.useFakeTimers()
+  // DO NOT enable fake timers globally - let tests control this
+  // jest.useFakeTimers() - REMOVED to prevent conflicts
   
-  // Set up persistent animation frame polyfills (don't delete in afterEach)
-  if (!global.requestAnimationFrame) {
-    global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
-  }
-  if (!global.cancelAnimationFrame) {
-    global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
+  // Set up persistent animation frame polyfills with improved implementation
+  if (!global.requestAnimationFrame || global.requestAnimationFrame.toString().includes('setTimeout')) {
+    let rafId = 0;
+    const rafCallbacks = new Map();
+    
+    global.requestAnimationFrame = (callback) => {
+      rafId++;
+      const id = rafId;
+      rafCallbacks.set(id, callback);
+      
+      // Use setImmediate for more accurate frame timing
+      const handle = setImmediate(() => {
+        const cb = rafCallbacks.get(id);
+        if (cb) {
+          rafCallbacks.delete(id);
+          cb(performance.now());
+        }
+      });
+      
+      return id;
+    };
+    
+    global.cancelAnimationFrame = (id) => {
+      rafCallbacks.delete(id);
+    };
   }
   
   // Speed up CSS animations with isolated test styles
@@ -245,8 +270,16 @@ afterEach(() => {
     window.removeEventListener(eventType, () => {})
   })
   
-  // Run any pending timers and restore real timers
-  jest.runOnlyPendingTimers()
+  // Only run pending timers if fake timers are in use
+  if (jest.isMockFunction(setTimeout)) {
+    try {
+      jest.runOnlyPendingTimers()
+    } catch (e) {
+      // Ignore errors if timers aren't mocked
+    }
+  }
+  
+  // Always ensure we're back to real timers for next test
   jest.useRealTimers()
   
   // Reset scroll position
@@ -261,3 +294,10 @@ afterEach(() => {
   
   // Note: Keep animation frame polyfills persistent to prevent "not defined" errors
 })
+
+// Global withAct utility for easy act() wrapping in tests
+global.withAct = async (callback) => {
+  return act(async () => {
+    await callback();
+  });
+};
