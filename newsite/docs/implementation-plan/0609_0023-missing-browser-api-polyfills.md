@@ -9,71 +9,68 @@
 
 ## Background/Motivation
 
-Our test suite is experiencing a 45% failure rate due to missing browser API polyfills in the Jest/JSDOM environment. The most critical issue is that `cancelAnimationFrame` is not defined, which causes immediate failure of all 22 homepage tests. Additionally, `requestAnimationFrame` implementation is inconsistent, and these polyfills aren't persisting through test cleanup cycles.
+Our test suite is experiencing a 45% failure rate due to issues with browser API polyfills in the Jest/JSDOM environment. The most critical issue is that `cancelAnimationFrame` is not properly defined, which causes immediate failure of all 22 homepage tests.
 
-This implementation addresses the first and most critical item from the test environment limitations report, which blocks the largest number of tests and has the simplest solution path.
+**Current State**: The jest.setup.js file already includes RAF/cAF polyfills (lines 186-191), but they are:
+1. Using `setTimeout(cb, 0)` instead of proper 16ms timing for 60fps
+2. Wrapped in `jest.fn()` which may interfere with their functionality
+3. Only set up once in beforeEach, not re-applied after cleanup
+
+This implementation fixes the existing polyfills to work correctly and persist through test cleanup cycles.
 
 ## Key Challenges
 
-1. **Polyfill Persistence**: Current polyfills are being cleared during test cleanup, causing subsequent tests to fail
-2. **JSDOM Limitations**: JSDOM doesn't provide these browser APIs by default, requiring manual implementation
-3. **Test Isolation**: Need to ensure polyfills work correctly in parallel test execution without interfering with test isolation
+1. **Incorrect Implementation**: Current polyfills use 0ms timeout instead of 16ms for proper frame timing
+2. **Jest Mock Wrapper**: The `jest.fn()` wrapper may be interfering with proper execution
+3. **Persistence in beforeEach**: Need to ensure polyfills are reapplied in beforeEach to handle cleanup
 
 ## High-Level Task Breakdown
 
-### Phase 1: Implement Basic Polyfills
-- [ ] **Task 1.1**: Write failing tests that demonstrate the missing APIs issue
-- [ ] **Task 1.2**: Add persistent RAF/cAF polyfills to jest.setup.js
-- [ ] **Task 1.3**: Verify polyfills persist through test cleanup cycles
-- [ ] **Task 1.4**: Test that homepage tests no longer fail due to missing APIs
+### Phase 1: Fix Existing Polyfills
+- [ ] **Task 1.1**: Write a test that demonstrates the current polyfill failure
+- [ ] **Task 1.2**: Fix the RAF/cAF polyfills in jest.setup.js (remove jest.fn wrapper, use 16ms timing)
+- [ ] **Task 1.3**: Add polyfill reapplication in beforeEach hook
+- [ ] **Task 1.4**: Verify homepage tests no longer fail due to missing APIs
 
-### Phase 2: Enhance Polyfill Robustness
-- [ ] **Task 2.1**: Write comprehensive tests for polyfill behavior
-- [ ] **Task 2.2**: Consider implementing raf-stub for more accurate frame timing
-- [ ] **Task 2.3**: Add polyfill health checks in beforeEach hooks
-- [ ] **Task 2.4**: Document polyfill implementation for team reference
-
-### Phase 3: Verify Test Suite Impact
-- [ ] **Task 3.1**: Run full test suite to measure improvement
-- [ ] **Task 3.2**: Document any remaining test failures
-- [ ] **Task 3.3**: Update test environment documentation
-- [ ] **Task 3.4**: Create follow-up tasks for remaining environment issues
+### Phase 2: Verify and Document
+- [ ] **Task 2.1**: Run the full test suite to measure improvement
+- [ ] **Task 2.2**: Document the polyfill fix in code comments
+- [ ] **Task 2.3**: Update scratchpad.md with the solution
+- [ ] **Task 2.4**: Check for any new issues introduced by the fix
 
 ## Implementation Strategy
 
 ### Technical Approach:
-1. Use setTimeout-based polyfills for basic implementation (16ms for ~60fps)
-2. Ensure polyfills are reapplied in beforeEach hooks to handle cleanup
-3. Consider raf-stub library for more sophisticated animation frame control
-4. Follow TDD approach - write tests first, then implement solutions
+1. Remove `jest.fn()` wrapper from RAF/cAF polyfills - use direct function assignment
+2. Change timing from 0ms to 16ms for proper 60fps frame timing
+3. Move polyfill setup to both global scope AND beforeEach for persistence
+4. Follow TDD approach - write failing test first, then fix
 
 ### Key Requirements:
-- Polyfills must persist through Jest's cleanup cycles
-- Implementation must support parallel test execution
-- Solution should not interfere with existing test isolation
-- Must be compatible with React 19 and Jest's modern timer APIs
+- Polyfills must work with both real and fake timers
+- Must not interfere with existing test isolation
+- Should fix the 22 failing homepage tests
+- Must be compatible with parallel test execution
 
 ### Dependencies:
-- Jest setup file (jest.setup.js)
-- Testing library configuration
-- Optional: raf-stub npm package for enhanced implementation
+- Jest setup file (jest.setup.js) - lines 186-191 need modification
+- No new npm packages needed for basic fix
 
 ## Acceptance Criteria
 
 ### Functional Requirements:
-- [ ] All homepage tests (22 tests) no longer fail due to missing cancelAnimationFrame
-- [ ] requestAnimationFrame and cancelAnimationFrame are available in all test environments
-- [ ] Polyfills persist through test cleanup and work in parallel execution
+- [ ] Homepage tests no longer fail with "cancelAnimationFrame is not defined" error
+- [ ] RAF/cAF polyfills work correctly with both fake and real timers
+- [ ] Polyfills persist through test cleanup cycles
 
 ### Quality Requirements:
-- [ ] No new test failures introduced by polyfill implementation
-- [ ] Clear documentation of polyfill behavior and limitations
-- [ ] Implementation follows project coding standards
+- [ ] No new test failures introduced by the fix
+- [ ] Code changes are minimal and focused (only jest.setup.js)
+- [ ] Clear comments explain the polyfill implementation
 
 ### Performance Requirements:
-- [ ] No significant impact on test execution time (<5% increase)
-- [ ] Polyfills do not cause memory leaks in long test runs
-- [ ] Solution works efficiently with parallel test execution on M2 MacBook
+- [ ] No noticeable impact on test execution time
+- [ ] 16ms timing provides realistic frame simulation without slowing tests
 
 ## Project Status Board
 
@@ -89,12 +86,13 @@ This implementation addresses the first and most critical item from the test env
 | Phase 1 preparation | ⏳ Pending | [Add status updates here] |
 
 ### Next Steps:
-1. [Next step 1]
-2. [Next step 2]
-3. [Next step 3]
+1. Write a test to verify the current polyfill issue
+2. Update jest.setup.js lines 186-191 with the fixed implementation
+3. Add beforeEach hook to reapply polyfills after cleanup
+4. Run homepage tests to verify the fix works
 
 ### Executor's Feedback or Assistance Requests
-[Use this section to communicate with the user about progress, blockers, or questions]
+This is a focused fix for an existing implementation issue. The polyfills already exist but need correction. The implementation should be straightforward and low-risk.
 
 ---
 
