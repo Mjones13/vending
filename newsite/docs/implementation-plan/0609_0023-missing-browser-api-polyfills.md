@@ -28,9 +28,9 @@ This implementation fixes the existing polyfills to work correctly and persist t
 ## High-Level Task Breakdown
 
 ### Phase 1: Fix Existing Polyfills
-- [ ] **Task 1.1**: Write a test that demonstrates the current polyfill failure
-- [ ] **Task 1.2**: Fix the RAF/cAF polyfills in jest.setup.js (remove jest.fn wrapper, use 16ms timing, remove conditional check)
-- [ ] **Task 1.3**: Fix AnimationTestIsolation in parallel-isolation.ts to preserve polyfills during cleanup
+- [x] **Task 1.1**: Write a test that demonstrates the current polyfill failure
+- [x] **Task 1.2**: Fix the RAF/cAF polyfills in jest.setup.js (remove jest.fn wrapper, use 16ms timing, remove conditional check)
+- [x] **Task 1.3**: Fix AnimationTestIsolation in parallel-isolation.ts to preserve polyfills during cleanup
 - [ ] **Task 1.4**: Verify homepage tests no longer fail due to missing APIs
 
 ### Phase 2: Verify and Document

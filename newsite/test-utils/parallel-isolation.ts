@@ -18,10 +18,14 @@ export class TestIsolation {
    * Set up isolated test environment
    */
   setup() {
-    // Store original environment
+    // Store original environment, ensuring RAF/cAF have polyfills
     this.originalEnv = {
-      requestAnimationFrame: global.requestAnimationFrame,
-      cancelAnimationFrame: global.cancelAnimationFrame,
+      requestAnimationFrame: global.requestAnimationFrame || ((callback: FrameRequestCallback) => {
+        return setTimeout(callback, 16) as unknown as number;
+      }),
+      cancelAnimationFrame: global.cancelAnimationFrame || ((id: number) => {
+        clearTimeout(id);
+      }),
       setTimeout: global.setTimeout,
       clearTimeout: global.clearTimeout,
       setInterval: global.setInterval,
@@ -153,8 +157,14 @@ export class AnimationTestIsolation {
 
   constructor() {
     this.animationId = `anim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    this.originalAnimationFrame = global.requestAnimationFrame
-    this.originalCancelAnimationFrame = global.cancelAnimationFrame
+    // Store current implementations, which should be our polyfills
+    // If they don't exist, create polyfills now
+    this.originalAnimationFrame = global.requestAnimationFrame || ((callback: FrameRequestCallback) => {
+      return setTimeout(callback, 16) as unknown as number;
+    })
+    this.originalCancelAnimationFrame = global.cancelAnimationFrame || ((id: number) => {
+      clearTimeout(id);
+    })
   }
 
   /**
@@ -196,8 +206,14 @@ export class AnimationTestIsolation {
    */
   cleanup() {
     jest.useRealTimers()
-    global.requestAnimationFrame = this.originalAnimationFrame
-    global.cancelAnimationFrame = this.originalCancelAnimationFrame
+    // Restore the implementations we stored, which should be the polyfills
+    // Never set these to undefined
+    global.requestAnimationFrame = this.originalAnimationFrame || ((callback: FrameRequestCallback) => {
+      return setTimeout(callback, 16) as unknown as number;
+    })
+    global.cancelAnimationFrame = this.originalCancelAnimationFrame || ((id: number) => {
+      clearTimeout(id);
+    })
   }
 }
 

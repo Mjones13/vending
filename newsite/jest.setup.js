@@ -1,5 +1,21 @@
 import '@testing-library/jest-dom'
 
+// Global browser API polyfills - must be available before any tests run
+// These are defined at the top level to ensure they exist even before beforeEach runs
+global.requestAnimationFrame = global.requestAnimationFrame || ((callback) => {
+  return setTimeout(callback, 16); // 16ms for ~60fps
+});
+
+global.cancelAnimationFrame = global.cancelAnimationFrame || ((id) => {
+  clearTimeout(id);
+});
+
+// Also set on window for tests that use window.requestAnimationFrame
+if (typeof window !== 'undefined') {
+  window.requestAnimationFrame = global.requestAnimationFrame;
+  window.cancelAnimationFrame = global.cancelAnimationFrame;
+}
+
 // Mock Next.js router
 jest.mock('next/router', () => ({
   useRouter() {
@@ -182,13 +198,19 @@ beforeEach(() => {
   // Enable fake timers globally for consistent testing
   jest.useFakeTimers()
   
-  // Set up persistent animation frame polyfills (don't delete in afterEach)
-  if (!global.requestAnimationFrame) {
-    global.requestAnimationFrame = jest.fn((cb) => setTimeout(cb, 0))
-  }
-  if (!global.cancelAnimationFrame) {
-    global.cancelAnimationFrame = jest.fn((id) => clearTimeout(id))
-  }
+  // Ensure animation frame polyfills are always available
+  // Re-apply in every test to handle cases where they might be cleared
+  global.requestAnimationFrame = (callback) => {
+    return setTimeout(callback, 16); // 16ms for ~60fps
+  };
+  
+  global.cancelAnimationFrame = (id) => {
+    clearTimeout(id);
+  };
+  
+  // Also ensure they're available on window
+  window.requestAnimationFrame = global.requestAnimationFrame;
+  window.cancelAnimationFrame = global.cancelAnimationFrame;
   
   // Speed up CSS animations with isolated test styles
   const style = document.createElement('style')
