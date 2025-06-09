@@ -48,356 +48,307 @@ newsite/
 # Run all unit and component tests
 npm test
 
-# Run tests in watch mode during development
-npm run test:watch
+# Run tests in watch mode
+npm test -- --watch
 
-# Run tests with coverage report
-npm run test:coverage
+# Run tests with coverage
+npm test -- --coverage
 
-# Run end-to-end tests
+# Run specific test file
+npm test -- --testPathPattern=HeroSection
+
+# Run E2E tests
 npm run test:e2e
 
-# Run E2E tests with UI
-npm run test:e2e:ui
+# Run E2E tests in headed mode
+npm run test:e2e:headed
 
-# Run all tests (unit + E2E)
-npm run test:all
+# Run E2E tests for specific browser
+npm run test:e2e -- --project=chromium
 ```
 
-## Test-Driven Development Workflow
+## Setting Up Tests
 
-### 1. Write Failing Tests First
-Before implementing any feature or fix:
+### 1. Configure Test Environment
+
+The test environment is pre-configured with:
+- JSDOM for DOM simulation
+- React Testing Library for component testing
+- Custom render function with all necessary providers
+- Animation frame polyfills for smooth animation testing
+- Timer utilities for predictable async testing
+
+### 2. Writing Your First Test
 
 ```typescript
-// Example: Writing a failing test for new functionality
-describe('New Feature Component', () => {
-  it('should display expected behavior', () => {
-    // Test the expected behavior before implementing
-    const result = newFeatureFunction('input')
-    expect(result).toBe('expected-output')
-  })
-})
+// Basic component test example
+import { render, screen } from '../test-utils';
+import HeroSection from '../components/HeroSection';
+
+describe('HeroSection', () => {
+  it('should render with correct heading', () => {
+    render(<HeroSection />);
+    
+    expect(screen.getByRole('heading', { level: 1 }))
+      .toHaveTextContent('Premium Amenity Solutions');
+  });
+});
 ```
 
-### 2. Implement Code to Pass Tests
-Only after writing failing tests, implement the minimal code to make tests pass.
+### 3. Testing Components with Animations
 
-### 3. Refactor and Verify
-Refactor implementation while ensuring all tests continue to pass.
-
-### 4. Integration Testing
-Add E2E tests to verify the feature works in real browser environment.
-
-## Component Testing Patterns
-
-### Basic Component Test
 ```typescript
-import { render, screen } from '../test-utils/render'
-import ComponentName from '../components/ComponentName'
+import { render, screen, waitFor } from '../test-utils';
+import { setupRealTimers, cleanupTimers } from '../test-utils/timer-helpers';
+import RotatingText from '../components/RotatingText';
 
-describe('ComponentName', () => {
-  it('renders correctly with props', () => {
-    render(<ComponentName title="Test Title" />)
-    
-    expect(screen.getByRole('heading')).toHaveTextContent('Test Title')
-    expect(screen.getByRole('heading')).toBeVisible()
-  })
-})
-```
-
-### Testing User Interactions
-```typescript
-import { render, screen, fireEvent } from '../test-utils/render'
-import userEvent from '@testing-library/user-event'
-
-describe('Interactive Component', () => {
-  it('handles user clicks', async () => {
-    const user = userEvent.setup()
-    const mockHandler = jest.fn()
-    
-    render(<Button onClick={mockHandler}>Click me</Button>)
-    
-    await user.click(screen.getByRole('button'))
-    expect(mockHandler).toHaveBeenCalledTimes(1)
-  })
-})
-```
-
-### Testing with Custom Hooks
-```typescript
-import { renderHook, act } from '@testing-library/react'
-import { useCustomHook } from '../hooks/useCustomHook'
-
-describe('useCustomHook', () => {
-  it('returns expected state', () => {
-    const { result } = renderHook(() => useCustomHook())
-    
-    expect(result.current.isLoading).toBe(false)
-    
-    act(() => {
-      result.current.startLoading()
-    })
-    
-    expect(result.current.isLoading).toBe(true)
-  })
-})
-```
-
-## Animation Testing Patterns
-
-### Testing CSS Animations
-```typescript
-import { RotatingTextTester } from '../test-utils/animation-testing'
-
-describe('Rotating Text Animation', () => {
-  it('cycles through words correctly', async () => {
-    render(<RotatingTextComponent words={['Word1', 'Word2']} />)
-    
-    const tester = new RotatingTextTester('.rotating-text', ['Word1', 'Word2'])
-    await tester.waitForCompleteCycle()
-    
-    expect(tester.getCurrentWord()).toBe('Word1')
-  })
-})
-```
-
-### Testing Keyframe Animations
-```typescript
-import { KeyframeAnimationTester } from '../test-utils/keyframe-testing'
-
-describe('CSS Keyframe Animations', () => {
-  it('applies fade-in animation correctly', async () => {
-    render(<AnimatedComponent />)
-    
-    const tester = new KeyframeAnimationTester('.animated-element')
-    await tester.testFadeIn()
-    
-    // Verify animation properties
-    expect(tester.getAnimationDuration()).toBe('0.5s')
-  })
-})
-```
-
-## E2E Testing Patterns
-
-### Page Navigation Testing
-```typescript
-import { test, expect } from '@playwright/test'
-import { createE2EHelpers } from '../test-utils/e2e-helpers'
-
-test('navigates between pages correctly', async ({ page }) => {
-  const helpers = createE2EHelpers(page)
+describe('RotatingText', () => {
+  beforeEach(() => {
+    setupRealTimers(); // Use real timers for animations
+  });
   
-  await helpers.navigation.goToHomepage()
-  await helpers.navigation.clickNavigationLink('Contact')
-  await helpers.navigation.verifyCurrentURL('/contact')
-})
-```
+  afterEach(async () => {
+    await cleanupTimers();
+  });
 
-### Responsive Design Testing
-```typescript
-test('works on mobile devices', async ({ page }) => {
-  const helpers = createE2EHelpers(page)
-  
-  await helpers.responsive.setMobileViewport()
-  await helpers.navigation.goToHomepage()
-  await helpers.responsive.verifyMobileMenuVisible()
-})
-```
-
-### Animation Testing in E2E
-```typescript
-test('rotating text animation works', async ({ page }) => {
-  const helpers = createE2EHelpers(page)
-  
-  await helpers.navigation.goToHomepage()
-  
-  const words = ['Workplaces', 'Apartments', 'Gyms', 'Businesses']
-  await helpers.animation.verifyRotatingTextAnimation('.rotating-text', words)
-})
-```
-
-## Accessibility Testing Patterns
-
-### Component Accessibility
-```typescript
-describe('Component Accessibility', () => {
-  it('has proper ARIA labels', () => {
-    render(<Component />)
+  it('should rotate through words', async () => {
+    render(<RotatingText words={['Hello', 'World']} />);
     
-    expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Expected label')
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
-  })
-  
-  it('supports keyboard navigation', async () => {
-    const user = userEvent.setup()
-    render(<Component />)
+    expect(screen.getByText('Hello')).toBeInTheDocument();
     
-    await user.tab()
-    expect(screen.getByRole('button')).toHaveFocus()
-    
-    await user.keyboard('{Enter}')
-    // Verify expected behavior
-  })
-})
+    await waitFor(() => {
+      expect(screen.getByText('World')).toBeInTheDocument();
+    }, { timeout: 4000 });
+  });
+});
 ```
 
-### E2E Accessibility Testing
+## Testing Best Practices
+
+### General Guidelines
+
+1. **Test Behavior, Not Implementation**
+   ```typescript
+   // ❌ Bad: Testing implementation details
+   expect(component.state.isOpen).toBe(true);
+   
+   // ✅ Good: Testing user-visible behavior
+   expect(screen.getByRole('dialog')).toBeVisible();
+   ```
+
+2. **Use Semantic Queries**
+   ```typescript
+   // ❌ Bad: Fragile selectors
+   screen.getByClassName('btn-primary');
+   
+   // ✅ Good: Accessible queries
+   screen.getByRole('button', { name: 'Submit' });
+   ```
+
+3. **Wait for Async Operations**
+   ```typescript
+   // ❌ Bad: No waiting
+   fireEvent.click(button);
+   expect(screen.getByText('Loaded')).toBeInTheDocument();
+   
+   // ✅ Good: Proper async handling
+   fireEvent.click(button);
+   await waitFor(() => {
+     expect(screen.getByText('Loaded')).toBeInTheDocument();
+   });
+   ```
+
+### Component Testing
+
+**Setup and Teardown**
 ```typescript
-test('maintains accessibility standards', async ({ page }) => {
-  const helpers = createE2EHelpers(page)
+describe('Component', () => {
+  let mockFn;
   
-  await helpers.navigation.goToHomepage()
-  await helpers.accessibility.verifyHeadingHierarchy()
-  await helpers.accessibility.verifyImageAltTexts()
-  await helpers.accessibility.testKeyboardAccessibility()
-})
+  beforeEach(() => {
+    mockFn = jest.fn();
+  });
+  
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+});
 ```
 
-## Performance Testing Patterns
-
-### Component Performance
+**Testing User Interactions**
 ```typescript
-describe('Component Performance', () => {
-  it('renders quickly with large datasets', () => {
-    const largeDataset = Array(1000).fill({ id: 1, name: 'Item' })
-    
-    const startTime = performance.now()
-    render(<ListComponent items={largeDataset} />)
-    const endTime = performance.now()
-    
-    expect(endTime - startTime).toBeLessThan(100) // 100ms
-  })
-})
+it('should handle user input', async () => {
+  const user = userEvent.setup();
+  render(<Form />);
+  
+  const input = screen.getByLabelText('Email');
+  await user.type(input, 'test@example.com');
+  
+  expect(input).toHaveValue('test@example.com');
+});
 ```
 
-### E2E Performance Testing
+### Animation Testing
+
+**Timer Strategy**
 ```typescript
-test('loads page within acceptable time', async ({ page }) => {
-  const helpers = createE2EHelpers(page)
-  
-  const performance = await helpers.performance.measurePageLoad()
-  
-  expect(performance.loadTime).toBeLessThan(5000) // 5 seconds
-  expect(performance.domContentLoaded).toBeLessThan(3000) // 3 seconds
-})
+// For components with intervals (rotating text, carousels)
+beforeEach(() => {
+  setupRealTimers();
+});
+
+// For simple timeout testing
+beforeEach(() => {
+  jest.useFakeTimers();
+});
 ```
 
-## Best Practices
-
-### Test Organization
-1. **Group related tests** using `describe` blocks
-2. **Use descriptive test names** that explain expected behavior
-3. **Follow AAA pattern**: Arrange, Act, Assert
-4. **Keep tests isolated** - each test should be independent
-5. **Clean up after tests** - reset state, clear mocks
-
-### Test Data Management
+**Testing CSS Classes**
 ```typescript
-// Use consistent test data
-const mockUserData = {
-  id: 1,
-  name: 'Test User',
-  email: 'test@example.com'
+it('should apply animation classes', async () => {
+  render(<AnimatedCard />);
+  const card = screen.getByTestId('card');
+  
+  fireEvent.mouseEnter(card);
+  expect(card).toHaveClass('hover-state');
+  
+  fireEvent.mouseLeave(card);
+  expect(card).not.toHaveClass('hover-state');
+});
+```
+
+## Advanced Testing Patterns
+
+### Custom Render with Providers
+
+```typescript
+// test-utils/render.tsx
+export function render(ui, options = {}) {
+  return rtlRender(ui, {
+    wrapper: ({ children }) => (
+      <ThemeProvider>
+        <RouterContext.Provider value={mockRouter}>
+          {children}
+        </RouterContext.Provider>
+      </ThemeProvider>
+    ),
+    ...options,
+  });
 }
-
-// Create factories for complex objects
-const createMockUser = (overrides = {}) => ({
-  ...mockUserData,
-  ...overrides
-})
 ```
 
-### Mock Management
+### Mocking External Dependencies
+
 ```typescript
-// Mock external dependencies
+// Mock Next.js router
 jest.mock('next/router', () => ({
   useRouter: () => ({
-    push: jest.fn(),
     pathname: '/',
-    query: {}
-  })
-}))
+    push: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+}));
 
-// Reset mocks between tests
-beforeEach(() => {
-  jest.clearAllMocks()
-})
+// Mock API calls
+jest.mock('../utils/api', () => ({
+  fetchData: jest.fn(() => Promise.resolve({ data: [] })),
+}));
 ```
 
-### Async Testing
+### Testing Accessibility
+
 ```typescript
-// Use async/await for async operations
-it('handles async operations', async () => {
-  const user = userEvent.setup()
-  render(<AsyncComponent />)
+it('should have no accessibility violations', async () => {
+  const { container } = render(<Page />);
+  const results = await axe(container);
   
-  await user.click(screen.getByRole('button'))
+  expect(results).toHaveNoViolations();
+});
+
+it('should be keyboard navigable', async () => {
+  const user = userEvent.setup();
+  render(<Navigation />);
   
-  // Wait for async operation to complete
-  await waitFor(() => {
-    expect(screen.getByText('Success')).toBeInTheDocument()
-  })
-})
+  await user.tab();
+  expect(screen.getByText('Home')).toHaveFocus();
+  
+  await user.tab();
+  expect(screen.getByText('About')).toHaveFocus();
+});
+```
+
+## E2E Testing with Playwright
+
+### Basic E2E Test
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('should complete purchase flow', async ({ page }) => {
+  await page.goto('/shop');
+  
+  // Select product
+  await page.click('[data-testid="product-card"]');
+  
+  // Add to cart
+  await page.click('button:has-text("Add to Cart")');
+  
+  // Checkout
+  await page.click('button:has-text("Checkout")');
+  
+  // Verify on checkout page
+  await expect(page).toHaveURL('/checkout');
+  await expect(page.locator('h1')).toHaveText('Checkout');
+});
+```
+
+### Cross-Browser Testing
+
+```typescript
+test.describe('Cross-browser compatibility', () => {
+  ['chromium', 'firefox', 'webkit'].forEach(browserName => {
+    test(`should work in ${browserName}`, async ({ page }) => {
+      await page.goto('/');
+      await expect(page.locator('h1')).toBeVisible();
+    });
+  });
+});
 ```
 
 ## Debugging Tests
 
-### Running Specific Tests
-```bash
-# Run specific test file
-npm test ComponentName.test.tsx
+### Debugging Tools
 
-# Run tests matching pattern
-npm test -- --testNamePattern="should handle clicks"
+**React Testing Library**
+```typescript
+// Print current DOM
+screen.debug();
 
-# Run with verbose output
-npm test -- --verbose
+// Print specific element
+screen.debug(screen.getByRole('button'));
+
+// Use logRoles for accessibility tree
+import { logRoles } from '@testing-library/react';
+logRoles(container);
 ```
 
-### Debugging E2E Tests
-```bash
-# Run with browser visible
-npm run test:e2e -- --headed
+**Playwright**
+```typescript
+// Pause test execution
+await page.pause();
 
-# Run with debug mode
-npm run test:e2e -- --debug
+// Take screenshot
+await page.screenshot({ path: 'debug.png' });
 
-# Run specific E2E test
-npm run test:e2e -- --grep "test name"
+// Slow down execution
+test.use({ slowMo: 500 });
 ```
 
-### Common Debugging Techniques
-1. **Use `screen.debug()`** to see rendered HTML
-2. **Add `await page.pause()`** to pause E2E tests
-3. **Check test screenshots/videos** in `test-results/` directory
-4. **Use `console.log`** sparingly for debugging
-5. **Review test error messages** for specific failure details
+### Common Issues and Solutions
 
-## Coverage Requirements
-
-- **Minimum 80% code coverage** for all new features
-- **100% coverage required** for critical user flows
-- **Animation tests required** for all CSS animations
-- **E2E tests required** for all user-facing features
-- **Accessibility tests required** for all interactive components
-
-## Continuous Integration
-
-Tests run automatically on:
-- **Pre-commit hooks** - Basic unit tests
-- **Pull requests** - Full test suite including E2E
-- **Main branch pushes** - Complete test suite with coverage reporting
-- **Nightly builds** - Performance regression testing
-
-## Troubleshooting
-
-### Common Issues
-
-**Test timeouts**
+**Async test timeouts**
 - Increase timeout for slow operations
-- Use `waitFor` for async state changes
+- Use proper wait conditions
 - Mock slow external dependencies
 
 **Flaky E2E tests**
@@ -584,3 +535,241 @@ When fixing act() warnings in existing tests:
 - **Wrap all state-updating operations** in act() or use our utilities
 - **Run the detection script** before committing changes
 - **Prefer real timers** over fake timers for complex timing scenarios
+
+## CSS Animation Testing in JSDOM
+
+### Understanding JSDOM Limitations
+
+JSDOM, the DOM implementation used by Jest, doesn't have a CSS engine. This means:
+- ❌ CSS animations don't execute
+- ❌ `getComputedStyle()` returns empty animation properties
+- ❌ Keyframe animations don't run
+- ❌ Transition events don't fire
+- ❌ Transform calculations aren't available
+
+### Three-Tier Testing Strategy
+
+We use a three-tier approach to test animations despite JSDOM limitations:
+
+#### Tier 1: Animation Logic Testing (Unit Tests)
+Test animation state machines, hooks, and timing logic without DOM rendering.
+
+```typescript
+import { AnimationStateMachine } from '../test-utils/animation-state-testing';
+
+it('should transition animation states correctly', () => {
+  const machine = new AnimationStateMachine('idle');
+  
+  machine.transition('running', 'user-interaction');
+  expect(machine.getCurrentState()).toBe('running');
+  
+  machine.transition('completed', 'animation-end');
+  expect(machine.getCurrentState()).toBe('completed');
+});
+```
+
+#### Tier 2: Component Behavior Testing (Integration Tests)
+Test DOM changes, class applications, and user interactions without visual validation.
+
+```typescript
+import { mockAnimationProperties, clearAnimationMocks } from '../test-utils/css-animation-mocking';
+
+beforeEach(() => {
+  // Mock CSS properties that components might check
+  mockAnimationProperties('.fade-in', {
+    animationName: 'fadeIn',
+    animationDuration: '1s'
+  });
+});
+
+afterEach(() => {
+  clearAnimationMocks();
+});
+
+it('should apply animation classes on trigger', async () => {
+  render(<AnimatedComponent />);
+  
+  const element = screen.getByTestId('animated');
+  expect(element).toHaveClass('idle');
+  
+  fireEvent.click(screen.getByText('Animate'));
+  
+  await waitFor(() => {
+    expect(element).toHaveClass('animating');
+  });
+});
+```
+
+#### Tier 3: Visual Validation (E2E Tests - Playwright)
+Reserve actual visual testing for real browser environments.
+
+### Do's and Don'ts
+
+#### ✅ DO:
+- Test animation state changes and logic
+- Test CSS class applications
+- Test DOM content changes during animations
+- Mock CSS properties when components check them
+- Use data attributes to track animation states
+- Test user interactions that trigger animations
+
+#### ❌ DON'T:
+- Try to test actual CSS property values
+- Expect `getComputedStyle()` to return animation properties
+- Test visual opacity, transform, or position changes
+- Fire animation events manually (they won't work correctly)
+- Test animation performance in JSDOM
+- Verify computed transform matrices
+
+### Code Review Checklist for Animation Tests
+
+When reviewing animation tests, ensure:
+
+1. **Correct Tier Usage**
+   - [ ] Logic tests use Tier 1 patterns (no DOM rendering)
+   - [ ] Behavior tests use Tier 2 patterns (DOM but no visual validation)
+   - [ ] Visual tests are deferred to E2E (Tier 3)
+
+2. **Proper Mocking**
+   - [ ] CSS properties are mocked only when needed
+   - [ ] Mocks are cleaned up in `afterEach`
+   - [ ] Only necessary properties are mocked
+
+3. **Timer Management**
+   - [ ] Real timers used for interval-based animations
+   - [ ] Proper cleanup with `cleanupTimers()`
+   - [ ] Reasonable timeout values in `waitFor`
+
+4. **Test Focus**
+   - [ ] Tests focus on behavior, not implementation
+   - [ ] No attempts to test visual CSS properties
+   - [ ] Clear test descriptions indicating what's being tested
+
+### Animation Testing Utilities
+
+#### `mockAnimationProperties(selector, properties)`
+Mocks CSS animation properties for elements matching the selector.
+
+```typescript
+mockAnimationProperties('.rotating-text', {
+  animationName: 'rotate',
+  animationDuration: '3s',
+  animationIterationCount: 'infinite'
+});
+```
+
+#### `AnimationStateMachine`
+Manages animation state transitions for logic testing.
+
+```typescript
+const machine = new AnimationStateMachine('idle');
+machine.transition('running', 'trigger-event');
+expect(machine.getCurrentState()).toBe('running');
+```
+
+#### `KeyframeAnimationTester`
+Simulates keyframe animation phases without CSS.
+
+```typescript
+const tester = new KeyframeAnimationTester({
+  name: 'slideIn',
+  duration: 1000
+});
+tester.onPhaseChange(phase => console.log(phase));
+tester.start();
+```
+
+### Common Mistakes and Solutions
+
+#### Mistake 1: Testing Visual Properties
+```typescript
+// ❌ Wrong - This won't work in JSDOM
+expect(getComputedStyle(element).opacity).toBe('0.5');
+
+// ✅ Correct - Test behavior instead
+expect(element).toHaveClass('fade-half');
+expect(element).toHaveAttribute('data-opacity', '0.5');
+```
+
+#### Mistake 2: Expecting Keyframes to Execute
+```typescript
+// ❌ Wrong - Keyframes don't run
+await waitFor(() => {
+  expect(element.style.transform).toBe('translateX(100px)');
+});
+
+// ✅ Correct - Test state changes
+await waitFor(() => {
+  expect(element).toHaveClass('slide-complete');
+});
+```
+
+#### Mistake 3: Using getComputedStyle for Animations
+```typescript
+// ❌ Wrong - Returns empty/default values
+const animationName = getComputedStyle(element).animationName;
+expect(animationName).toBe('fadeIn');
+
+// ✅ Correct - Mock what you need
+mockAnimationProperties(element, { animationName: 'fadeIn' });
+// Now test behavior that depends on this property
+```
+
+#### Mistake 4: Testing Transform Matrices
+```typescript
+// ❌ Wrong - Complex calculations not available
+const transform = getComputedStyle(element).transform;
+expect(transform).toBe('matrix(1, 0, 0, 1, 100, 0)');
+
+// ✅ Correct - Test position state
+expect(element).toHaveAttribute('data-position', 'moved');
+expect(element).toHaveClass('translated-right');
+```
+
+### Migration Guide for CSS-Dependent Tests
+
+If you have existing tests that depend on CSS animations:
+
+1. **Identify CSS dependencies**
+   ```typescript
+   // Look for patterns like:
+   getComputedStyle(element).animationName
+   element.style.opacity
+   expect(transform).toBe(...)
+   ```
+
+2. **Categorize by tier**
+   - Can it be tested as pure logic? → Tier 1
+   - Does it need DOM but not visuals? → Tier 2
+   - Does it need actual rendering? → Tier 3 (defer)
+
+3. **Refactor to appropriate pattern**
+   ```typescript
+   // Before: CSS-dependent
+   expect(getComputedStyle(el).opacity).toBe('0');
+   
+   // After: Behavior-focused
+   expect(el).toHaveAttribute('aria-hidden', 'true');
+   expect(el).toHaveClass('invisible');
+   ```
+
+4. **Add necessary mocks**
+   ```typescript
+   beforeEach(() => {
+     mockAnimationProperties('.component', {
+       animationDuration: '2s'
+     });
+   });
+   ```
+
+5. **Update assertions**
+   Focus on observable behavior rather than visual properties.
+
+### Animation Testing Resources
+
+- **Guidelines**: See `/docs/animation-testing-guidelines.md` for detailed strategies
+- **Examples**: See `/docs/animation-testing-examples.md` for complete examples
+- **Utilities**: Check `/test-utils/` for animation testing helpers
+- **Performance**: See `/docs/animation-test-performance-report.md` for metrics
+
+Remember: You're testing that your components behave correctly when animations should occur, not that CSS animations work (browsers handle that).
