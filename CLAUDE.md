@@ -22,7 +22,7 @@ npm run lint   # Run ESLint (SAFE FOR AI AGENTS)
 A Next.js Pages Router application for Golden Coast Amenities (formerly Smarter Vending replica).
 
 ### Architecture
-- **Framework**: Next.js 15.3.2 with React 19
+- **Framework**: Next.js 15.3.2 with React 18
 - **Router**: Pages Router (not App Router)
 - **Styling**: Styled JSX + Global CSS
 - **Testing**: Jest + Playwright with parallel execution optimized for M2 MacBook (75% CPU cores)
@@ -212,6 +212,24 @@ This final phase should:
 
 **No implementation plan is complete without this verification phase.**
 
+##### **MANDATORY PRE-MERGE PREPARATION:**
+
+**Every implementation plan MUST include a pre-merge preparation phase before final integration:**
+
+This phase should include:
+- Fetching latest changes from remote
+- Rebasing feature branch on top of latest main
+- Running all tests after rebase
+- Verifying no regressions were introduced
+- Documenting any conflicts resolved during rebase
+
+Example task:
+- [ ] **Task [PRE-MERGE].1**: Update branch with latest main changes
+  - **File**: Git repository
+  - **Change**: Run `git fetch --all --prune && git pull --rebase origin main`
+  - **Verify**: `git log --oneline -5` shows your commits on top of latest main
+  - **Conflicts**: Document any conflicts resolved during rebase
+
 ### Step 2: Sequential Execution (REQUIRED)
 During implementation:
 1. **Pre-task sync**: Before EACH task: `git fetch --all --prune && git pull`
@@ -304,6 +322,18 @@ When all tasks in a phase are complete and verified:
 - Example: `### Phase 1: Configure Jest for optimal M2 parallel execution ✅ **COMPLETE**`
 - Only mark complete when all subtasks show [x] and tests pass
 
+**Feature Branch Update Protocol:**
+When your feature branch needs updates from main:
+```bash
+git fetch --all --prune
+git pull --rebase origin main
+```
+Benefits of rebase over merge:
+- Maintains linear commit history
+- Your commits appear on top of latest main
+- Cleaner history for code review
+- No merge commits cluttering the log
+
 ### Autonomous Execution Model
 
 **When User Says "Go":**
@@ -364,10 +394,12 @@ Any task performed outside the scope of an existing implementation plan MUST be 
 7. **Pre-merge preparation**:
    ```bash
    git fetch --all --prune
-   git checkout main && git pull
-   git checkout descriptive-task-name
-   git merge main  # Merge main into your branch
-   # Resolve any conflicts if they exist
+   git pull --rebase origin main  # Rebase your commits on top of latest main
+   # If conflicts exist during rebase:
+   # - Fix conflicts in each commit
+   # - Use `git add` to stage resolved files
+   # - Use `git rebase --continue` to proceed
+   # - Use `git rebase --abort` if you need to start over
    # Run tests and ensure everything works
    ```
 8. **Final push**: `git push` (after merge verification)
@@ -498,6 +530,17 @@ npm run push:ai           # Push merged changes
 - AI test commands run a subset of tests for speed
 - If pre-push hook still fails, fix the specific failing tests
 - Never use --no-verify unless explicitly instructed
+
+**4. Rebase conflicts:**
+```bash
+# During rebase, if conflicts occur:
+git status                    # See conflicted files
+# Fix conflicts in your editor
+git add <resolved-files>      # Stage resolved files
+git rebase --continue         # Continue rebase
+# Or if rebase goes wrong:
+git rebase --abort           # Return to pre-rebase state
+```
 
 ## 8. Command Reference
 
@@ -766,7 +809,7 @@ __tests__/
 **After all phases complete:**
 
 1. **Sync with remote**: `git fetch --all --prune && git checkout main && git pull`
-2. **Merge branch to main**: `git checkout task-branch && git merge main`
+2. **Update branch with latest main**: `git checkout task-branch && git pull --rebase origin main`
 3. **Resolve conflicts**: If conflicts exist, follow merge conflict protocol
 4. **Final verification**: Ensure all tests pass and build succeeds
 5. **Push final state**: `git push` to update remote branch
@@ -788,6 +831,8 @@ Always verify you're on the correct branch before starting work:
 - **On main + new task**: Create dedicated branch before proceeding
 - **In implementation plan**: Continue on existing implementation plan branch
 - **Branch verification**: Ensure branch name matches the work being performed
+- **Feature branch updates**: Always use `git pull --rebase origin main` to keep branches current
+- **Avoid merge commits**: Rebase preserves linear history and makes reviews easier
 
 ### Multi-Clone Best Practices
 - **Start of work session**: `git fetch --all --prune` in both clones
@@ -835,7 +880,7 @@ Logo is implemented as Next.js Image component with specific dimensions:
 - File: `/images/logos/Golden Coast Amenities (3).svg`
 
 ### Build Requirements
-- React 19 and Next.js 15.3.2
+- React 18 and Next.js 15.3.2
 - TypeScript 5 with strict mode enabled
 - Always run lint before commits
 - Test builds after content updates to catch ESLint errors

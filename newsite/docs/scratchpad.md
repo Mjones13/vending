@@ -41,6 +41,7 @@
 - [2025-01-09 01:15] Error: React act() warnings in rotating text tests - Solution: Use real timers instead of fake timers for setInterval-based animations, implement maxCycles pattern to prevent infinite loops during testing
 
 ## Lessons Learned
+- [2025-06-11] Best Practice: Use `git pull --rebase origin main` instead of merge when updating feature branches. This maintains linear history and places your commits on top of the latest main branch changes, making code review and history tracking cleaner.
 - [2025-06-08 21:55] Lesson: Always follow correct branch workflow - Switch to appropriate branch before executing implementation plans. Implementation plans should specify which branch to work on
 - [2025-06-08 21:50] Success: Fixed rotating text infinite loop - Changed from RAF to timer-based approach, tests now complete in 2 seconds instead of timing out
 - [2025-06-08 21:35] Solution: AI agent push timeout issues - Created dedicated npm scripts (test:ai:pre-push, push:ai:validated, push:ai) with proper timeout configurations (3 min for tests, 4 min for push)
