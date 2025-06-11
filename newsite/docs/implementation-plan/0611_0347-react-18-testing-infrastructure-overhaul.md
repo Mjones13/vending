@@ -13,17 +13,16 @@
 The codebase has already been migrated to React 18.3.1 and TypeScript strict mode has been enabled. However, the testing infrastructure still has:
 - Complex Jest configuration with M2 optimization that may be over-engineered
 - React act() warnings due to complex timer management
-- Test coverage at 31% (target: 80%)
 - Over-complex testing utilities with extensive polyfills
 - TypeScript exclusions for test files that should be included
+- Test coverage at 31% (not a focus of this plan)
 
 ## Key Challenges
 
 1. **TypeScript Configuration**: Tests are excluded from tsconfig.json but should be included with proper typing
 2. **Over-Complex Jest Setup**: 355 lines of jest.setup.js with extensive polyfills and workarounds
 3. **Test Utilities Misalignment**: Current utilities don't leverage TypeScript strict mode benefits
-4. **Coverage Gaps**: Pages (24%) and hooks (40%) below 80% target
-5. **Complex M2 Optimization**: May be unnecessary complexity for current needs
+4. **Complex M2 Optimization**: May be unnecessary complexity for current needs
 
 ## High-Level Task Breakdown
 
@@ -182,42 +181,9 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: All scripts execute successfully
 
-### Phase 5: Increase Test Coverage with TypeScript - Components
+### Phase 5: Create Hook Tests with TypeScript
 
-- [ ] **Task 5.1**: Create comprehensive HeroSection tests with TypeScript
-  - **File**: `__tests__/components/HeroSection.test.tsx`
-  - **Change**: Create typed test suite:
-    ```typescript
-    import { render, screen } from '@testing-library/react';
-    import HeroSection from '@/components/HeroSection';
-    import type { ComponentProps } from 'react';
-    
-    type HeroSectionProps = ComponentProps<typeof HeroSection>;
-    
-    const defaultProps = {
-      // Define typed props
-    } satisfies Partial<HeroSectionProps>;
-    
-    const renderHeroSection = (props: Partial<HeroSectionProps> = {}) =>
-      render(<HeroSection {...defaultProps} {...props} />);
-    ```
-  - **Verify**: Coverage >80% with TypeScript validation
-
-### Phase 6: Increase Test Coverage with TypeScript - Pages
-
-- [ ] **Task 6.1**: Create typed tests for about page
-  - **File**: `__tests__/pages/about.test.tsx`
-  - **Change**: Add comprehensive tests with TypeScript
-  - **Verify**: `npm test about.test` passes with coverage
-
-- [ ] **Task 6.2**: Create typed tests for contact page
-  - **File**: `__tests__/pages/contact.test.tsx`
-  - **Change**: Test form validation with proper TypeScript types
-  - **Verify**: Form interactions tested with type safety
-
-### Phase 7: Create Hook Tests with TypeScript
-
-- [ ] **Task 7.1**: Create comprehensive useScrollAnimation tests
+- [ ] **Task 5.1**: Create comprehensive useScrollAnimation tests
   - **File**: `__tests__/hooks/useScrollAnimation.test.tsx`
   - **Change**: Use `@testing-library/react-hooks` with TypeScript:
     ```typescript
@@ -231,46 +197,46 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: Hook tests achieve >80% coverage with TypeScript
 
-### Phase 8: Clean Up and Remove Complexity
+### Phase 6: Clean Up and Remove Complexity
 
-- [ ] **Task 8.1**: Remove complex M2 optimization scripts
+- [ ] **Task 6.1**: Remove complex M2 optimization scripts
   - **File**: `scripts/`
   - **Change**: Archive test-related scripts to `scripts/archived/`
   - **Verify**: Simplified scripts directory
 
-- [ ] **Task 8.2**: Remove act() warning detection scripts
+- [ ] **Task 6.2**: Remove act() warning detection scripts
   - **File**: `scripts/detect-act-warnings.js`
   - **Change**: Delete file as warnings should be resolved
   - **Verify**: File no longer exists
 
-- [ ] **Task 8.3**: Run full TypeScript validation on tests
+- [ ] **Task 6.3**: Run full TypeScript validation on tests
   - **File**: N/A
-  - **Change**: Run `npm run test:typecheck && npm run test:coverage`
-  - **Verify**: All tests pass TypeScript validation and coverage >80%
+  - **Change**: Run `npm run test:typecheck`
+  - **Verify**: All tests pass TypeScript validation
 
-### Phase 9: Documentation and TypeScript Integration
+### Phase 7: Documentation and TypeScript Integration
 
-- [ ] **Task 9.1**: Create TypeScript testing guide
+- [ ] **Task 7.1**: Create TypeScript testing guide
   - **File**: `docs/typescript-testing-guide.md`
   - **Change**: Document TypeScript testing patterns for React 18
   - **Verify**: Comprehensive guide with examples
 
-- [ ] **Task 9.2**: Update CLAUDE.md testing section
+- [ ] **Task 7.2**: Update CLAUDE.md testing section
   - **File**: `CLAUDE.md`
   - **Change**: Update testing requirements to mention TypeScript strict mode
   - **Verify**: `grep "TypeScript.*testing" CLAUDE.md` shows updated content
 
-### Phase 10: Pre-Merge Preparation
+### Phase 8: Pre-Merge Preparation
 
-- [ ] **Task 10.1**: Update branch with latest main changes
+- [ ] **Task 8.1**: Update branch with latest main changes
   - **File**: Git repository
   - **Change**: Run `git fetch --all --prune && git pull --rebase origin main`
   - **Verify**: `git log --oneline -5` shows commits on top of latest main
   - **Conflicts**: Document any conflicts resolved during rebase
 
-- [ ] **Task 10.2**: Final comprehensive test suite validation
+- [ ] **Task 8.2**: Final comprehensive test suite validation
   - **File**: N/A
-  - **Change**: Run `npm run test:ci && npm run e2e`
+  - **Change**: Run `npm run test && npm run e2e`
   - **Verify**: All tests pass without warnings or TypeScript errors
 
 ## Implementation Strategy
@@ -279,7 +245,7 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
 2. **Gradual Simplification**: Remove complexity while maintaining functionality
 3. **Type Safety**: Leverage TypeScript strict mode for better test reliability
 4. **React 18 Patterns**: Use proper async patterns instead of complex workarounds
-5. **Coverage Goals**: Focus on achieving 80% coverage with maintainable tests
+5. **Technical Debt Reduction**: Focus on fixing warnings and improving maintainability
 
 ## Technical Approach
 
@@ -292,12 +258,11 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
 ## Acceptance Criteria
 
 1. ✅ All tests pass TypeScript strict mode validation
-2. ✅ Test coverage exceeds 80% globally and per category  
-3. ✅ Jest setup reduced from 355 lines to <100 lines
-4. ✅ All test utilities are properly typed
-5. ✅ No React act() warnings in any tests
-6. ✅ Test execution simplified without complex M2 optimizations
-7. ✅ Clear TypeScript testing patterns documented
+2. ✅ Jest setup reduced from 355 lines to <100 lines
+3. ✅ No React act() warnings in any tests
+4. ✅ Test execution simplified without complex M2 optimizations
+5. ✅ Clear TypeScript testing patterns documented
+6. ✅ Tests properly typed and using React 18 best practices
 
 ## Project Status Board
 
@@ -307,12 +272,10 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
 | Phase 2: Setup TypeScript | ⏳ Pending | Convert 355-line setup to TS |
 | Phase 3: Fix Act Warnings | ⏳ Pending | TypeScript + proper async |
 | Phase 4: Simplify Scripts | ⏳ Pending | Add TypeScript validation |
-| Phase 5: Component Coverage | ⏳ Pending | Typed component tests |
-| Phase 6: Page Coverage | ⏳ Pending | Typed page tests |
-| Phase 7: Hook Coverage | ⏳ Pending | Typed hook tests |
-| Phase 8: Clean Up | ⏳ Pending | Remove unnecessary complexity |
-| Phase 9: Documentation | ⏳ Pending | TypeScript testing guide |
-| Phase 10: Pre-Merge | ⏳ Pending | Rebase and final validation |
+| Phase 5: Hook Coverage | ⏳ Pending | Typed hook tests |
+| Phase 6: Clean Up | ⏳ Pending | Remove unnecessary complexity |
+| Phase 7: Documentation | ⏳ Pending | TypeScript testing guide |
+| Phase 8: Pre-Merge | ⏳ Pending | Rebase and final validation |
 
 ## Lessons Learned
 
