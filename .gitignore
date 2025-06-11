@@ -1,0 +1,29 @@
+# Logs
+logs/
+*.log
+
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+.next-ai/
+out/
+build/
+
+# Testing
+coverage/
+
+# Environment variables
+.env*
+
+# OS files
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
