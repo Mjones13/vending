@@ -67,6 +67,10 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@liuyoshio/mcp-compass": "^1.0.7",
+    "@modelcontextprotocol/server-filesystem": "^2025.3.28",
+    "@modelcontextprotocol/server-memory": "^2025.4.25",
+    "@modelcontextprotocol/server-puppeteer": "^2025.5.12",
     "@playwright/test": "^1.52.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
