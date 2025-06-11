@@ -63,7 +63,9 @@ export const useStaggeredAnimation = (count: number, delay = 100) => {
       const timeout = setTimeout(() => {
         setAnimatedItems(prev => {
           const newState = [...prev];
-          newState[i] = true;
+          if (i < newState.length) {
+            newState[i] = true;
+          }
           return newState;
         });
       }, i * delay);

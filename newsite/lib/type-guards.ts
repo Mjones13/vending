@@ -163,3 +163,28 @@ export function validateOptional<T>(
 ): value is T | undefined {
   return value === undefined || validator(value);
 }
+
+// Safe array access utilities
+export function safeArrayAccess<T>(array: T[], index: number): T | undefined {
+  return index >= 0 && index < array.length ? array[index] : undefined;
+}
+
+export function safeArrayAccessWithFallback<T>(array: T[], index: number, fallback: T): T {
+  return index >= 0 && index < array.length ? array[index]! : fallback;
+}
+
+// Safe object property access
+export function safeObjectAccess<T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  key: K
+): T[K] | undefined {
+  return obj?.[key];
+}
+
+export function safeObjectAccessWithFallback<T extends Record<string, unknown>, K extends keyof T>(
+  obj: T,
+  key: K,
+  fallback: T[K]
+): T[K] {
+  return obj?.[key] ?? fallback;
+}

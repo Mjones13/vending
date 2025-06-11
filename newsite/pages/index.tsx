@@ -107,7 +107,7 @@ export default function Home() {
                       className={`rotating-text rotating-text-${animationState}`}
                       data-testid="rotating-text"
                     >
-                      {rotatingWords[currentWordIndex]}
+                      {rotatingWords[currentWordIndex] ?? 'Workplaces'}
                     </span>
                   </span>
                 </h1>
@@ -178,7 +178,7 @@ export default function Home() {
               ].map((logo, index) => (
                 <div 
                   key={logo.alt}
-                  className={`logo-item transition hover:scale-105 ${logoAnimations[index] ? 'animate-fade-in' : ''}`}
+                  className={`logo-item transition hover:scale-105 ${logoAnimations[index] ?? false ? 'animate-fade-in' : ''}`}
                 >
                   <Image 
                     src={logo.src} 
