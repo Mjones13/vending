@@ -1,9 +1,10 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
 import { useState } from "react";
+import { isContactFormData, isValidEmail, ContactFormData } from "../lib/type-guards";
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: ""
@@ -15,8 +16,20 @@ export default function Contact() {
     e.preventDefault();
     const newErrors: {[key: string]: string} = {};
 
+    // Validate using type guards
+    if (!isContactFormData(formData)) {
+      newErrors.general = "Invalid form data format";
+      setErrors(newErrors);
+      return;
+    }
+
+    // Basic required field validation
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
     if (!formData.message.trim()) newErrors.message = "Message is required";
 
     if (Object.keys(newErrors).length > 0) {
@@ -24,9 +37,17 @@ export default function Contact() {
       return;
     }
 
+    // Form data is validated and safe to process
     setErrors({});
     setShowSuccess(true);
     setFormData({ name: "", email: "", message: "" });
+
+    // Here you could safely send the validated data to an API
+    // fetch('/api/contact', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(formData)
+    // });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

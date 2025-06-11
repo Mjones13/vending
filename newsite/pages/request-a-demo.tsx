@@ -1,9 +1,29 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
 import { useState } from "react";
+import { isString, isValidEmail, isValidPhoneNumber } from "../lib/type-guards";
+
+interface DemoRequestForm {
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+}
+
+function isDemoRequestForm(value: unknown): value is DemoRequestForm {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  
+  const obj = value as Record<string, unknown>;
+  return isString(obj.name) && 
+         isString(obj.company) && 
+         isString(obj.email) && 
+         isString(obj.phone);
+}
 
 export default function RequestADemo() {
-  const [form, setForm] = useState({ name: "", company: "", email: "", phone: "" });
+  const [form, setForm] = useState<DemoRequestForm>({ name: "", company: "", email: "", phone: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -14,10 +34,27 @@ export default function RequestADemo() {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!form.name) newErrors.name = "Name is required.";
-    if (!form.company) newErrors.company = "Company is required.";
-    if (!form.email) newErrors.email = "Email is required.";
-    if (!form.phone) newErrors.phone = "Phone is required.";
+    
+    // Validate using type guard
+    if (!isDemoRequestForm(form)) {
+      newErrors.general = "Invalid form data format";
+      return newErrors;
+    }
+    
+    // Required field validation
+    if (!form.name.trim()) newErrors.name = "Name is required.";
+    if (!form.company.trim()) newErrors.company = "Company is required.";
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!isValidEmail(form.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+    if (!form.phone.trim()) {
+      newErrors.phone = "Phone is required.";
+    } else if (!isValidPhoneNumber(form.phone)) {
+      newErrors.phone = "Please enter a valid phone number.";
+    }
+    
     return newErrors;
   };
 
