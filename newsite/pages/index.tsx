@@ -592,7 +592,7 @@ export default function Home() {
         }
 
         .rotating-text-container {
-          display: inline;
+          display: inline-block;
           position: relative;
           min-width: 330px;
           max-width: 100%;
@@ -600,20 +600,23 @@ export default function Home() {
           overflow: hidden;
           vertical-align: baseline;
           line-height: inherit;
-          /* Remove problematic top offset for proper baseline alignment */
+          /* Proper baseline alignment without offset */
         }
 
         .rotating-text {
           color: var(--color-primary-600);
-          display: inline;
-          position: relative;
-          /* Use relative positioning to maintain baseline flow */
+          display: inline-block;
+          position: absolute;
+          /* Absolute positioning within container for animation */
+          top: 0;
+          left: 0;
+          width: 100%;
           white-space: nowrap;
           line-height: inherit;
           /* Ensure consistent font baseline alignment */
           font-feature-settings: 'kern' 1;
           text-rendering: geometricPrecision;
-          /* Maintain baseline alignment without transforms */
+          /* Maintain baseline alignment without manual offsets */
         }
 
         .rotating-text-visible {
