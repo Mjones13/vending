@@ -59,88 +59,14 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
   - **Change**: Add `"@types/jest": "^29.5.0"` to devDependencies
   - **Verify**: `npm list @types/jest` shows correct version
 
-### Phase 2: Simplify Jest Configuration
+### Phase 2: Convert and Simplify jest.setup.js to TypeScript
 
-- [ ] **Task 2.1**: Backup existing jest.config.js
-  - **File**: `jest.config.js`
-  - **Change**: Copy to `jest.config.js.backup`
-  - **Verify**: `ls jest.config.js.backup` exists
-
-- [ ] **Task 2.2**: Create simplified jest.config.js with TypeScript support
-  - **File**: `jest.config.js`
-  - **Change**: Replace with simplified configuration:
-    ```javascript
-    const nextJest = require('next/jest');
-    
-    const createJestConfig = nextJest({
-      dir: './',
-    });
-    
-    /** @type {import('jest').Config} */
-    const config = {
-      setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-      testEnvironment: 'jsdom',
-      
-      // TypeScript support
-      preset: 'ts-jest/presets/default-esm',
-      extensionsToTreatAsEsm: ['.ts', '.tsx'],
-      globals: {
-        'ts-jest': {
-          useESM: true,
-          tsconfig: 'tsconfig.test.json'
-        }
-      },
-      
-      // Test matching
-      testMatch: [
-        '**/__tests__/**/*.(test|spec).(ts|tsx|js)',
-        '**/*.(test|spec).(ts|tsx|js)'
-      ],
-      testPathIgnorePatterns: [
-        '/node_modules/',
-        '/.next/',
-        '/.next-ai/',
-        '/coverage/',
-        '/__tests__/e2e/'
-      ],
-      
-      // Coverage
-      collectCoverageFrom: [
-        'components/**/*.{ts,tsx}',
-        'pages/**/*.{ts,tsx}',
-        'hooks/**/*.{ts,tsx}',
-        'utils/**/*.{ts,tsx}',
-        '!**/*.d.ts',
-        '!pages/_app.tsx',
-        '!pages/_document.tsx',
-        '!pages/api/**/*'
-      ],
-      coverageThreshold: {
-        global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80
-        }
-      },
-      
-      // Simplified performance
-      maxWorkers: '50%',
-      testTimeout: 10000
-    };
-    
-    module.exports = createJestConfig(config);
-    ```
-  - **Verify**: `npm test -- --listTests` runs without errors
-
-### Phase 3: Convert and Simplify jest.setup.js to TypeScript
-
-- [ ] **Task 3.1**: Backup existing jest.setup.js
+- [ ] **Task 2.1**: Backup existing jest.setup.js
   - **File**: `jest.setup.js`
   - **Change**: Copy to `jest.setup.js.backup`
   - **Verify**: `ls jest.setup.js.backup` exists
 
-- [ ] **Task 3.2**: Create simplified jest.setup.ts with proper typing
+- [ ] **Task 2.2**: Create simplified jest.setup.ts with proper typing
   - **File**: `jest.setup.ts`
   - **Change**: Replace 355-line file with TypeScript version:
     ```typescript
@@ -214,118 +140,13 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: `npm test -- --testPathPattern="simple"` runs without setup errors
 
-### Phase 4: Create TypeScript-First Test Utilities
+### Phase 3: Fix React Act() Warnings with TypeScript
 
-- [ ] **Task 4.1**: Archive existing test-utils directory
-  - **File**: `test-utils/`
-  - **Change**: Move entire directory to `test-utils-archived/`
-  - **Verify**: `ls test-utils-archived/` shows archived files
-
-- [ ] **Task 4.2**: Create typed test-utils/index.ts
-  - **File**: `test-utils/index.ts`
-  - **Change**: Create new file with TypeScript exports:
-    ```typescript
-    export * from './render';
-    export * from './test-data';
-    export type * from './types';
-    ```
-  - **Verify**: File exists with proper TypeScript exports
-
-- [ ] **Task 4.3**: Create typed render utility
-  - **File**: `test-utils/render.tsx`
-  - **Change**: Create with TypeScript generics:
-    ```typescript
-    import React, { ReactElement } from 'react';
-    import { render as rtlRender, RenderOptions, RenderResult } from '@testing-library/react';
-    
-    interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-      // Add any custom wrapper props here if needed
-    }
-    
-    function render<T extends ReactElement>(
-      ui: T,
-      options?: CustomRenderOptions
-    ): RenderResult {
-      return rtlRender(ui, {
-        ...options,
-      });
-    }
-    
-    // Re-export everything from RTL
-    export * from '@testing-library/react';
-    export { render };
-    ```
-  - **Verify**: TypeScript recognizes proper types
-
-- [ ] **Task 4.4**: Create typed test data utilities
-  - **File**: `test-utils/test-data.ts`
-  - **Change**: Create with TypeScript interfaces:
-    ```typescript
-    import type { NextRouter } from 'next/router';
-    
-    export interface MockRouterProps extends Partial<NextRouter> {
-      pathname?: string;
-      query?: Record<string, string | string[]>;
-    }
-    
-    export const createMockRouter = (overrides: MockRouterProps = {}): NextRouter => ({
-      route: '/',
-      pathname: '/',
-      query: {},
-      asPath: '/',
-      push: jest.fn(),
-      replace: jest.fn(),
-      reload: jest.fn(),
-      back: jest.fn(),
-      prefetch: jest.fn().mockResolvedValue(undefined),
-      beforePopState: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-        emit: jest.fn(),
-      },
-      ...overrides,
-    } satisfies NextRouter);
-    
-    export const mockImageProps = {
-      src: '/test-image.jpg',
-      alt: 'Test image',
-      width: 100,
-      height: 100,
-    } as const;
-    ```
-  - **Verify**: TypeScript validates mock data types
-
-- [ ] **Task 4.5**: Create test types file
-  - **File**: `test-utils/types.ts`
-  - **Change**: Create common test types:
-    ```typescript
-    import type { ReactElement } from 'react';
-    import type { RenderResult } from '@testing-library/react';
-    
-    export interface TestComponentProps {
-      children?: React.ReactNode;
-      className?: string;
-    }
-    
-    export interface RenderWithPropsOptions<T = Record<string, unknown>> {
-      props?: T;
-      renderOptions?: Parameters<typeof render>[1];
-    }
-    
-    export type TestRenderFunction<T = Record<string, unknown>> = (
-      props?: T
-    ) => RenderResult;
-    ```
-  - **Verify**: Types are properly exported and usable
-
-### Phase 5: Fix React Act() Warnings with TypeScript
-
-- [ ] **Task 5.1**: Update Layout component test with TypeScript
+- [ ] **Task 3.1**: Update Layout component test with TypeScript
   - **File**: `__tests__/components/Layout.test.tsx`
   - **Change**: Add proper typing and fix async patterns:
     ```typescript
-    import { render, screen, waitFor } from '@/test-utils';
+    import { render, screen, waitFor } from '@testing-library/react';
     import Layout from '@/components/Layout';
     import type { ReactNode } from 'react';
     
@@ -338,14 +159,14 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: `npm test Layout.test` passes without act() warnings
 
-- [ ] **Task 5.2**: Fix Homepage test with proper TypeScript patterns
+- [ ] **Task 3.2**: Fix Homepage test with proper TypeScript patterns
   - **File**: `__tests__/pages/index.test.tsx`
   - **Change**: Use `waitFor` instead of timer manipulation with proper types
   - **Verify**: `npm test index.test` passes without act() warnings
 
-### Phase 6: Simplify Package.json Test Scripts
+### Phase 4: Simplify Package.json Test Scripts
 
-- [ ] **Task 6.1**: Update package.json test scripts for TypeScript
+- [ ] **Task 4.1**: Update package.json test scripts for TypeScript
   - **File**: `package.json`
   - **Change**: Replace complex test scripts with:
     ```json
@@ -361,13 +182,13 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: All scripts execute successfully
 
-### Phase 7: Increase Test Coverage with TypeScript - Components
+### Phase 5: Increase Test Coverage with TypeScript - Components
 
-- [ ] **Task 7.1**: Create comprehensive HeroSection tests with TypeScript
+- [ ] **Task 5.1**: Create comprehensive HeroSection tests with TypeScript
   - **File**: `__tests__/components/HeroSection.test.tsx`
   - **Change**: Create typed test suite:
     ```typescript
-    import { render, screen } from '@/test-utils';
+    import { render, screen } from '@testing-library/react';
     import HeroSection from '@/components/HeroSection';
     import type { ComponentProps } from 'react';
     
@@ -382,21 +203,21 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: Coverage >80% with TypeScript validation
 
-### Phase 8: Increase Test Coverage with TypeScript - Pages
+### Phase 6: Increase Test Coverage with TypeScript - Pages
 
-- [ ] **Task 8.1**: Create typed tests for about page
+- [ ] **Task 6.1**: Create typed tests for about page
   - **File**: `__tests__/pages/about.test.tsx`
   - **Change**: Add comprehensive tests with TypeScript
   - **Verify**: `npm test about.test` passes with coverage
 
-- [ ] **Task 8.2**: Create typed tests for contact page
+- [ ] **Task 6.2**: Create typed tests for contact page
   - **File**: `__tests__/pages/contact.test.tsx`
   - **Change**: Test form validation with proper TypeScript types
   - **Verify**: Form interactions tested with type safety
 
-### Phase 9: Create Hook Tests with TypeScript
+### Phase 7: Create Hook Tests with TypeScript
 
-- [ ] **Task 9.1**: Create comprehensive useScrollAnimation tests
+- [ ] **Task 7.1**: Create comprehensive useScrollAnimation tests
   - **File**: `__tests__/hooks/useScrollAnimation.test.tsx`
   - **Change**: Use `@testing-library/react-hooks` with TypeScript:
     ```typescript
@@ -410,44 +231,44 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: Hook tests achieve >80% coverage with TypeScript
 
-### Phase 10: Clean Up and Remove Complexity
+### Phase 8: Clean Up and Remove Complexity
 
-- [ ] **Task 10.1**: Remove complex M2 optimization scripts
+- [ ] **Task 8.1**: Remove complex M2 optimization scripts
   - **File**: `scripts/`
   - **Change**: Archive test-related scripts to `scripts/archived/`
   - **Verify**: Simplified scripts directory
 
-- [ ] **Task 10.2**: Remove act() warning detection scripts
+- [ ] **Task 8.2**: Remove act() warning detection scripts
   - **File**: `scripts/detect-act-warnings.js`
   - **Change**: Delete file as warnings should be resolved
   - **Verify**: File no longer exists
 
-- [ ] **Task 10.3**: Run full TypeScript validation on tests
+- [ ] **Task 8.3**: Run full TypeScript validation on tests
   - **File**: N/A
   - **Change**: Run `npm run test:typecheck && npm run test:coverage`
   - **Verify**: All tests pass TypeScript validation and coverage >80%
 
-### Phase 11: Documentation and TypeScript Integration
+### Phase 9: Documentation and TypeScript Integration
 
-- [ ] **Task 11.1**: Create TypeScript testing guide
+- [ ] **Task 9.1**: Create TypeScript testing guide
   - **File**: `docs/typescript-testing-guide.md`
   - **Change**: Document TypeScript testing patterns for React 18
   - **Verify**: Comprehensive guide with examples
 
-- [ ] **Task 11.2**: Update CLAUDE.md testing section
+- [ ] **Task 9.2**: Update CLAUDE.md testing section
   - **File**: `CLAUDE.md`
   - **Change**: Update testing requirements to mention TypeScript strict mode
   - **Verify**: `grep "TypeScript.*testing" CLAUDE.md` shows updated content
 
-### Phase 12: Pre-Merge Preparation
+### Phase 10: Pre-Merge Preparation
 
-- [ ] **Task 12.1**: Update branch with latest main changes
+- [ ] **Task 10.1**: Update branch with latest main changes
   - **File**: Git repository
   - **Change**: Run `git fetch --all --prune && git pull --rebase origin main`
   - **Verify**: `git log --oneline -5` shows commits on top of latest main
   - **Conflicts**: Document any conflicts resolved during rebase
 
-- [ ] **Task 12.2**: Final comprehensive test suite validation
+- [ ] **Task 10.2**: Final comprehensive test suite validation
   - **File**: N/A
   - **Change**: Run `npm run test:ci && npm run e2e`
   - **Verify**: All tests pass without warnings or TypeScript errors
@@ -483,17 +304,15 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 1: TypeScript Config | ⏳ Pending | Include tests in TypeScript |
-| Phase 2: Simplify Jest | ⏳ Pending | TypeScript-aware configuration |
-| Phase 3: Setup TypeScript | ⏳ Pending | Convert 355-line setup to TS |
-| Phase 4: Typed Utilities | ⏳ Pending | Create TypeScript-first utilities |
-| Phase 5: Fix Act Warnings | ⏳ Pending | TypeScript + proper async |
-| Phase 6: Simplify Scripts | ⏳ Pending | Add TypeScript validation |
-| Phase 7: Component Coverage | ⏳ Pending | Typed component tests |
-| Phase 8: Page Coverage | ⏳ Pending | Typed page tests |
-| Phase 9: Hook Coverage | ⏳ Pending | Typed hook tests |
-| Phase 10: Clean Up | ⏳ Pending | Remove unnecessary complexity |
-| Phase 11: Documentation | ⏳ Pending | TypeScript testing guide |
-| Phase 12: Pre-Merge | ⏳ Pending | Rebase and final validation |
+| Phase 2: Setup TypeScript | ⏳ Pending | Convert 355-line setup to TS |
+| Phase 3: Fix Act Warnings | ⏳ Pending | TypeScript + proper async |
+| Phase 4: Simplify Scripts | ⏳ Pending | Add TypeScript validation |
+| Phase 5: Component Coverage | ⏳ Pending | Typed component tests |
+| Phase 6: Page Coverage | ⏳ Pending | Typed page tests |
+| Phase 7: Hook Coverage | ⏳ Pending | Typed hook tests |
+| Phase 8: Clean Up | ⏳ Pending | Remove unnecessary complexity |
+| Phase 9: Documentation | ⏳ Pending | TypeScript testing guide |
+| Phase 10: Pre-Merge | ⏳ Pending | Rebase and final validation |
 
 ## Lessons Learned
 
