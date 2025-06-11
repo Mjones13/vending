@@ -3,6 +3,7 @@
  * These patterns demonstrate how to write parallel-safe tests
  */
 
+import React from 'react'
 import { 
   ConcurrentTestDataFactory, 
   TestDataRegistry, 
