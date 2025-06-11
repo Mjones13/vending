@@ -18,6 +18,7 @@
 - [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md) ✅ COMPLETED
 - [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) ✅ COMPLETED
 - [docs/implementation-plan/0609_0028-fix-react-act-warnings.md](implementation-plan/0609_0028-fix-react-act-warnings.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0611_0350-fix-homepage-rotating-text-baseline-alignment.md](implementation-plan/0611_0350-fix-homepage-rotating-text-baseline-alignment.md) ✅ COMPLETED
 
 ## React Version Downgrade Reference
 
@@ -38,6 +39,7 @@
 
 ## Errors & Solutions
 
+- [2025-06-11 04:20] Error: Rotating text baseline misalignment on homepage - Solution: Remove `top: 0.05em` offset from `.rotating-text-container` CSS in pages/index.tsx. The offset was causing vertical misalignment between static and rotating text.
 - [2025-01-09 01:15] Error: React act() warnings in rotating text tests - Solution: Use real timers instead of fake timers for setInterval-based animations, implement maxCycles pattern to prevent infinite loops during testing
 
 ## Lessons Learned
