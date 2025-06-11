@@ -52,7 +52,7 @@ export default function Home() {
     }, 3000); // Total cycle time
 
     return () => clearInterval(interval);
-  }, [rotatingWords.length, getNextWordIndex]);
+  }, [rotatingWords, getNextWordIndex]);
 
   const handleRequestDemo = () => {
     router.push('/request-a-demo');
