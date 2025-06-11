@@ -2,10 +2,9 @@
  * Layout Component Tests
  * Following TDD approach - these tests define expected behavior for the Layout component
  */
-import { render, screen, simulateScreenSize, SCREEN_SIZES, expectNavigation, hoverElement, unhoverElement, clickElement, act, waitFor } from '../../test-utils'
+import { render, screen, simulateScreenSize, SCREEN_SIZES, waitFor, act } from '../../test-utils'
 import userEvent from '@testing-library/user-event'
 import Layout from '../../components/Layout'
-import { setupRealTimers, cleanupTimers } from '../../test-utils/timer-helpers'
 
 // Mock child component for testing
 const MockChild = () => <div data-testid="child-content">Test Content</div>
@@ -13,8 +12,6 @@ const MockChild = () => <div data-testid="child-content">Test Content</div>
 describe('Layout Component', () => {
   // Enhanced cleanup to prevent test isolation issues
   beforeEach(() => {
-    // Use real timers for scroll/animation events
-    setupRealTimers()
     // Clear any lingering DOM state
     document.body.innerHTML = ''
     
@@ -22,10 +19,10 @@ describe('Layout Component', () => {
     jest.clearAllMocks()
   })
 
-  afterEach(async () => {
+  afterEach(() => {
     // Additional cleanup after each test
     document.body.innerHTML = ''
-    await cleanupTimers()
+    jest.clearAllMocks()
   })
 
   describe('Basic Rendering', () => {
@@ -198,19 +195,19 @@ describe('Layout Component', () => {
       expect(mobileMenu).not.toHaveClass('active')
       expect(mobileMenuButton).toHaveAttribute('aria-expanded', 'false')
       
-      // Click to open menu with act() to handle state updates
-      await act(async () => {
-        await userEvent.click(mobileMenuButton)
-      })
+      // Click to open menu - userEvent already handles act() internally
+      await userEvent.click(mobileMenuButton)
+      
+      // Wait for menu to open
       await waitFor(() => {
         expect(mobileMenu).toHaveClass('active')
         expect(mobileMenuButton).toHaveAttribute('aria-expanded', 'true')
       })
       
       // Click to close menu
-      await act(async () => {
-        await userEvent.click(mobileMenuButton)
-      })
+      await userEvent.click(mobileMenuButton)
+      
+      // Wait for menu to close
       await waitFor(() => {
         expect(mobileMenu).not.toHaveClass('active')
         expect(mobileMenuButton).toHaveAttribute('aria-expanded', 'false')
@@ -235,7 +232,7 @@ describe('Layout Component', () => {
       const header = screen.getByRole('banner')
       
       // Simulate scroll event with act() to handle React state updates
-      await act(async () => {
+      act(() => {
         Object.defineProperty(window, 'scrollY', {
           writable: true,
           value: 100
@@ -264,7 +261,7 @@ describe('Layout Component', () => {
       expect(header).toHaveClass('header')
       
       // Simulate scroll event to verify positioning class remains consistent
-      await act(async () => {
+      act(() => {
         Object.defineProperty(window, 'scrollY', {
           writable: true,
           value: 100
