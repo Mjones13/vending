@@ -169,7 +169,7 @@ export async function runTimerCycles(cycles: number, cycleTime: number): Promise
  * Setup helper for tests using fake timers
  * Ensures proper configuration and cleanup
  */
-export function setupFakeTimers(options: jest.FakeTimersConfig = {}): void {
+export function setupFakeTimers(options: Parameters<typeof jest.useFakeTimers>[0] = {}): void {
   jest.useFakeTimers({
     ...options,
     advanceTimers: options.advanceTimers ?? true,

@@ -19,6 +19,20 @@ export interface MockAnimationProperties {
   animationFillMode: string;
   animationPlayState: string;
   animationTimingFunction: string;
+  // Transition properties
+  transitionProperty?: string;
+  transitionDuration?: string;
+  transitionDelay?: string;
+  transitionTimingFunction?: string;
+  // Layout properties
+  display?: string;
+  position?: string;
+  visibility?: string;
+  opacity?: string;
+  transform?: string;
+  // Filter properties
+  backdropFilter?: string;
+  filter?: string;
 }
 
 // Default animation properties

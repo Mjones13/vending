@@ -510,4 +510,4 @@ export const verifyAnimationDuration = async (
 };
 
 // Export types for external use
-export type { AnimationPhase, KeyframeStep, AnimationTimeline, KeyframeAnimationConfig };
+export type { AnimationPhase, KeyframeStep, AnimationTimeline };

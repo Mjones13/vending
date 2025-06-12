@@ -106,7 +106,11 @@ describe('Logo Staggered Animation Logic (Tier 1)', () => {
       
       // Test that delays increase linearly
       for (let i = 1; i < expectedDelays.length; i++) {
-        expect(expectedDelays[i] - expectedDelays[i - 1]).toBe(staggerDelay)
+        const current = expectedDelays[i];
+        const previous = expectedDelays[i - 1];
+        expect(current).toBeDefined();
+        expect(previous).toBeDefined();
+        expect(current! - previous!).toBe(staggerDelay);
       }
     })
 
@@ -134,8 +138,8 @@ describe('Logo Staggered Animation Logic (Tier 1)', () => {
       }
       
       expect(phases).toHaveLength(logoCount)
-      expect(phases[0].startTime).toBe(0)
-      expect(phases[3].startTime).toBe(450)
+      expect(phases[0]?.startTime).toBe(0)
+      expect(phases[3]?.startTime).toBe(450)
     })
 
     it('should verify stagger state machine transitions', async () => {
