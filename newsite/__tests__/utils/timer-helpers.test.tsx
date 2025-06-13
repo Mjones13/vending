@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import {
   advanceTimersByTimeAndAct,
@@ -21,9 +21,9 @@ import {
 
 // Test component that uses timers
 const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = React.useState(0);
   
-  useEffect(() => {
+  React.useEffect(() => {
     const timer = setInterval(() => {
       setCount(c => c + 1);
       onTick?.();
@@ -37,9 +37,9 @@ const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }) => {
 
 // Test component that uses RAF
 const AnimationComponent: React.FC = () => {
-  const [frame, setFrame] = useState(0);
+  const [frame, setFrame] = React.useState(0);
   
-  useEffect(() => {
+  React.useEffect(() => {
     let animationId: number;
     const animate = () => {
       setFrame(f => f + 1);
