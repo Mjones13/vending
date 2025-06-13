@@ -5,7 +5,7 @@
  * - Tier 2: Component Behavior (DOM class changes, timing behavior)
  * Following TDD approach - testing the staggered logo fade-in animations
  */
-import React from 'react'
+import React, { useState, useCallback, useEffect, memo } from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import { 
   KeyframeAnimationTester,
@@ -23,11 +23,11 @@ import { mockLogos } from '../../test-utils/mock-data'
 
 // Component that matches the actual logo staggered animation implementation
 function LogoStaggerComponent() {
-  const [logoAnimations, setLogoAnimations] = React.useState<boolean[]>(
+  const [logoAnimations, setLogoAnimations] = useState<boolean[]>(
     new Array(mockLogos.length).fill(false)
   )
 
-  const triggerLogoAnimations = React.useCallback(() => {
+  const triggerLogoAnimations = useCallback(() => {
     const newAnimations = [...logoAnimations]
     
     // Stagger the animations with 150ms delay
@@ -39,7 +39,7 @@ function LogoStaggerComponent() {
     })
   }, [logoAnimations])
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Trigger animations after component mount
     const timer = setTimeout(() => {
       triggerLogoAnimations()
@@ -388,7 +388,7 @@ describe('Logo Staggered Animation Behavior (Tier 2)', () => {
     it('should not cause excessive re-renders', async () => {
       let renderCount = 0
       
-      const WrappedComponent = React.memo(() => {
+      const WrappedComponent = memo(() => {
         renderCount++
         return <LogoStaggerComponent />
       })

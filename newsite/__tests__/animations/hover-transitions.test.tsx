@@ -5,7 +5,7 @@
  * - Tier 2: Component Behavior (DOM interactions, class changes, user events)
  * Following TDD approach - testing hover effects on buttons, cards, and interactive elements
  */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import {
   mockAnimationProperties,
@@ -68,9 +68,9 @@ function CardHoverComponent() {
 }
 
 function HeaderScrollComponent() {
-  const [isScrolled, setIsScrolled] = React.useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
     }
