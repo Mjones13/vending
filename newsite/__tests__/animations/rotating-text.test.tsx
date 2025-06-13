@@ -56,9 +56,9 @@ function RotatingTextComponent({ maxCycles }: { maxCycles?: number }) {
       
       // Phase 2: After exit completes, change word and start entrance
       setTimeout(() => {
-        setCurrentWordIndex((prevIndex) => (prevIndex + 1) % rotatingWords.length)
+        setCurrentWordIndex((prevIndex: number) => (prevIndex + 1) % rotatingWords.length)
         setAnimationState('entering')
-        setCycleCount(prev => prev + 1)
+        setCycleCount((prev: number) => prev + 1)
         
         // Phase 3: After entrance completes, return to visible state
         setTimeout(() => {
@@ -158,7 +158,7 @@ describe('Rotating Text Animation Logic (Tier 1)', () => {
         const cycleToNext = useCallback(() => {
           setState('exiting')
           setTimeout(() => {
-            setCurrentIndex((prev) => (prev + 1) % words.length)
+            setCurrentIndex((prev: number) => (prev + 1) % words.length)
             setState('entering')
             setTimeout(() => setState('visible'), 400)
           }, 400)

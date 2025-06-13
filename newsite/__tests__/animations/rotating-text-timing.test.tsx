@@ -110,7 +110,7 @@ describe('Rotating Text Timing Logic (Tier 1)', () => {
           const now = Date.now();
           const actualInterval = now - lastTick;
           setLastTick(now);
-          setIntervalCount(prev => prev + 1);
+          setIntervalCount((prev: number) => prev + 1);
           return actualInterval;
         }, [lastTick]);
         
