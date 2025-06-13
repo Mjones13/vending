@@ -22,18 +22,19 @@ interface HeroSectionProps {
   className?: string;
 }
 
-const HeroSection: FC<HeroSectionProps> = ({
-  backgroundImage,
-  title,
-  subtitle,
-  description,
-  ctaButton,
-  phoneNumber,
-  textColor = 'white',
-  overlayOpacity = 0.4,
-  minHeight = '70vh',
-  className = ''
-}) => {
+const HeroSection: FC<HeroSectionProps> = (props: HeroSectionProps) => {
+  const {
+    backgroundImage,
+    title,
+    subtitle,
+    description,
+    ctaButton,
+    phoneNumber,
+    textColor = 'white',
+    overlayOpacity = 0.4,
+    minHeight = '70vh',
+    className = ''
+  } = props;
   return (
     <>
       <section className={`hero-section ${className}`}>

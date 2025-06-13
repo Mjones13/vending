@@ -96,7 +96,7 @@ const AnimationContext = createContext<AnimationContextValue | null>(null);
 export const MockAnimationContext: FC<{
   children: ReactNode;
   initialState?: Partial<MockAnimationState>;
-}> = ({ children, initialState = {} }) => {
+}> = ({ children, initialState = {} }: { children: ReactNode; initialState?: Partial<MockAnimationState> }) => {
   const [state, setState] = useState<MockAnimationState>({
     currentState: 'idle',
     previousState: null,
@@ -247,7 +247,7 @@ export const testAnimationHook = <TProps, TResult>(
 } => {
   let animationContextValue: AnimationContextValue | null = null;
 
-  const TestWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+  const TestWrapper: FC<{ children: ReactNode }> = ({ children }: { children: ReactNode }) => {
     return (
       <MockAnimationContext {...(options.initialAnimationState && { initialState: options.initialAnimationState })}>
         <AnimationContextCapture>
@@ -262,7 +262,7 @@ export const testAnimationHook = <TProps, TResult>(
   };
 
   // Component to capture animation context value
-  const AnimationContextCapture: FC<{ children: ReactNode }> = ({ children }) => {
+  const AnimationContextCapture: FC<{ children: ReactNode }> = ({ children }: { children: ReactNode }) => {
     animationContextValue = useMockAnimationContext();
     return <>{children}</>;
   };
