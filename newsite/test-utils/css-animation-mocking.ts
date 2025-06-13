@@ -349,4 +349,4 @@ export const cleanupAnimationMocking = (): void => {
 };
 
 // Export types for external use
-export type { MockAnimationProperties };
+// MockAnimationProperties is already exported as interface on line 13
