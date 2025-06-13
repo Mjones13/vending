@@ -143,8 +143,8 @@ export function exampleIsolatedTestDatabase() {
       const productId = database.store('products', { name: 'Widget', price: 10.99 })
       
       // Retrieve data
-      const user = database.findByKey(userId)
-      const product = database.findByKey(productId)
+      const user = database.findByKey<{ name: string; email: string }>(userId)
+      const product = database.findByKey<{ name: string; price: number }>(productId)
       
       expect(user?.name).toBe('John')
       expect(product?.name).toBe('Widget')
@@ -196,7 +196,7 @@ export function exampleConcurrentTestEnvironment() {
       const storedUserId = database.store('users', user)
       
       // Verify isolation
-      const retrievedUser = database.findByKey(storedUserId)
+      const retrievedUser = database.findByKey<{ name: string; email: string; role: string }>(storedUserId)
       
       expect(retrievedUser?.name).toBe('Alice')
       expect(environment.getEnvironmentId()).toMatch(/^env_\d+_[a-z0-9]+$/)
@@ -281,10 +281,10 @@ export function exampleComponentTestingWithConcurrentData() {
       const testUser = userFactory.create({ name: 'Editable User' })
       
       const mockOnEdit = jest.fn()
-      const props = createMockProps({ 
-        user: testUser,
+      const props = {
+        ...createMockProps({ user: testUser }),
         onEdit: mockOnEdit,
-      })
+      }
       
       const { getByRole } = renderComponent(props)
       
@@ -305,7 +305,11 @@ export function exampleAPITestingWithConcurrentMocks() {
     
     it('should handle API responses with isolated data', async () => {
       const environment = getEnvironment()
-      const apiFactory = TestDataFactories.apiResponse({
+      const apiFactory = TestDataFactories.apiResponse<{
+        users: { id: string; name: string }[];
+        total: number;
+        page: number;
+      }>({
         users: [],
         total: 0,
         page: 1,
@@ -313,11 +317,14 @@ export function exampleAPITestingWithConcurrentMocks() {
       
       // Create mock API response with unique data
       const mockResponse = apiFactory.create({
-        users: [
-          { id: 'user1', name: 'User One' },
-          { id: 'user2', name: 'User Two' },
-        ],
-        total: 2,
+        data: {
+          users: [
+            { id: 'user1', name: 'User One' },
+            { id: 'user2', name: 'User Two' },
+          ],
+          total: 2,
+          page: 1,
+        },
       })
       
       // Mock fetch with isolated response

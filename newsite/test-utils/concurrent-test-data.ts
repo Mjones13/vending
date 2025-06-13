@@ -4,6 +4,20 @@
  */
 
 /**
+ * Base interface for all test data objects created by factories
+ */
+export interface TestDataObject {
+  id: string;
+  testId: string;
+  createdAt: number;
+}
+
+/**
+ * Enhanced data object type with required factory properties
+ */
+export type FactoryEnhancedData<T> = T & TestDataObject;
+
+/**
  * Thread-safe test data factory for concurrent execution
  */
 export class ConcurrentTestDataFactory<T> {
@@ -18,7 +32,7 @@ export class ConcurrentTestDataFactory<T> {
   /**
    * Create a unique instance of test data for this test
    */
-  create(overrides?: Partial<T>): T {
+  create(overrides?: Partial<T>): FactoryEnhancedData<T> {
     const uniqueId = `${this.instanceId}_${Math.random().toString(36).substr(2, 9)}`
     
     return {
@@ -28,13 +42,13 @@ export class ConcurrentTestDataFactory<T> {
       id: `${(this.baseData as any).id || 'test'}_${uniqueId}`,
       testId: uniqueId,
       createdAt: Date.now(),
-    } as T
+    } as FactoryEnhancedData<T>
   }
   
   /**
    * Create multiple unique instances
    */
-  createMany(count: number, overrides?: Partial<T>): T[] {
+  createMany(count: number, overrides?: Partial<T>): FactoryEnhancedData<T>[] {
     return Array.from({ length: count }, (_, index) => {
       const uniqueId = `${this.instanceId}_${index}_${Math.random().toString(36).substr(2, 9)}`
       
@@ -45,14 +59,14 @@ export class ConcurrentTestDataFactory<T> {
         testId: uniqueId,
         index,
         createdAt: Date.now(),
-      } as T
+      } as FactoryEnhancedData<T>
     })
   }
   
   /**
    * Create a data instance with deterministic ID for repeatability
    */
-  createDeterministic(seed: string, overrides?: Partial<T>): T {
+  createDeterministic(seed: string, overrides?: Partial<T>): FactoryEnhancedData<T> {
     const deterministicId = `${this.instanceId}_${seed}_${this.hashString(seed)}`
     
     return {
@@ -62,7 +76,7 @@ export class ConcurrentTestDataFactory<T> {
       testId: deterministicId,
       seed,
       createdAt: Date.now(),
-    } as T
+    } as FactoryEnhancedData<T>
   }
   
   private hashString(str: string): string {
@@ -101,7 +115,7 @@ export class TestDataRegistry {
   /**
    * Create data using a registered factory
    */
-  create<T>(name: string, overrides?: Partial<T>): T {
+  create<T>(name: string, overrides?: Partial<T>): FactoryEnhancedData<T> {
     const factory = this.factories.get(name)
     if (!factory) {
       throw new Error(`Test data factory '${name}' not registered`)
@@ -115,7 +129,7 @@ export class TestDataRegistry {
   /**
    * Create multiple instances using a registered factory
    */
-  createMany<T>(name: string, count: number, overrides?: Partial<T>): T[] {
+  createMany<T>(name: string, count: number, overrides?: Partial<T>): FactoryEnhancedData<T>[] {
     const factory = this.factories.get(name)
     if (!factory) {
       throw new Error(`Test data factory '${name}' not registered`)
