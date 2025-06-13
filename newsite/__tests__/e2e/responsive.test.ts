@@ -187,7 +187,7 @@ test.describe('Responsive Design E2E Tests', () => {
       for (let i = 0; i < Math.min(count, 3); i++) {
         const img = images.nth(i)
         await expect(img).toHaveJSProperty('complete', true)
-        await expect(img).toHaveJSProperty('naturalWidth')
+        await expect(img).toHaveJSProperty('naturalWidth', expect.any(Number))
       }
     }
   })
