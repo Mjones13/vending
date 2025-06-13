@@ -797,12 +797,34 @@ __tests__/
 - Test cross-browser compatibility (Chromium, Firefox, Webkit)
 - Test responsive design on mobile, tablet, and desktop
 
+### TypeScript Testing Requirements
+
+**CRITICAL: All tests must comply with TypeScript strict mode including `exactOptionalPropertyTypes: true`.**
+
+- **Type Safety**: All test files must pass TypeScript validation without errors
+- **Array Access Safety**: Use optional chaining or explicit checks for array access (`array[0]?.property`)
+- **Optional Properties**: Handle optional properties correctly with conditional object spreading
+- **Mock Type Safety**: Ensure all mocks match their target function signatures
+- **Animation Testing Types**: Use strongly-typed animation interfaces for test utilities
+
+**TypeScript Validation Commands:**
+```bash
+npm run test:typecheck    # Validate TypeScript compliance in tests
+npm run test:ai:full     # Full testing with TypeScript validation
+```
+
+**Reference Documentation:**
+- See `docs/typescript-testing-guide.md` for comprehensive TypeScript testing patterns
+- Common error patterns and solutions are documented with code examples
+- Animation testing types and mock interfaces are fully documented
+
 ### TDD Workflow Integration
 
 1. **Write Failing Tests**: Before implementing any feature, create failing tests that define expected behavior
-2. **Use Testing Utilities**: Leverage pre-built testing utilities in `test-utils/`
-3. **Verify All Tests Pass**: After implementation, ensure all tests pass before proceeding
-4. **Test Coverage**: Maintain minimum 80% coverage, verify with `npm run test:coverage`
+2. **TypeScript Validation**: Ensure tests pass TypeScript strict mode validation
+3. **Use Testing Utilities**: Leverage pre-built testing utilities in `test-utils/`
+4. **Verify All Tests Pass**: After implementation, ensure all tests pass before proceeding
+5. **Test Coverage**: Maintain minimum 80% coverage, verify with `npm run test:coverage`
 
 ## 12. Final Integration and Cleanup
 
