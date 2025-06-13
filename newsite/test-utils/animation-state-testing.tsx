@@ -1,6 +1,7 @@
 import { renderHook, RenderHookResult } from '@testing-library/react';
 import { act } from '@testing-library/react';
-import * as React from 'react';
+import React, { createContext, useState, useCallback, useContext } from 'react';
+import type { FC, ReactNode, ComponentType, MutableRefObject } from 'react';
 
 /**
  * Animation State Testing Utilities
@@ -90,13 +91,13 @@ interface AnimationContextValue {
   triggerTransition: (to: AnimationState, trigger?: string) => void;
 }
 
-const AnimationContext = React.createContext<AnimationContextValue | null>(null);
+const AnimationContext = createContext<AnimationContextValue | null>(null);
 
-export const MockAnimationContext: React.FC<{
-  children: React.ReactNode;
+export const MockAnimationContext: FC<{
+  children: ReactNode;
   initialState?: Partial<MockAnimationState>;
 }> = ({ children, initialState = {} }) => {
-  const [state, setState] = React.useState<MockAnimationState>({
+  const [state, setState] = useState<MockAnimationState>({
     currentState: 'idle',
     previousState: null,
     transitions: [],
@@ -105,11 +106,11 @@ export const MockAnimationContext: React.FC<{
     ...initialState
   });
 
-  const updateState = React.useCallback((updates: Partial<MockAnimationState>) => {
+  const updateState = useCallback((updates: Partial<MockAnimationState>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);
 
-  const triggerTransition = React.useCallback((to: AnimationState, trigger?: string) => {
+  const triggerTransition = useCallback((to: AnimationState, trigger?: string) => {
     setState(prev => {
       const transition: AnimationStateTransition = {
         from: prev.currentState,
@@ -144,7 +145,7 @@ export const MockAnimationContext: React.FC<{
  * Hook for accessing mock animation context in tests
  */
 export const useMockAnimationContext = (): AnimationContextValue => {
-  const context = React.useContext(AnimationContext);
+  const context = useContext(AnimationContext);
   if (!context) {
     throw new Error('useMockAnimationContext must be used within MockAnimationContext');
   }
@@ -235,10 +236,10 @@ export const testAnimationHook = <TProps, TResult>(
   options: {
     initialProps?: TProps;
     initialAnimationState?: Partial<MockAnimationState>;
-    wrapper?: React.ComponentType<{ children: React.ReactNode }>;
+    wrapper?: ComponentType<{ children: ReactNode }>;
   } = {}
 ): {
-  result: React.MutableRefObject<TResult>;
+  result: MutableRefObject<TResult>;
   rerender: (newProps?: TProps) => void;
   unmount: () => void;
   getAnimationState: () => MockAnimationState;
@@ -246,7 +247,7 @@ export const testAnimationHook = <TProps, TResult>(
 } => {
   let animationContextValue: AnimationContextValue | null = null;
 
-  const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const TestWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     return (
       <MockAnimationContext {...(options.initialAnimationState && { initialState: options.initialAnimationState })}>
         <AnimationContextCapture>
@@ -261,7 +262,7 @@ export const testAnimationHook = <TProps, TResult>(
   };
 
   // Component to capture animation context value
-  const AnimationContextCapture: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const AnimationContextCapture: FC<{ children: ReactNode }> = ({ children }) => {
     animationContextValue = useMockAnimationContext();
     return <>{children}</>;
   };

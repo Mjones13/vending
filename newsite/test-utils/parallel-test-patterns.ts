@@ -3,7 +3,8 @@
  * Pre-built patterns for common parallel-safe testing scenarios
  */
 
-import * as React from 'react'
+import React from 'react'
+import type { ReactElement } from 'react'
 import { RenderResult } from '@testing-library/react'
 import { 
   TestIsolation, 
@@ -30,7 +31,7 @@ export function createParallelSafeTest(suiteName: string, testFn: (isolation: Te
  */
 export function createIsolatedComponentTest<T extends Record<string, any>>(
   componentName: string,
-  component: (props: T) => React.ReactElement,
+  component: (props: T) => ReactElement,
   defaultProps: T
 ) {
   return {
@@ -110,7 +111,7 @@ interface AnimationTestHelpers {
  */
 export function createParallelPageTest(
   pageName: string,
-  pageComponent: () => React.ReactElement
+  pageComponent: () => ReactElement
 ) {
   return {
     describe: (testName: string, testFn: (helpers: PageTestHelpers) => void) => {
