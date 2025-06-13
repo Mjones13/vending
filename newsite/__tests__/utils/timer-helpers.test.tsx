@@ -20,7 +20,7 @@ import {
 } from '../../test-utils/timer-helpers';
 
 // Test component that uses timers
-const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }) => {
+const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }: { onTick?: () => void }) => {
   const [count, setCount] = React.useState(0);
   
   React.useEffect(() => {
