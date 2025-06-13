@@ -541,7 +541,7 @@ export default function Home() {
         </section>
       </Layout>
 
-      <style jsx>{`
+      <style jsx={true as any}>{`
         /* Modern Split-Screen Hero */
         .hero-split {
           min-height: 90vh;

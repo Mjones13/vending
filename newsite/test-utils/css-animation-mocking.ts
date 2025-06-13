@@ -30,9 +30,18 @@ export interface MockAnimationProperties {
   visibility?: string;
   opacity?: string;
   transform?: string;
+  // Typography properties
+  verticalAlign?: string;
+  lineHeight?: string;
+  textAlign?: string;
   // Filter properties
   backdropFilter?: string;
   filter?: string;
+  // Sizing properties
+  width?: string;
+  height?: string;
+  minWidth?: string;
+  minHeight?: string;
 }
 
 // Default animation properties

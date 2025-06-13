@@ -437,7 +437,7 @@ describe('Timer Helpers', () => {
       
       // Manually trigger RAF callbacks
       await act(async () => {
-        if (rafCallbacks.length > 0) {
+        if (rafCallbacks.length > 0 && rafCallbacks[0]) {
           rafCallbacks[0](16);
           rafCallbacks = rafCallbacks.slice(1);
         }

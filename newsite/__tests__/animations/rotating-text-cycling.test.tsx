@@ -117,9 +117,9 @@ describe('Rotating Text Cycling Logic (Tier 1)', () => {
       
       const transitions = machine.getTransitionHistory();
       expect(transitions).toHaveLength(3);
-      expect(transitions[0].trigger).toBe('cycle-start');
-      expect(transitions[1].trigger).toBe('word-changed');
-      expect(transitions[2].trigger).toBe('next-cycle-start');
+      expect(transitions[0]?.trigger).toBe('cycle-start');
+      expect(transitions[1]?.trigger).toBe('word-changed');
+      expect(transitions[2]?.trigger).toBe('next-cycle-start');
     });
 
     it('should test cycling hook logic in isolation', () => {
@@ -364,7 +364,7 @@ describe('Rotating Text Cycling Behavior (Tier 2)', () => {
           
           const currentWord = rotatingText.textContent;
           expect(currentWord).toBeTruthy();
-          expect(currentWord.trim()).not.toBe('');
+          expect(currentWord?.trim()).not.toBe('');
         }
         
         const sequence = observer.getWordSequence();

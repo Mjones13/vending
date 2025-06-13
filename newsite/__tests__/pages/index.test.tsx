@@ -60,20 +60,26 @@ describe('Home Page', () => {
       render(<Home />)
       
       // Should start with first word
-      expect(screen.getByText(mockRotatingWords[0])).toBeInTheDocument()
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      expect(screen.getByText(firstWord)).toBeInTheDocument()
     })
 
     it('should have rotating text container with proper styling', () => {
       render(<Home />)
       
-      const rotatingContainer = screen.getByText(mockRotatingWords[0]).parentElement
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      const rotatingContainer = screen.getByText(firstWord).parentElement
       expect(rotatingContainer).toHaveClass('rotating-text-container')
     })
 
     it('should cycle through all rotating words', async () => {
       render(<Home />)
       
-      const rotatingElement = screen.getByText(mockRotatingWords[0])
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      const rotatingElement = screen.getByText(firstWord)
       const tester = new RotatingTextTester(rotatingElement, mockRotatingWords)
       
       // Wait for complete rotation cycle
@@ -97,7 +103,9 @@ describe('Home Page', () => {
     it('should apply correct animation state classes', async () => {
       render(<Home />)
       
-      const rotatingElement = screen.getByText(mockRotatingWords[0])
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      const rotatingElement = screen.getByText(firstWord)
       const tester = new RotatingTextTester(rotatingElement, mockRotatingWords)
       
       // Verify animation state transitions
@@ -112,7 +120,9 @@ describe('Home Page', () => {
       render(<Home />)
       
       const staticText = screen.getByText(/premium amenity for modern/i)
-      const rotatingText = screen.getByText(mockRotatingWords[0])
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      const rotatingText = screen.getByText(firstWord)
       
       // Both should be in the same line/container
       expect(staticText).toBeInTheDocument()
@@ -129,7 +139,9 @@ describe('Home Page', () => {
     it('should have proper container dimensions to prevent cutoff', () => {
       render(<Home />)
       
-      const rotatingText = screen.getByText(mockRotatingWords[0])
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First rotating word is required for test');
+      const rotatingText = screen.getByText(firstWord)
       const container = rotatingText.parentElement
       
       // Should have minimum width to accommodate longest word

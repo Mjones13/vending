@@ -13,6 +13,9 @@ import {
   commonAnimationConfigs
 } from '../../test-utils/keyframe-testing'
 import {
+  StaggeredAnimationTester
+} from '../../test-utils/animation-testing'
+import {
   mockAnimationProperties,
   clearAnimationMocks
 } from '../../test-utils/css-animation-mocking'
@@ -192,7 +195,7 @@ describe('Logo Staggered Animation Behavior (Tier 2)', () => {
     it('should trigger animations in staggered sequence', async () => {
       render(<LogoStaggerComponent />)
       
-      const timingTester = new AnimationTimingTester()
+      const timingTester = new StaggeredAnimationTester('logoStagger', 150)
       const animationTimes: number[] = []
       
       // Monitor when each logo gets the animation class
@@ -210,9 +213,13 @@ describe('Logo Staggered Animation Behavior (Tier 2)', () => {
       
       // Verify stagger timing - each logo should animate 150ms after the previous
       for (let i = 1; i < animationTimes.length; i++) {
-        const delay = animationTimes[i] - animationTimes[i - 1]
-        expect(delay).toBeGreaterThanOrEqual(140) // Allow 10ms tolerance
-        expect(delay).toBeLessThanOrEqual(160)
+        const current = animationTimes[i];
+        const previous = animationTimes[i - 1];
+        expect(current).toBeDefined();
+        expect(previous).toBeDefined();
+        const delay = current! - previous!;
+        expect(delay).toBeGreaterThanOrEqual(140); // Allow 10ms tolerance
+        expect(delay).toBeLessThanOrEqual(160);
       }
     }, 5000)
 
@@ -364,7 +371,10 @@ describe('Logo Staggered Animation Behavior (Tier 2)', () => {
       
       // Verify logos got their classes at staggered intervals
       for (let i = 1; i < classAdditionTimes.length; i++) {
-        const actualInterval = classAdditionTimes[i] - classAdditionTimes[i - 1]
+        const current = classAdditionTimes[i];
+        const previous = classAdditionTimes[i - 1];
+        if (current === undefined || previous === undefined) continue;
+        const actualInterval = current - previous;
         const expectedInterval = 150 // 150ms stagger between consecutive logos
         
         // Allow reasonable tolerance for timing (due to setTimeout precision and test environment)

@@ -71,7 +71,7 @@ describe('useScrollAnimation', () => {
     const { result } = renderHook(() => useScrollAnimation());
     
     // Get the observer instance
-    const observerInstance = (global.IntersectionObserver as jest.Mock).mock.results[0].value;
+    const observerInstance = (global.IntersectionObserver as jest.Mock).mock.results[0]?.value;
     
     // Simulate intersection
     act(() => {

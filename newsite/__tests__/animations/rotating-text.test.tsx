@@ -145,8 +145,8 @@ describe('Rotating Text Animation Logic (Tier 1)', () => {
       // Verify transition history
       const transitions = stateMachine.getTransitionHistory()
       expect(transitions).toHaveLength(2)
-      expect(transitions[0].trigger).toBe('exit-animation-start')
-      expect(transitions[1].trigger).toBe('enter-animation-complete')
+      expect(transitions[0]?.trigger).toBe('exit-animation-start')
+      expect(transitions[1]?.trigger).toBe('enter-animation-complete')
     })
 
     it('should test word cycling logic with animation state hooks', () => {
@@ -251,7 +251,7 @@ describe('Rotating Text Component Behavior (Tier 2)', () => {
       
       const rotatingText = screen.getByTestId('rotating-text')
       expect(rotatingText).toHaveClass('rotating-text-visible')
-      expect(rotatingText).toHaveTextContent(mockRotatingWords[0])
+      expect(rotatingText).toHaveTextContent(mockRotatingWords[0] || '')
     })
 
     it('should apply correct CSS classes during component state transitions', async () => {
@@ -303,7 +303,7 @@ describe('Rotating Text Component Behavior (Tier 2)', () => {
       
       // Should be the next word in the sequence
       const expectedWord = mockRotatingWords[1]
-      expect(rotatingText).toHaveTextContent(expectedWord)
+      expect(rotatingText).toHaveTextContent(expectedWord || '')
     }, 8000)
 
     it('should cycle through all words in correct sequence', async () => {
@@ -435,7 +435,9 @@ describe('Rotating Text Component Behavior (Tier 2)', () => {
     it('should have proper container element with correct CSS class', () => {
       render(<RotatingTextComponent />)
       
-      const container = screen.getByText(mockRotatingWords[0]).parentElement
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First word is required for test');
+      const container = screen.getByText(firstWord).parentElement
       expect(container).toHaveClass('rotating-text-container')
       
       // Test container DOM structure (not visual styles)
@@ -446,7 +448,9 @@ describe('Rotating Text Component Behavior (Tier 2)', () => {
     it('should maintain proper DOM hierarchy with surrounding content', () => {
       render(<RotatingTextComponent />)
       
-      const container = screen.getByText(mockRotatingWords[0]).parentElement
+      const firstWord = mockRotatingWords[0];
+      if (!firstWord) throw new Error('First word is required for test');
+      const container = screen.getByText(firstWord).parentElement
       
       // Test DOM structure and class application
       expect(container).toHaveClass('rotating-text-container')

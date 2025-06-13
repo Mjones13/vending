@@ -146,8 +146,8 @@ describe('Rotating Text Timing Logic (Tier 1)', () => {
       
       const transitions = machine.getTransitionHistory();
       expect(transitions).toHaveLength(3);
-      expect(transitions[0].trigger).toBe('interval-start');
-      expect(transitions[1].trigger).toBe('interval-complete');
+      expect(transitions[0]?.trigger).toBe('interval-start');
+      expect(transitions[1]?.trigger).toBe('interval-complete');
     });
   });
 });
@@ -344,12 +344,15 @@ describe('Rotating Text Timing Behavior (Tier 2)', () => {
         for (let i = 1; i < stateTransitions.length; i++) {
           const prevTransition = stateTransitions[i - 1];
           const currTransition = stateTransitions[i];
+          if (!prevTransition || !currTransition) continue;
           const duration = currTransition.timestamp - prevTransition.timestamp;
           
-          if (!stateDurations[prevTransition.animationState!]) {
-            stateDurations[prevTransition.animationState!] = [];
+          const state = prevTransition.animationState;
+          if (!state) continue;
+          if (!stateDurations[state]) {
+            stateDurations[state] = [];
           }
-          stateDurations[prevTransition.animationState!].push(duration);
+          stateDurations[state]?.push(duration);
         }
         
         // Verify component state durations match expectations
@@ -402,6 +405,7 @@ describe('Rotating Text Timing Behavior (Tier 2)', () => {
         for (let i = 1; i < stateTransitions.length; i++) {
           const prevTransition = stateTransitions[i - 1];
           const currTransition = stateTransitions[i];
+          if (!prevTransition || !currTransition) continue;
           const gap = currTransition.timestamp - prevTransition.timestamp;
           
           // No component state transition should take longer than 1 second

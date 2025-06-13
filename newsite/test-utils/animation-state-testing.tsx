@@ -55,7 +55,7 @@ export class AnimationStateMachine {
       from,
       to,
       timestamp: Date.now(),
-      trigger
+      ...(trigger !== undefined && { trigger })
     };
 
     this.transitions.push(transition);
@@ -115,7 +115,7 @@ export const MockAnimationContext: React.FC<{
         from: prev.currentState,
         to,
         timestamp: Date.now(),
-        trigger
+        ...(trigger !== undefined && { trigger })
       };
 
       return {
@@ -182,6 +182,7 @@ export class StateTransitionValidator {
       const actual = actualTransitions[i];
       const expected = this.expectedTransitions[i];
 
+      if (!actual || !expected) continue;
       if (actual.from !== expected.from || actual.to !== expected.to) {
         errors.push(
           `Transition ${i}: expected ${expected.from} → ${expected.to}, got ${actual.from} → ${actual.to}`
@@ -247,7 +248,7 @@ export const testAnimationHook = <TProps, TResult>(
 
   const TestWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
     return (
-      <MockAnimationContext initialState={options.initialAnimationState}>
+      <MockAnimationContext {...(options.initialAnimationState && { initialState: options.initialAnimationState })}>
         <AnimationContextCapture>
           {options.wrapper ? (
             <options.wrapper>{children}</options.wrapper>
@@ -266,7 +267,7 @@ export const testAnimationHook = <TProps, TResult>(
   };
 
   const hookResult = renderHook(hook, {
-    initialProps: options.initialProps,
+    ...(options.initialProps !== undefined && { initialProps: options.initialProps }),
     wrapper: TestWrapper
   });
 

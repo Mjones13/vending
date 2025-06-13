@@ -25,12 +25,12 @@ export class RotatingTextTester {
     
     await waitFor(
       () => {
-        expect(this.element).toHaveTextContent(expectedWord)
+        expect(this.element).toHaveTextContent(expectedWord || '')
       },
       { timeout }
     )
     
-    return expectedWord
+    return expectedWord || ''
   }
 
   /**

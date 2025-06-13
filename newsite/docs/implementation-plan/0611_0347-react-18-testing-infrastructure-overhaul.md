@@ -139,70 +139,52 @@ The codebase has already been migrated to React 18.3.1 and TypeScript strict mod
     ```
   - **Verify**: `npm test -- --testPathPattern="simple"` runs without setup errors
 
-### Phase 3: Fix React Act() Warnings with TypeScript
+### Phase 3: Fix React Act() Warnings with TypeScript ✅ **COMPLETE**
 
-- [ ] **Task 3.1**: Update Layout component test with TypeScript
+- [x] **Task 3.1**: Update Layout component test with TypeScript ✅ **COMPLETE**
   - **File**: `__tests__/components/Layout.test.tsx`
-  - **Change**: Add proper typing and fix async patterns:
-    ```typescript
-    import { render, screen, waitFor } from '@testing-library/react';
-    import Layout from '@/components/Layout';
-    import type { ReactNode } from 'react';
-    
-    interface LayoutProps {
-      children: ReactNode;
-    }
-    
-    const renderLayout = (props: Partial<LayoutProps> = {}) =>
-      render(<Layout {...props}>Test Content</Layout>);
-    ```
-  - **Verify**: `npm test Layout.test` passes without act() warnings
+  - **Change**: Replace custom timer helpers with proper async patterns
+  - **Verify**: `npm test -- Layout.test.tsx 2>&1 | grep -c "act"` returns 0
+  - **Result**: Removed timer-helpers imports, fixed act() warnings in scroll tests, all 19 tests pass cleanly
 
-- [ ] **Task 3.2**: Fix Homepage test with proper TypeScript patterns
+- [x] **Task 3.2**: Fix Homepage test with proper TypeScript patterns ✅ **COMPLETE**
   - **File**: `__tests__/pages/index.test.tsx`
   - **Change**: Use `waitFor` instead of timer manipulation with proper types
   - **Verify**: `npm test index.test` passes without act() warnings
+  - **Result**: Removed timer-helpers imports, fixed multiple test failures, no act() warnings
 
-### Phase 4: Simplify Package.json Test Scripts
+### Phase 4: Simplify Package.json Test Scripts ✅ **COMPLETE**
 
-- [ ] **Task 4.1**: Update package.json test scripts for TypeScript
+- [x] **Task 4.1**: Update package.json test scripts for TypeScript ✅ **COMPLETE**
   - **File**: `package.json`
-  - **Change**: Replace complex test scripts with:
-    ```json
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
-    "test:typecheck": "tsc --noEmit -p tsconfig.test.json",
-    "test:unit": "jest --testPathPattern='__tests__/(components|hooks|utils)'",
-    "test:integration": "jest --testPathPattern='__tests__/pages'",
-    "test:ci": "npm run test:typecheck && jest --ci --coverage --maxWorkers=2",
-    "e2e": "playwright test",
-    "e2e:headed": "playwright test --headed"
-    ```
+  - **Change**: Replace complex test scripts with simplified versions
   - **Verify**: All scripts execute successfully
+  - **Result**: Removed 15+ complex parallel execution scripts, added test:typecheck, simplified to 9 core scripts
 
-### Phase 5: Create Hook Tests with TypeScript
+### Phase 5: Create Hook Tests with TypeScript ✅ **COMPLETE**
 
-- [ ] **Task 5.1**: Create comprehensive useScrollAnimation tests
+- [x] **Task 5.1**: Create comprehensive useScrollAnimation tests ✅ **COMPLETE**
   - **File**: `__tests__/hooks/useScrollAnimation.test.tsx`
-  - **Change**: Use `@testing-library/react-hooks` with TypeScript:
-    ```typescript
-    import { renderHook, act } from '@testing-library/react';
-    import { useScrollAnimation } from '@/hooks/useScrollAnimation';
-    import type { ScrollAnimationOptions } from '@/hooks/useScrollAnimation';
-    
-    const defaultOptions = {
-      // Typed options
-    } satisfies ScrollAnimationOptions;
-    ```
+  - **Change**: Use `@testing-library/react` renderHook with TypeScript
   - **Verify**: Hook tests achieve >80% coverage with TypeScript
+  - **Result**: Created tests for all 3 hooks, achieved 93% statement coverage, 100% function coverage, all 14 tests passing
 
 ### Phase 6: Clean Up and Remove Complexity
 
 - [ ] **Task 6.1**: Remove complex M2 optimization scripts
   - **File**: `scripts/`
-  - **Change**: Archive test-related scripts to `scripts/archived/`
-  - **Verify**: Simplified scripts directory
+  - **Change**: Archive M2-specific scripts to `scripts/archived/`:
+    - `parallel-test-runner.js` - Complex parallel execution logic
+    - `load-balanced-test-runner.js` - CPU load balancing for M2
+    - `test-performance-monitor.js` - Performance tracking overhead
+    - `concurrent-test-executor.js` - Multi-process coordination
+    - `parallel-execution-monitor.js` - Real-time execution monitoring
+    - `test-resource-management.js` - Resource allocation management
+    - `resource-manager.js` - System resource controls
+    - `monitoring-dashboard.js` - Test execution dashboard
+    - `monitoring-integration.js` - Performance metric integration
+    - `measure-test-times.js` - Test timing measurement
+  - **Verify**: `ls scripts/archived/` shows moved scripts, `scripts/` has only essential files
 
 - [ ] **Task 6.2**: Remove act() warning detection scripts
   - **File**: `scripts/detect-act-warnings.js`

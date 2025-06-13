@@ -414,7 +414,7 @@ describe('Layout Component', () => {
       expect(mainServicesLink).toHaveClass('dropdown-toggle')
       
       // Find the dropdown container (parent with dropdown class)
-      const dropdownContainer = mainServicesLink.closest('.dropdown')
+      const dropdownContainer = mainServicesLink?.closest('.dropdown')
       expect(dropdownContainer).toBeInTheDocument()
       
       // Verify dropdown menu exists within the container

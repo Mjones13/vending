@@ -164,7 +164,7 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </footer>
 
-      <style jsx>{`
+      <style jsx={true as any}>{`
         .header {
           position: fixed;
           top: 0;
