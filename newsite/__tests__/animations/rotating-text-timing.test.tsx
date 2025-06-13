@@ -7,7 +7,7 @@
  * - Tier 2: Component Behavior (DOM timing, performance behavior)
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../../pages/index';
@@ -41,7 +41,7 @@ jest.mock('next/router', () => ({
 }));
 
 jest.mock('next/head', () => {
-  return function Head({ children }: { children: React.ReactNode }) {
+  return function Head({ children }: { children: ReactNode }) {
     return <>{children}</>;
   };
 });
@@ -57,7 +57,7 @@ jest.mock('../../hooks/useScrollAnimation', () => ({
 }));
 
 jest.mock('../../components/Layout', () => {
-  return function Layout({ children }: { children: React.ReactNode }) {
+  return function Layout({ children }: { children: ReactNode }) {
     return <div data-testid="layout">{children}</div>;
   };
 });

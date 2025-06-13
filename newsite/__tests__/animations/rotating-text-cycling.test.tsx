@@ -7,7 +7,7 @@
  * - Tier 2: Component Behavior (DOM text changes, class applications)
  */
 
-import React from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../../pages/index';
@@ -39,7 +39,7 @@ jest.mock('next/router', () => ({
 }));
 
 jest.mock('next/head', () => {
-  return function Head({ children }: { children: React.ReactNode }) {
+  return function Head({ children }: { children: ReactNode }) {
     return <>{children}</>;
   };
 });
@@ -55,7 +55,7 @@ jest.mock('../../hooks/useScrollAnimation', () => ({
 }));
 
 jest.mock('../../components/Layout', () => {
-  return function Layout({ children }: { children: React.ReactNode }) {
+  return function Layout({ children }: { children: ReactNode }) {
     return <div data-testid="layout">{children}</div>;
   };
 });
@@ -124,10 +124,10 @@ describe('Rotating Text Cycling Logic (Tier 1)', () => {
 
     it('should test cycling hook logic in isolation', () => {
       const useCyclingLogic = (words: string[]) => {
-        const [currentIndex, setCurrentIndex] = React.useState(0);
-        const [isTransitioning, setIsTransitioning] = React.useState(false);
+        const [currentIndex, setCurrentIndex] = useState(0);
+        const [isTransitioning, setIsTransitioning] = useState(false);
         
-        const cycleToNext = React.useCallback(() => {
+        const cycleToNext = useCallback(() => {
           setIsTransitioning(true);
           setCurrentIndex((prev) => (prev + 1) % words.length);
           setIsTransitioning(false);
