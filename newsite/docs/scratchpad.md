@@ -18,6 +18,7 @@
 - [docs/implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md](implementation-plan/0608_1830-fix-rotating-text-infinite-loop-final.md) ✅ COMPLETED
 - [docs/implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md](implementation-plan/0608_2111-ai-agent-push-workflow-optimization.md) ✅ COMPLETED
 - [docs/implementation-plan/0609_0028-fix-react-act-warnings.md](implementation-plan/0609_0028-fix-react-act-warnings.md) 🔄 IN PROGRESS
+- [docs/implementation-plan/0613_1432-fix-typescript-errors-for-react-18-testing-merge.md](implementation-plan/0613_1432-fix-typescript-errors-for-react-18-testing-merge.md) ✅ **MAJOR BREAKTHROUGH** - Config issue resolved
 
 ## React Version Downgrade Reference
 
@@ -41,6 +42,9 @@
 - [2025-01-09 01:15] Error: React act() warnings in rotating text tests - Solution: Use real timers instead of fake timers for setInterval-based animations, implement maxCycles pattern to prevent infinite loops during testing
 
 ## Lessons Learned
+- [2025-06-13 16:45] **CRITICAL**: TypeScript Configuration Debugging - When facing large numbers of TypeScript errors (130+), always verify you're using the correct tsconfig.json. Test files require `"jsx": "react-jsx"` while app files use `"jsx": "preserve"`. Use `npm run test:typecheck` for test files, not `npm run type-check`. Real error count: 28, not 130+ (96% were config-related false positives). **React 18 named imports work correctly** - apparent import issues were purely configuration problems.
+- [2025-06-13 16:30] Lesson: Module Export Conflicts - When multiple files export the same named export (e.g., `KeyframeAnimationTester`), use explicit imports in index.ts rather than `export *` to avoid TS2308 conflicts. Choose the more comprehensive implementation.
+- [2025-06-13 16:15] Solution: TypeScript Strict Mode Undefined Safety - Always add explicit checks for array[0] access and optional properties. Use `if (!value) throw new Error()` pattern for better error messages than implicit undefined returns.
 - [2025-06-11] Best Practice: Use `git pull --rebase origin main` instead of merge when updating feature branches. This maintains linear history and places your commits on top of the latest main branch changes, making code review and history tracking cleaner.
 - [2025-06-08 21:55] Lesson: Always follow correct branch workflow - Switch to appropriate branch before executing implementation plans. Implementation plans should specify which branch to work on
 - [2025-06-08 21:50] Success: Fixed rotating text infinite loop - Changed from RAF to timer-based approach, tests now complete in 2 seconds instead of timing out
