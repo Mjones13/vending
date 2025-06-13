@@ -127,8 +127,8 @@ export function useTestIsolation() {
  */
 export function createIsolatedMock<T extends (...args: any[]) => any>(
   implementation?: T
-): jest.MockedFunction<T> {
-  const mock = jest.fn(implementation) as jest.MockedFunction<T>
+) {
+  const mock = jest.fn(implementation)
   
   // Ensure mock is cleared in this test's cleanup
   beforeEach(() => {

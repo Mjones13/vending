@@ -63,7 +63,7 @@ interface ComponentTestHelpers<T> {
   renderComponent: (props?: Partial<T>) => RenderResult
   createMockProps: (overrides?: Partial<T>) => T
   getTestId: () => string
-  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.MockedFunction<F>
+  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.Mock
 }
 
 /**
@@ -93,7 +93,7 @@ interface AnimationTestHelpers {
   advanceTime: (ms: number) => void
   waitForFrame: () => Promise<unknown>
   getTestId: () => string
-  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.MockedFunction<F>
+  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.Mock
   createStorage: <T = any>() => {
     testId: string
     get: (key: string) => T | undefined
@@ -159,8 +159,8 @@ interface PageTestHelpers {
   renderPage: () => RenderResult
   createTestData: <T>(factory: () => T) => T
   getTestId: () => string
-  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.MockedFunction<F>
-  mockRouter: (routerProps?: Record<string, any>) => jest.MockedFunction<any>
+  createMock: <F extends (...args: any[]) => any>(impl?: F) => jest.Mock
+  mockRouter: (routerProps?: Record<string, any>) => jest.Mock
 }
 
 /**
