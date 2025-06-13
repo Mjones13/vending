@@ -247,7 +247,10 @@ export class InMemoryCache {
    */
   set(key: string, value: any, ttlMs?: number): void {
     const expires = ttlMs ? Date.now() + ttlMs : undefined
-    this.cache.set(key, { value, expires })
+    this.cache.set(key, { 
+      value, 
+      ...(expires !== undefined && { expires }) 
+    })
   }
   
   /**
@@ -335,7 +338,9 @@ export class OptimizedTestEnvironment {
   } = {}) {
     this.instanceId = `env_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     this.database = new InMemoryTestDatabase()
-    this.apiService = new MockAPIService({ latency: options.apiLatency })
+    this.apiService = new MockAPIService({
+      ...(options.apiLatency !== undefined && { latency: options.apiLatency })
+    })
     this.cache = new InMemoryCache()
     
     this.setupGlobalMocks()

@@ -230,8 +230,8 @@ export async function testStyledJsxComponentStates(
     await waitFor(() => {
       expectStyledJsxElement(element, {
         classes: state.expectedClasses,
-        computedStyles: state.expectedStyles,
-        skipComputedStyles: !state.expectedStyles
+        ...(state.expectedStyles !== undefined && { computedStyles: state.expectedStyles }),
+        ...(state.expectedStyles === undefined && { skipComputedStyles: true })
       })
     })
   }
