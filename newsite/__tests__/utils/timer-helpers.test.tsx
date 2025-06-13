@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import type { FC } from 'react';
 import { render, screen, act } from '@testing-library/react';
 import {
   advanceTimersByTimeAndAct,
@@ -20,7 +21,7 @@ import {
 } from '../../test-utils/timer-helpers';
 
 // Test component that uses timers
-const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }: { onTick?: () => void }) => {
+const TimerComponent: FC<{ onTick?: () => void }> = ({ onTick }: { onTick?: () => void }) => {
   const [count, setCount] = useState(0);
   
   useEffect(() => {
@@ -36,7 +37,7 @@ const TimerComponent: React.FC<{ onTick?: () => void }> = ({ onTick }: { onTick?
 };
 
 // Test component that uses RAF
-const AnimationComponent: React.FC = () => {
+const AnimationComponent: FC = () => {
   const [frame, setFrame] = useState(0);
   
   useEffect(() => {

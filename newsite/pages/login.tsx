@@ -1,18 +1,19 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import * as React from "react";
+import React, { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 
 export default function Login() {
-  const [form, setForm] = React.useState({ email: "", password: "" });
-  const [error, setError] = React.useState("");
-  const [submitted, setSubmitted] = React.useState(false);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || !form.password) {
       setError("Both fields are required.");

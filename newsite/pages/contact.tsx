@@ -1,10 +1,11 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import * as React from "react";
+import React, { useState } from "react";
+import type { FormEvent, ChangeEvent } from "react";
 import { isContactFormData, isValidEmail, ContactFormData } from "../lib/type-guards";
 
 export default function Contact() {
-  const [formData, setFormData] = React.useState<ContactFormData>({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     message: ""
@@ -12,7 +13,7 @@ export default function Contact() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const newErrors: {[key: string]: string} = {};
 
@@ -50,7 +51,7 @@ export default function Contact() {
     // });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value

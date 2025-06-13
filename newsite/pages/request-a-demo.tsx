@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import * as React from "react";
+import React, { useState } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { isString, isValidEmail, isValidPhoneNumber } from "../lib/type-guards";
 
 interface DemoRequestForm {
@@ -23,11 +24,11 @@ function isDemoRequestForm(value: unknown): value is DemoRequestForm {
 }
 
 export default function RequestADemo() {
-  const [form, setForm] = React.useState<DemoRequestForm>({ name: "", company: "", email: "", phone: "" });
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
-  const [submitted, setSubmitted] = React.useState(false);
+  const [form, setForm] = useState<DemoRequestForm>({ name: "", company: "", email: "", phone: "" });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
@@ -58,7 +59,7 @@ export default function RequestADemo() {
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
