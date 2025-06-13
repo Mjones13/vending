@@ -231,7 +231,7 @@ export class ResponsiveHelper {
       
       // Verify image loads
       await expect(img).toHaveJSProperty('complete', true)
-      await expect(img).toHaveJSProperty('naturalWidth')
+      await expect(img).toHaveJSProperty('naturalWidth', expect.any(Number))
     }
   }
 }
