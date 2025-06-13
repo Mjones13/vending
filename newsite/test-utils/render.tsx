@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import * as React from 'react'
 import { render, RenderOptions, waitFor, screen } from '@testing-library/react'
 import { useRouter } from 'next/router'
 
@@ -48,7 +48,7 @@ export async function verifyLayoutMounted(timeout: number = 5000): Promise<void>
  * @param options - Render options including router mock and mount verification
  */
 export function renderWithProviders(
-  ui: ReactElement,
+  ui: React.ReactElement,
   {
     router = {},
     verifyMount = false,
