@@ -38,6 +38,9 @@ export class RotatingTextTester {
    */
   async waitForCompleteCycle(timeout = 20000): Promise<void> {
     const startWord = this.words[0]
+    if (!startWord) {
+      throw new Error('No words available for rotation testing')
+    }
     
     // Wait for each word in sequence
     for (let i = 1; i < this.words.length; i++) {

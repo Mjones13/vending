@@ -3,7 +3,17 @@ export * from './render'
 export * from './animation-helpers'
 export * from './mock-data'
 export * from './component-helpers'
-export * from './animation-testing'
+// Export animation-testing utilities except KeyframeAnimationTester (to avoid conflict)
+export {
+  RotatingTextTester,
+  StaggeredAnimationTester,
+  TransitionTester,
+  fastForwardAnimations,
+  resetAnimationSpeed,
+  createAnimationTestSuite
+} from './animation-testing'
+
+// Export keyframe-testing utilities (including KeyframeAnimationTester)
 export * from './keyframe-testing'
 export * from './parallel-isolation'
 export * from './layout-test-patterns'

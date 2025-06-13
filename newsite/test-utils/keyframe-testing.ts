@@ -216,7 +216,11 @@ export class KeyframeAnimationTester {
    * Get current animation step
    */
   getCurrentStep(): KeyframeStep {
-    return this.timeline.steps[this.timeline.currentStep] || this.timeline.steps[0];
+    const step = this.timeline.steps[this.timeline.currentStep] || this.timeline.steps[0];
+    if (!step) {
+      throw new Error('No keyframe steps available in timeline');
+    }
+    return step;
   }
 
   /**
