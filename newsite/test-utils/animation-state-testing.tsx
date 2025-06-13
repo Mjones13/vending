@@ -274,7 +274,7 @@ export const testAnimationHook = <TProps, TResult>(
 
   return {
     result: hookResult.result,
-    rerender: hookResult.rerender,
+    rerender: (newProps?: TProps) => hookResult.rerender(newProps as any),
     unmount: hookResult.unmount,
     getAnimationState: () => {
       if (!animationContextValue) {
