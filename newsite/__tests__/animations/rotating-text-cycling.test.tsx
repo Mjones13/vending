@@ -129,7 +129,7 @@ describe('Rotating Text Cycling Logic (Tier 1)', () => {
         
         const cycleToNext = useCallback(() => {
           setIsTransitioning(true);
-          setCurrentIndex((prev) => (prev + 1) % words.length);
+          setCurrentIndex((prev: number) => (prev + 1) % words.length);
           setIsTransitioning(false);
         }, [words.length]);
         
