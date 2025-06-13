@@ -172,7 +172,6 @@ export async function runTimerCycles(cycles: number, cycleTime: number): Promise
 export function setupFakeTimers(options: Parameters<typeof jest.useFakeTimers>[0] = {}): void {
   jest.useFakeTimers({
     ...options,
-    advanceTimers: options.advanceTimers ?? true,
   });
 }
 
