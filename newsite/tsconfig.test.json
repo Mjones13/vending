@@ -8,6 +8,9 @@
     "**/__tests__/**/*",
     "**/test-utils/**/*",
     "**/*.test.*",
-    "**/*.spec.*"
+    "**/*.spec.*",
+    "types/**/*",
+    "components/**/*",
+    "pages/**/*"
   ]
 }
