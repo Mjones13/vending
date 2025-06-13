@@ -93,7 +93,7 @@ export async function verifyServicesDropdown(options?: { timeout?: number }) {
   // Verify dropdown structure
   expect(mainServicesLink).toHaveClass('dropdown-toggle')
   
-  const dropdownContainer = mainServicesLink.closest('.dropdown')
+  const dropdownContainer = mainServicesLink?.closest('.dropdown')
   expect(dropdownContainer).toBeInTheDocument()
   
   const dropdownMenu = dropdownContainer?.querySelector('.dropdown-menu')

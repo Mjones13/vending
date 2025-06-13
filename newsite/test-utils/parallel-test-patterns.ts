@@ -213,7 +213,7 @@ export function createTestDataFactory<T>(defaultData: T) {
       return Array.from({ length: count }, (_, index) => ({
         ...defaultData,
         ...overrides,
-        id: `${defaultData.id || 'item'}_${index}_${Date.now()}`,
+        id: `${(defaultData as any).id || 'item'}_${index}_${Date.now()}`,
       }))
     },
     

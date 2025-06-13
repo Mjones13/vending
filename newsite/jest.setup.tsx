@@ -43,6 +43,10 @@ jest.mock('next/image', () => ({
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
+  root = null;
+  rootMargin = '';
+  thresholds = [];
+
   constructor() {}
   disconnect() {}
   observe() {}
