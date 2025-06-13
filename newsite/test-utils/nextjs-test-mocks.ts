@@ -26,7 +26,7 @@ export class MockNextRouter {
   }
   
   get pathname(): string {
-    return this.currentRoute.split('?')[0]
+    return this.currentRoute.split('?')[0] || this.currentRoute
   }
   
   get query(): Record<string, string | string[]> {
@@ -85,12 +85,14 @@ export class MockNextRouter {
     if (this.history.length > 1) {
       this.history.pop()
       const previousRoute = this.history[this.history.length - 1]
-      this.currentRoute = previousRoute
-      this.parseQuery(previousRoute)
-      
-      this.emit('routeChangeStart', previousRoute)
-      await new Promise(resolve => setTimeout(resolve, 1))
-      this.emit('routeChangeComplete', previousRoute)
+      if (previousRoute) {
+        this.currentRoute = previousRoute
+        this.parseQuery(previousRoute)
+        
+        this.emit('routeChangeStart', previousRoute)
+        await new Promise(resolve => setTimeout(resolve, 1))
+        this.emit('routeChangeComplete', previousRoute)
+      }
     }
   }
   

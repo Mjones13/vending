@@ -155,7 +155,9 @@ export class MockAPIService {
   /**
    * Mock fetch implementation
    */
-  async fetch(url: string, options: RequestInit = {}): Promise<Response> {
+  async fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+    const options = init || {};
     const method = options.method || 'GET'
     const key = `${method.toUpperCase()} ${url}`
     
@@ -433,7 +435,9 @@ export class OptimizedTestEnvironment {
     if (data.apiEndpoints) {
       for (const [endpoint, response] of Object.entries(data.apiEndpoints)) {
         const [method, url] = endpoint.split(' ')
-        this.apiService.mock(method, url, response)
+        if (method && url) {
+          this.apiService.mock(method, url, response)
+        }
       }
     }
   }

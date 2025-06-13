@@ -96,7 +96,11 @@ export class WordSequenceObserver {
   getTimingIntervals(): number[] {
     const intervals: number[] = [];
     for (let i = 1; i < this.observations.length; i++) {
-      intervals.push(this.observations[i].timestamp - this.observations[i - 1].timestamp);
+      const current = this.observations[i];
+      const previous = this.observations[i - 1];
+      if (current && previous) {
+        intervals.push(current.timestamp - previous.timestamp);
+      }
     }
     return intervals;
   }
@@ -161,6 +165,8 @@ export class WordSequenceObserver {
     for (let i = 1; i < sequence.length; i++) {
       const prevWord = sequence[i - 1];
       const currentWord = sequence[i];
+      if (!prevWord || !currentWord) continue;
+      
       const observation = this.observations.find(obs => obs.word === currentWord);
       
       if (prevWord === expectedWords[expectedWords.length - 1] && currentWord === expectedWords[0]) {
@@ -346,7 +352,7 @@ export const validateAnimationStates = async (
     // Check for stuck states
     const stateGrouped = stateTransitions.reduce((acc, transition) => {
       if (!acc[transition.state]) acc[transition.state] = [];
-      acc[transition.state].push(transition.timestamp);
+      acc[transition.state]!.push(transition.timestamp);
       return acc;
     }, {} as Record<string, number[]>);
     
