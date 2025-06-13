@@ -1,11 +1,11 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import { useState } from "react";
+import * as React from "react";
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = React.useState({ email: "", password: "" });
+  const [error, setError] = React.useState("");
+  const [submitted, setSubmitted] = React.useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

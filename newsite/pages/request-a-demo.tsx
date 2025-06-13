@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import { useState } from "react";
+import * as React from "react";
 import { isString, isValidEmail, isValidPhoneNumber } from "../lib/type-guards";
 
 interface DemoRequestForm {
@@ -23,9 +23,9 @@ function isDemoRequestForm(value: unknown): value is DemoRequestForm {
 }
 
 export default function RequestADemo() {
-  const [form, setForm] = useState<DemoRequestForm>({ name: "", company: "", email: "", phone: "" });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = React.useState<DemoRequestForm>({ name: "", company: "", email: "", phone: "" });
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  const [submitted, setSubmitted] = React.useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

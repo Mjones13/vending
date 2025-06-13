@@ -7,7 +7,7 @@
  * - Tier 2: Component Behavior (DOM timing, performance behavior)
  */
 
-import React, { useState, useCallback, ReactNode } from 'react';
+import * as React from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../../pages/index';
@@ -41,7 +41,7 @@ jest.mock('next/router', () => ({
 }));
 
 jest.mock('next/head', () => {
-  return function Head({ children }: { children: ReactNode }) {
+  return function Head({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   };
 });
@@ -57,7 +57,7 @@ jest.mock('../../hooks/useScrollAnimation', () => ({
 }));
 
 jest.mock('../../components/Layout', () => {
-  return function Layout({ children }: { children: ReactNode }) {
+  return function Layout({ children }: { children: React.ReactNode }) {
     return <div data-testid="layout">{children}</div>;
   };
 });
@@ -103,10 +103,10 @@ describe('Rotating Text Timing Logic (Tier 1)', () => {
 
     it('should test timing hook logic', () => {
       const useTimingLogic = (interval: number) => {
-        const [lastTick, setLastTick] = useState(Date.now());
-        const [intervalCount, setIntervalCount] = useState(0);
+        const [lastTick, setLastTick] = React.useState(Date.now());
+        const [intervalCount, setIntervalCount] = React.useState(0);
         
-        const tick = useCallback(() => {
+        const tick = React.useCallback(() => {
           const now = Date.now();
           const actualInterval = now - lastTick;
           setLastTick(now);

@@ -5,7 +5,7 @@
  * - Tier 2: Component Behavior (DOM class changes, timing behavior)
  * Following TDD approach - testing the staggered logo fade-in animations
  */
-import React, { useState, useCallback, useEffect, memo } from 'react'
+import * as React from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import { 
   KeyframeAnimationTester,

@@ -5,7 +5,7 @@
  * - Tier 2: Component Behavior (DOM interactions, class changes, user events)
  * Following TDD approach - testing hover effects on buttons, cards, and interactive elements
  */
-import React, { useState, useEffect } from 'react'
+import * as React from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import {
   mockAnimationProperties,

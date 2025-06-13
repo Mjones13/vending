@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
-import { useState } from "react";
+import * as React from "react";
 import { isContactFormData, isValidEmail, ContactFormData } from "../lib/type-guards";
 
 export default function Contact() {
-  const [formData, setFormData] = useState<ContactFormData>({
+  const [formData, setFormData] = React.useState<ContactFormData>({
     name: "",
     email: "",
     message: ""

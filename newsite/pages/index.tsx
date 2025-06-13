@@ -2,18 +2,18 @@ import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import * as React from "react";
 import Layout from "../components/Layout";
 import { useStaggeredAnimation } from "../hooks/useScrollAnimation";
 
 export default function Home() {
   const router = useRouter();
   const [logoAnimations, triggerLogoAnimations] = useStaggeredAnimation(9, 150);
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [animationState, setAnimationState] = useState<'visible' | 'exiting' | 'entering'>('visible');
-  const rotatingWords = useMemo(() => ['Workplaces', 'Apartments', 'Gyms', 'Businesses'], []);
+  const [currentWordIndex, setCurrentWordIndex] = React.useState(0);
+  const [animationState, setAnimationState] = React.useState<'visible' | 'exiting' | 'entering'>('visible');
+  const rotatingWords = React.useMemo(() => ['Workplaces', 'Apartments', 'Gyms', 'Businesses'], []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Trigger logo animations on mount
     setTimeout(() => {
       triggerLogoAnimations();
@@ -21,7 +21,7 @@ export default function Home() {
   }, [triggerLogoAnimations]);
 
   // Robust word cycling utility
-  const getNextWordIndex = useCallback((currentIndex: number, wordsArray: string[]): number => {
+  const getNextWordIndex = React.useCallback((currentIndex: number, wordsArray: string[]): number => {
     if (!wordsArray || wordsArray.length === 0) return 0;
     if (wordsArray.length === 1) return 0;
     
@@ -30,7 +30,7 @@ export default function Home() {
     return nextIndex >= wordsArray.length ? 0 : nextIndex;
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const interval = setInterval(() => {
       // Phase 1: Start exit animation
       setAnimationState('exiting');

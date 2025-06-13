@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 
 export const useScrollAnimation = (threshold = 0.1, rootMargin = '0px') => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = React.useState(false);
+  const ref = React.useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
@@ -37,9 +37,9 @@ export const useScrollAnimation = (threshold = 0.1, rootMargin = '0px') => {
 };
 
 export const useParallax = () => {
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = React.useState(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleScroll = () => {
       setOffset(window.pageYOffset);
     };
@@ -52,7 +52,7 @@ export const useParallax = () => {
 };
 
 export const useStaggeredAnimation = (count: number, delay = 100) => {
-  const [animatedItems, setAnimatedItems] = useState<boolean[]>(
+  const [animatedItems, setAnimatedItems] = React.useState<boolean[]>(
     new Array(count).fill(false)
   );
 
