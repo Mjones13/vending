@@ -1,4 +1,5 @@
 import React from 'react';
+import type { FC } from 'react';
 import Image from 'next/image';
 
 interface HeroSectionProps {
@@ -21,7 +22,7 @@ interface HeroSectionProps {
   className?: string;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({
+const HeroSection: FC<HeroSectionProps> = ({
   backgroundImage,
   title,
   subtitle,

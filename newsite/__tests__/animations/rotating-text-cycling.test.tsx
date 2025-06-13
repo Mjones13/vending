@@ -7,7 +7,7 @@
  * - Tier 2: Component Behavior (DOM text changes, class applications)
  */
 
-import * as React from 'react';
+import React, { useState, useCallback } from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../../pages/index';
@@ -124,10 +124,10 @@ describe('Rotating Text Cycling Logic (Tier 1)', () => {
 
     it('should test cycling hook logic in isolation', () => {
       const useCyclingLogic = (words: string[]) => {
-        const [currentIndex, setCurrentIndex] = React.useState(0);
-        const [isTransitioning, setIsTransitioning] = React.useState(false);
+        const [currentIndex, setCurrentIndex] = useState(0);
+        const [isTransitioning, setIsTransitioning] = useState(false);
         
-        const cycleToNext = React.useCallback(() => {
+        const cycleToNext = useCallback(() => {
           setIsTransitioning(true);
           setCurrentIndex((prev: number) => (prev + 1) % words.length);
           setIsTransitioning(false);

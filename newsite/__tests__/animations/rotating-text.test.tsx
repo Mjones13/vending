@@ -5,7 +5,7 @@
  * - Tier 2: Component Behavior (DOM changes, text updates, className changes)
  * Following TDD approach - testing the specific animation state machine implementation
  */
-import * as React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { render, screen, waitFor, act } from '../../test-utils'
 import { 
   testAnimationHook,
@@ -33,12 +33,12 @@ import {
 // Component that matches the actual rotating text implementation
 // Modified to support maxCycles for testing to prevent infinite loops
 function RotatingTextComponent({ maxCycles }: { maxCycles?: number }) {
-  const [currentWordIndex, setCurrentWordIndex] = React.useState(0)
-  const [animationState, setAnimationState] = React.useState<'visible' | 'exiting' | 'entering'>('visible')
-  const [cycleCount, setCycleCount] = React.useState(0)
+  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [animationState, setAnimationState] = useState<'visible' | 'exiting' | 'entering'>('visible')
+  const [cycleCount, setCycleCount] = useState(0)
   const rotatingWords = mockRotatingWords
 
-  React.useEffect(() => {
+  useEffect(() => {
     // If maxCycles is set and we've reached it, don't start interval
     if (maxCycles && cycleCount >= maxCycles) {
       return
@@ -152,10 +152,10 @@ describe('Rotating Text Animation Logic (Tier 1)', () => {
     it('should test word cycling logic with animation state hooks', () => {
       // Create a mock hook for testing word rotation logic
       const useRotatingTextLogic = (words: string[]) => {
-        const [currentIndex, setCurrentIndex] = React.useState(0)
-        const [state, setState] = React.useState<'visible' | 'exiting' | 'entering'>('visible')
+        const [currentIndex, setCurrentIndex] = useState(0)
+        const [state, setState] = useState<'visible' | 'exiting' | 'entering'>('visible')
         
-        const cycleToNext = React.useCallback(() => {
+        const cycleToNext = useCallback(() => {
           setState('exiting')
           setTimeout(() => {
             setCurrentIndex((prev: number) => (prev + 1) % words.length)

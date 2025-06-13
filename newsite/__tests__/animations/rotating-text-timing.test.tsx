@@ -7,7 +7,7 @@
  * - Tier 2: Component Behavior (DOM timing, performance behavior)
  */
 
-import * as React from 'react';
+import React, { useState, useCallback } from 'react';
 import { render, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../../pages/index';
@@ -103,10 +103,10 @@ describe('Rotating Text Timing Logic (Tier 1)', () => {
 
     it('should test timing hook logic', () => {
       const useTimingLogic = (interval: number) => {
-        const [lastTick, setLastTick] = React.useState(Date.now());
-        const [intervalCount, setIntervalCount] = React.useState(0);
+        const [lastTick, setLastTick] = useState(Date.now());
+        const [intervalCount, setIntervalCount] = useState(0);
         
-        const tick = React.useCallback(() => {
+        const tick = useCallback(() => {
           const now = Date.now();
           const actualInterval = now - lastTick;
           setLastTick(now);
